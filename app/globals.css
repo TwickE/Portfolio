@@ -1,13 +1,40 @@
 @import "tailwindcss";
 
-:root {
-    --font-sora: 'Sora', sans-serif;
+@layer base {
+    * {
+        @apply box-border;
+    }
+
+    body {
+        @apply font-sora text-xl bg-dark-mode-100;
+    }
 }
 
-html {
-    font-family: var(--font-sora);
+@theme {
+    --font-sora: var(--font-sora);
+
+    --color-primary: #283aff;
+    --color-secondary: #0A1264;
+
+    --color-dark-mode-100: #070915;
+    --color-dark-mode-200: #050509;
+
+    --color-dark-photo-bg: #0F0F0F;
+
+
+    
+
+    /* --breakpoint-xs: 480px;
+
+    --background-image-hero-pattern: url("/hero-bg.png"); */
 }
 
-* {
-    box-sizing: border-box;
+@layer components {
+    .text-gradient-light {
+        @apply bg-linear-to-r from-[#283aff] to-[#0A1264] bg-clip-text text-transparent;
+    }
+
+    .text-gradient-dark {
+        @apply bg-linear-to-r from-[#283aff] to-[#ffffff] bg-clip-text text-transparent;
+    }
 }
