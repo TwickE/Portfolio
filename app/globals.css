@@ -29,8 +29,10 @@
     --color-dark-mode-100: #070915;
     --color-dark-mode-200: #050509;
 
-    --color-dark-photo-bg: #0F0F0F;
+    --color-light-glass-bg: rgba(255, 255, 255, 0.5);
+    --color-dark-glass-bg: rgba(7, 9, 21, 0.5);
 
+    --color-dark-photo-bg: #0F0F0F;
     
 
     /* --background-image-hero-pattern: url("/hero-bg.png"); */
@@ -38,15 +40,19 @@
 
 @layer components {
     .text-gradient-light {
-        @apply bg-linear-to-r from-[#283aff] to-[#0A1264] bg-clip-text text-transparent;
+        @apply bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent;
     }
 
     .text-gradient-dark {
-        @apply bg-linear-to-r from-[#283aff] to-[#ffffff] bg-clip-text text-transparent;
+        @apply bg-linear-to-r from-primary to-white bg-clip-text text-transparent;
     }
 
     .outline-button {
         @apply flex items-center justify-center gap-1 border border-primary text-primary text-base bg-transparent rounded-full cursor-pointer hover:bg-primary hover:text-white transition-all duration-300;
+    }
+
+    .filled-button {
+        @apply text-white text-base font-bold rounded-full bg-[length:200%] bg-gradient-to-r from-primary from-0% via-secondary via-50% to-primary to-100% cursor-pointer hover:bg-[-100%] transition-all duration-400;
     }
 
     .hero-glow1 {
@@ -55,6 +61,14 @@
 
     .hero-glow2 {
         @apply relative before:content-[""] before:absolute before:bottom-0 before:left-0 before:w-[220px] before:h-[220px] before:rounded-full before:blur-[150px] before:ms-[-5%] before:-z-10 before:bg-primary;
+    }
+
+    .nav-selected-btn {
+        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-linear-to-r after:from-primary after:to-secondary cursor-pointer;
+    }
+
+    .nav-hover-btn {
+        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-linear-to-r after:from-primary after:to-secondary after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
     }
 
 }

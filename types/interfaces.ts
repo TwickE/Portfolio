@@ -8,3 +8,11 @@ export interface OutlineButtonProps {
     clickFunction: () => void;
     containerClasses?: string;
 }
+
+export interface FilledButtonProps {
+    text?: string;
+    icon?: ReactElement;
+    clickFunction: () => void;
+    containerClasses: string;
+    ariaLabel?: string;
+}
