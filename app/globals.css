@@ -37,4 +37,8 @@
     .text-gradient-dark {
         @apply bg-linear-to-r from-[#283aff] to-[#ffffff] bg-clip-text text-transparent;
     }
+
+    .outline-button {
+        @apply flex items-center justify-center gap-1 border border-primary text-primary text-base bg-transparent rounded-full cursor-pointer hover:bg-primary hover:text-white transition-all duration-300;
+    }
 }
