@@ -7,7 +7,18 @@ import useOpenLink from '@/hooks/useOpenLink';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
-import { CgDarkMode, CgMenuRight  } from "react-icons/cg";
+import { CgDarkMode, CgMenuRight } from "react-icons/cg";
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+import { VisuallyHidden } from "radix-ui";
 
 const Navbar = () => {
     // State to track whether the page has been scrolled
@@ -99,7 +110,7 @@ const Navbar = () => {
                         alt="Logo dark"
                         className="hidden dark:block"
                     />
-                    <p className='max-3xl:text-base max-2xl:hidden'>Fred&apos;s Portfolio</p>
+                    <p className='max-3xl:hidden'>Fred&apos;s Portfolio</p>
                 </Link>
                 <div className='flex items-center gap-12 max-4xl:gap-6'>
                     <nav className='flex gap-12 text-base max-4xl:gap-6 max-xl:hidden'>
@@ -134,7 +145,23 @@ const Navbar = () => {
                         containerClasses='px-8 py-4'
                         clickFunction={useOpenLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
                     />
-                    <CgMenuRight size={56} className='hidden max-xl:block' />
+                    <Drawer onOpenChange={() => console.log('Drawer Triggered')} /* open={} */>
+                        <DrawerTrigger>
+                            <CgMenuRight size={56} className='hidden max-xl:block cursor-pointer' />
+                        </DrawerTrigger>
+                        <DrawerContent className='bg-light-mode-100 dark:bg-dark-mode-100 text-black dark:text-white h-[60dvh] !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
+                            <VisuallyHidden.Root>
+                                <DrawerTitle>Mobile Navigation Menu</DrawerTitle>
+                                <DrawerDescription></DrawerDescription>
+                            </VisuallyHidden.Root>
+                            <div className='flex flex-col gap-6 mt-16'>
+                                <Link href="/" className=' w-full text-center'>Home</Link>
+                                <Link href="/about" className=' w-full text-center'>About</Link>
+                                <Link href="/projects" className=' w-full text-center'>Projects</Link>
+                                <Link href="/contact" className=' w-full text-center'>Contact</Link>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
                 </div>
             </div>
         </header>
