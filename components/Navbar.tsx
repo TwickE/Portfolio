@@ -7,7 +7,7 @@ import useOpenLink from '@/hooks/useOpenLink';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
-import { CgDarkMode } from "react-icons/cg";
+import { CgDarkMode, CgMenuRight  } from "react-icons/cg";
 
 const Navbar = () => {
     // State to track whether the page has been scrolled
@@ -83,8 +83,8 @@ const Navbar = () => {
 
     return (
         <header className={`${scrolled ? 'bg-light-glass-bg dark:bg-dark-glass-bg shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full text-black dark:text-white font-bold sticky top-0 z-50 transition-colors duration-300`}>
-            <div className='flex items-center justify-between gap-5 w-[1320px] h-25 m-auto'>
-                <Link href='/' className='flex items-center gap-5 no-underline'>
+            <div className='flex items-center justify-between w-[1320px] h-25 m-auto max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px]'>
+                <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
                         src="/assets/icons/logoLight.svg"
                         width={60}
@@ -99,10 +99,10 @@ const Navbar = () => {
                         alt="Logo dark"
                         className="hidden dark:block"
                     />
-                    <p>Fred&apos;s Portfolio</p>
+                    <p className='max-3xl:text-base max-2xl:hidden'>Fred&apos;s Portfolio</p>
                 </Link>
-                <div className='flex items-center gap-12'>
-                    <nav className='flex gap-12 text-base'>
+                <div className='flex items-center gap-12 max-4xl:gap-6'>
+                    <nav className='flex gap-12 text-base max-4xl:gap-6 max-xl:hidden'>
                         <Link href="/" className={getLinkClassName('/')}>Home</Link>
                         <Link href="/about" className={getLinkClassName('/about')}>About</Link>
                         <Link href="/projects" className={getLinkClassName('/projects')}>Projects</Link>
@@ -114,15 +114,15 @@ const Navbar = () => {
                             </div>
                             <span className='absolute inset-x-0 h-[38px] top-full' />{/* Invisible hover extender */}
                             <ul className='absolute top-[62px] flex flex-col gap-1 left-0 bg-light-mode-100 dark:bg-dark-mode-100 rounded-md p-1 scale-y-0 origin-top opacity-0 group-hover:scale-y-100 group-hover:opacity-100 transition-[transform,opacity,scale] duration-600 shadow-[0_0_20px_rgba(40,58,255,0.5)]'>
-                                <li className={`${activeTheme === 'light' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background]`} onClick={() => setActiveTheme('light')}>
+                                <li className={`${activeTheme === 'light' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('light')}>
                                     <FaSun size={20} />
                                     <p>Light</p>
                                 </li>
-                                <li className={`${activeTheme === 'dark' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background]`} onClick={() => setActiveTheme('dark')}>
+                                <li className={`${activeTheme === 'dark' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('dark')}>
                                     <FaMoon size={20} />
                                     <p>Dark</p>
                                 </li>
-                                <li className={`${activeTheme === 'system' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background]`} onClick={() => setActiveTheme('system')}>
+                                <li className={`${activeTheme === 'system' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('system')}>
                                     <CgDarkMode size={20} />
                                     <p>System</p>
                                 </li>
@@ -134,6 +134,7 @@ const Navbar = () => {
                         containerClasses='px-8 py-4'
                         clickFunction={useOpenLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
                     />
+                    <CgMenuRight size={56} className='hidden max-xl:block' />
                 </div>
             </div>
         </header>
