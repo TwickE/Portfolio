@@ -16,3 +16,8 @@ export interface FilledButtonProps {
     containerClasses: string;
     ariaLabel?: string;
 }
+
+export interface ThemeToggleProps {
+    activeTheme: string;
+    setActiveTheme: (theme: string) => void;
+}
