@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
     * {
-        @apply box-border;
+        @apply box-border transition-[background] duration-600;
     }
 
     body {
-        @apply font-sora text-xl bg-dark-mode-100;
+        @apply font-sora text-xl bg-light-mode-100 dark:bg-dark-mode-100;
     }
 }
 
@@ -25,6 +27,9 @@
 
     --color-primary: #283aff;
     --color-secondary: #0A1264;
+
+    --color-light-mode-100: #F3F3FC;
+    --color-light-mode-200: #F3F2F2;
 
     --color-dark-mode-100: #070915;
     --color-dark-mode-200: #050509;
