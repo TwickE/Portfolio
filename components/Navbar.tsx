@@ -122,6 +122,12 @@ const Navbar = () => {
 }
 
 const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
+    // State to track if the theme dropdown is open
+    const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+
+    // Close dropdown when clicking outside
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    
     // Get current pathname
     const pathname = usePathname();
 
@@ -130,28 +136,63 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
         return pathname === path ? 'nav-selected-btn' : 'nav-hover-btn';
     };
 
+    // Effect to close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsThemeDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <nav className='flex gap-12 text-base max-4xl:gap-6 max-xl:hidden'>
             <Link href="/" className={getLinkClassName('/')}>Home</Link>
             <Link href="/about" className={getLinkClassName('/about')}>About</Link>
             <Link href="/projects" className={getLinkClassName('/projects')}>Projects</Link>
             <Link href="/contact" className={getLinkClassName('/contact')}>Contact</Link>
-            <div className='nav-hover-btn relative group'>
-                <div className='flex items-center gap-2 cursor-pointer'>
+            {/* Theme dropdown with click and hover functionality */}
+            <div ref={dropdownRef} className={`${isThemeDropdownOpen ? '' : 'nav-hover-btn'} relative group`}>
+                {/* Make the entire header clickable */}
+                <div className='flex items-center gap-2 cursor-pointer' onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}>
                     <p>Theme</p>
-                    <FaChevronDown size={16} className='group-hover:rotate-180 transition-transform duration-600' />
+                    <FaChevronDown size={16} className={`transition-transform duration-600 ${isThemeDropdownOpen ? 'rotate-180' : 'group-hover:rotate-180'}`}/>
                 </div>
                 <span className='absolute inset-x-0 h-[38px] top-full' />{/* Invisible hover extender */}
-                <ul className='absolute top-[62px] flex flex-col gap-1 left-0 bg-light-mode-100 dark:bg-dark-mode-100 rounded-md p-1 scale-y-0 origin-top opacity-0 group-hover:scale-y-100 group-hover:opacity-100 transition-[transform,opacity,scale] duration-600 shadow-[0_0_20px_rgba(40,58,255,0.5)]'>
-                    <li className={`${activeTheme === 'light' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('light')}>
+                {/* Dropdown menu that shows on hover or click */}
+                <ul className={`absolute top-[62px] flex flex-col gap-1 left-0 bg-light-mode-100 dark:bg-dark-mode-100 rounded-md p-1 shadow-[0_0_20px_rgba(40,58,255,0.5)] transition-[transform,opacity,scale] duration-600 origin-top ${isThemeDropdownOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100'}`}>
+                    <li
+                        className={`${activeTheme === 'light' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        onClick={() => {
+                            setActiveTheme('light');
+                            setIsThemeDropdownOpen(false);
+                        }}
+                    >
                         <FaSun size={20} />
                         <p>Light</p>
                     </li>
-                    <li className={`${activeTheme === 'dark' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('dark')}>
+                    <li
+                        className={`${activeTheme === 'dark' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        onClick={() => {
+                            setActiveTheme('dark');
+                            setIsThemeDropdownOpen(false);
+                        }}
+                    >
                         <FaMoon size={20} />
                         <p>Dark</p>
                     </li>
-                    <li className={`${activeTheme === 'system' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`} onClick={() => setActiveTheme('system')}>
+                    <li
+                        className={`${activeTheme === 'system' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        onClick={() => {
+                            setActiveTheme('system');
+                            setIsThemeDropdownOpen(false);
+                        }}
+                    >
                         <CgDarkMode size={20} />
                         <p>System</p>
                     </li>
