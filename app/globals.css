@@ -37,6 +37,7 @@
     --color-light-glass-bg: rgba(255, 255, 255, 0.5);
     --color-dark-glass-bg: rgba(7, 9, 21, 0.5);
 
+    --color-light-photo-bg: #F0F0F0;
     --color-dark-photo-bg: #0F0F0F;
     
 
@@ -44,12 +45,8 @@
 }
 
 @layer components {
-    .text-gradient-light {
-        @apply bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent;
-    }
-
-    .text-gradient-dark {
-        @apply bg-linear-to-r from-primary to-white bg-clip-text text-transparent;
+    .text-gradient {
+        @apply bg-linear-to-r from-primary to-secondary dark:to-white bg-clip-text text-transparent;
     }
 
     .outline-button {
