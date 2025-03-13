@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, Dispatch, SetStateAction } from "react";
 
 export interface OutlineButtonProps {
     text?: string;
@@ -17,7 +17,8 @@ export interface FilledButtonProps {
     ariaLabel?: string;
 }
 
+export type Theme = 'light' | 'dark' | 'system';
 export interface ThemeToggleProps {
-    activeTheme: string;
-    setActiveTheme: (theme: string) => void;
+    activeTheme: Theme;
+    setActiveTheme: Dispatch<SetStateAction<Theme>>;
 }

@@ -17,69 +17,38 @@ import {
 } from "@/components/ui/drawer"
 import { VisuallyHidden } from "radix-ui";
 import { ThemeToggleProps } from '@/types/interfaces';
+import useTheme from '@/hooks/useTheme';
 
 const Navbar = () => {
-    // State to track whether the page has been scrolled
-    const [scrolled, setScrolled] = useState(false);
-    // State to track the active theme
-    const [activeTheme, setActiveTheme] = useState(localStorage.activeTheme || 'system');
+    // Get theme data from the hook
+  const { activeTheme, setActiveTheme } = useTheme();
+  
+  // State to track whether the page has been scrolled
+  const [scrolled, setScrolled] = useState(false);
 
-    // Add scroll event listener
-    useEffect(() => {
-        const handleScroll = () => {
-            // Check if page is scrolled (more than 1px for a small threshold)
-            const isScrolled = window.scrollY > 1;
+  // Scroll event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if page is scrolled (more than 1px for a small threshold)
+      const isScrolled = window.scrollY > 1;
 
-            // Only update state if the value changes
-            if (isScrolled !== scrolled) {
-                setScrolled(isScrolled);
-            }
-        };
+      // Only update state if the value changes
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
 
-        // Add event listener
-        window.addEventListener('scroll', handleScroll);
-
-        // Call once on mount to set initial state
-        handleScroll();
-
-        // Clean up event listener on component unmount
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [scrolled]); // Depend on scrolled to prevent unnecessary state updates
-
-    // Apply theme based on activeTheme
-    useEffect(() => {
-        // Save active theme to local storage
-        if (activeTheme === 'system') {
-            localStorage.removeItem('activeTheme');
-        } else {
-            localStorage.setItem('activeTheme', activeTheme);
-        }
-
-        // Function to apply theme
-        const applyTheme = () => {
-            const isDark =
-                activeTheme === 'dark' ||
-                (activeTheme === 'system' && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-            document.documentElement.classList.toggle("dark", isDark);
-        };
-
-        applyTheme();
-
-        // Apply theme on activeTheme state change
-        if (activeTheme === 'system') {
-            const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-            const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-                document.documentElement.classList.toggle("dark", e.matches);
-            };
-
-            mediaQuery.addEventListener("change", handleSystemThemeChange);
-            return () => mediaQuery.removeEventListener("change", handleSystemThemeChange);
-        }
-    }, [activeTheme]);
+    // Add event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Call once on mount to set initial state
+    handleScroll();
+    
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
 
     return (
         <header className={`${scrolled ? 'bg-light-glass-bg dark:bg-dark-glass-bg shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full text-black dark:text-white font-bold sticky top-0 z-50 transition-colors duration-300`}>
