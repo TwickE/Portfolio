@@ -8,7 +8,7 @@
     }
 
     body {
-        @apply font-sora text-xl bg-light-mode-100 dark:bg-dark-mode-100;
+        @apply font-sora text-xl text-black dark:text-white bg-light-mode-100 dark:bg-dark-mode-100;
     }
 }
 
@@ -33,6 +33,9 @@
 
     --color-dark-mode-100: #070915;
     --color-dark-mode-200: #050509;
+
+    --color-light-secondary-glass-bg: rgba(10, 18, 100, 0.1);
+    --color-dark-secondary-glass-bg: rgba(10, 18, 100, 0.25);
 
     --color-light-glass-bg: rgba(255, 255, 255, 0.5);
     --color-dark-glass-bg: rgba(7, 9, 21, 0.5);

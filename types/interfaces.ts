@@ -22,3 +22,9 @@ export interface ThemeToggleProps {
     activeTheme: Theme;
     setActiveTheme: Dispatch<SetStateAction<Theme>>;
 }
+
+export interface SkillCardProps {
+    link: string;
+    image: string;
+    text: string;
+}

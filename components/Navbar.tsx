@@ -51,7 +51,7 @@ const Navbar = () => {
   }, [scrolled]);
 
     return (
-        <header className={`${scrolled ? 'bg-light-glass-bg dark:bg-dark-glass-bg shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full text-black dark:text-white font-bold sticky top-0 z-50 transition-colors duration-300`}>
+        <header className={`${scrolled ? 'bg-light-glass-bg dark:bg-dark-glass-bg shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between w-[1320px] h-25 m-auto max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px] max-lg:w-full max-lg:px-3'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
@@ -255,9 +255,9 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
     return (
         <Drawer onOpenChange={(open) => setIsDrawerOpen(open)} open={isDrawerOpen}>
             <DrawerTrigger className="items-center justify-center">
-                <CgMenuRight size={56} className='hidden max-xl:flex cursor-pointer text-black dark:text-white' />
+                <CgMenuRight size={56} className='hidden max-xl:flex cursor-pointer' />
             </DrawerTrigger>
-            <DrawerContent className='bg-light-mode-200 dark:bg-dark-mode-200 font-bold text-black dark:text-white !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
+            <DrawerContent className='bg-light-mode-200 dark:bg-dark-mode-200 font-bold !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
                 <VisuallyHidden.Root>
                     <DrawerTitle>Mobile Navigation Menu</DrawerTitle>
                     <DrawerDescription></DrawerDescription>

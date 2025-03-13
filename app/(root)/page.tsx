@@ -22,7 +22,7 @@ export default function Home() {
 const HeroSection = () => {
     return (
         <main className="w-[1320px] min-h-[calc(100vh-196px)] mx-auto flex my-12 hero-glow1 max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-2xl:flex-col max-2xl:items-center max-xl:w-[540px] max-lg:w-full max-lg:px-3">
-            <div className="flex flex-col justify-center gap-2 w-1/2 text-black dark:text-white max-2xl:w-[700px] max-2xl:items-center max-xl:w-full max-lg:px-3">
+            <div className="flex flex-col justify-center gap-2 w-1/2 max-2xl:w-[700px] max-2xl:items-center max-xl:w-full max-lg:px-3">
                 <h2 className="text-4xl font-bold max-5xl:text-[2rem] max-4xl:text-[1.8rem] max-3xl:text-[1.4rem] max-2xl:m-auto max-2xl:text-[2rem] max-xl:text-[1.8rem] max-lg:text-2xl max-md:text-xl max-sm:text-base">Hi, I am Fred</h2>
                 <h1 className="text-5xl font-bold text-gradient mb-2 max-5xl:text-[2.7rem] max-4xl:text-4xl max-3xl:text-[2rem] max-2xl:m-auto max-2xl:text-center max-2xl:text-5xl max-xl:text-[2.5rem] max-lg:text-[2rem] max-md:[1.7rem] max-sm:text-xl">A Full Stack Developer + UX Designer</h1>
                 <div className="hero-glow2 hidden max-2xl:block">

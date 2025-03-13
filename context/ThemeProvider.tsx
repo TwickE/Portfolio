@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
 type ThemeContextType = {
   activeTheme: Theme;
-  setActiveTheme: (theme: Theme) => void;
+  setActiveTheme: Dispatch<SetStateAction<Theme>>;
   currentTheme: 'light' | 'dark';
   isDarkMode: boolean;
 };
