@@ -1,13 +1,16 @@
 import { SkillCardProps } from "@/types/interfaces"
 import Image from "next/image"
+import useHoverSupport from "@/hooks/useHoverSupport"
 
 
 const SkillsSection = () => {
+    const isHoverSupported = useHoverSupport();
 
     return (
         <section className="bg-light-mode-200 dark:bg-dark-mode-200 w-full py-12">
             <div className="w-[1320px] mx-auto flex flex-col items-center max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px] max-lg:w-full max-lg:px-3">
                 <h2 className="font-bold text-4xl text-gradient">My Main Skills</h2>
+                <p>{isHoverSupported ? 'Hover effects are enabled' : 'No hover support'}</p>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
                         <SkillCard
                             link="https://reactjs.org/"
