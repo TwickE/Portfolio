@@ -45,6 +45,19 @@
     --color-light-photo-bg: #F0F0F0;
     --color-dark-photo-bg: #0F0F0F;
 
+    --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
+    @keyframes caret-blink {
+
+        0%,70%,100% {
+            opacity: 1;
+        }
+
+        20%,50% {
+            opacity: 0;
+        }
+    }
+
     /* --background-image-hero-pattern: url("/hero-bg.png"); */
 }
 
@@ -75,6 +88,10 @@
 
     .nav-hover-btn {
         @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-linear-to-r after:from-primary after:to-secondary after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
+    }
+
+    .otp-slot {
+        @apply !text-4xl font-normal !rounded-xl !ring-secondary !justify-center !flex !border-2 !border-secondary !size-12 md:!size-16 !gap-5;
     }
 
 }

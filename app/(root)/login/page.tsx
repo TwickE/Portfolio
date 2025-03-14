@@ -1,11 +1,28 @@
 "use client";
 
 import Image from 'next/image';
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useState } from 'react';
 import { logInAdmin } from "@/lib/actions/admin.actions";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot
+} from "@/components/ui/input-otp";
+import { verifySecret, sendEmailOTP } from "@/lib/actions/admin.actions";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -37,10 +54,8 @@ const Login = () => {
             }
 
             setAccountId(admin.accountId);
-
-            toast.success("OTP sent to your email");
         } catch {
-            toast.error("Failed to login!!!!!!!!!");
+            toast.error("Failed to login");
         } finally {
             setIsLoading(false);
         }
@@ -86,7 +101,7 @@ const Login = () => {
                             />
                         </div>
                         <Button
-                            {...{ disabled: isLoading }}
+                            disabled={isLoading}
                             type='submit'
                             className="w-full h-12 text-base cursor-pointer"
                         >
@@ -96,14 +111,85 @@ const Login = () => {
                     </form>
                 </div>
             </main>
-            {accountId && <OTPModal />}
+            {accountId && <OTPModal email={email} accountId={accountId}  />}
         </>
     )
 }
 
-const OTPModal = () => {
+const OTPModal = ({ accountId, email }: { accountId: string, email: string }) => {
+    const router = useRouter();
+    const [isOpen, setIsOpen] = useState(true);
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            const sessionId = await verifySecret({ accountId, password });
+            if(sessionId) {
+                router.push("/admin");
+            }
+        } catch (error) {
+            console.log("Failed to verify OTP", error);
+            toast.error("Failed to verify OTP");
+            setIsLoading(false);
+        }
+    }
+
+    const handleResendOTP = async () => {
+        await sendEmailOTP({ email });
+        toast.success("A new OTP has been sent to your email");
+    }
+
     return (
-        <div className='w-96 h-96 absolute bg-red-300 top-30 left-45'>OTP Modal</div>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialogContent className="space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-tertiary-light dark:bg-tertiary-dark border-secondary outline-none">
+                <AlertDialogHeader className="relative flex justify-center">
+                    <AlertDialogTitle className="text-center text-2xl font-bold">
+                        Enter your OTP
+                        <IoIosCloseCircleOutline
+                            size={20}
+                            onClick={() => setIsOpen(false)}
+                            className='absolute -right-1 -top-7 cursor-pointer sm:-right-2 sm:-top-4'
+                        />
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-base text-center text-light-100">
+                        We&apos;ve sent an OTP code to <span className="pl-1 text-primary">{email}</span>
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <InputOTP maxLength={6} value={password} onChange={setPassword}>
+                    <InputOTPGroup className="w-full flex gap-1 sm:gap-2 justify-between">
+                        <InputOTPSlot index={0} className="otp-slot" />
+                        <InputOTPSlot index={1} className="otp-slot" />
+                        <InputOTPSlot index={2} className="otp-slot" />
+                        <InputOTPSlot index={3} className="otp-slot" />
+                        <InputOTPSlot index={4} className="otp-slot" />
+                        <InputOTPSlot index={5} className="otp-slot" />
+                    </InputOTPGroup>
+                </InputOTP>
+
+                <AlertDialogFooter>
+                    <div className="flex w-full flex-col gap-4">
+                        <AlertDialogAction onClick={handleSubmit} className="w-full h-12 text-base cursor-pointer" type="button" disabled={isLoading}>
+                            Submit
+                            {isLoading && <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
+                        </AlertDialogAction>
+                        <div className="text-base mt-2 text-center">
+                            Didn&apos;t recive a code?
+                            <Button
+                                type="button"
+                                variant="link"
+                                className="pl-1 text-primary cursor-pointer"
+                                onClick={handleResendOTP}
+                            >
+                                Click to resend OTP
+                            </Button>
+                        </div>
+                    </div>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }
 
