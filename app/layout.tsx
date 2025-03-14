@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sora } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const sora = Sora({
     subsets: ['latin'],
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeProvider>
         {children}
         </ThemeProvider>
+        <Toaster richColors />
       </body>
     </html>
   );
