@@ -7,7 +7,7 @@ const useHoverSupport = () => {
     const mediaQuery = window.matchMedia('(hover: hover)');
     setIsHoverSupported(mediaQuery.matches);
 
-    const handleChange = (e) => setIsHoverSupported(e.matches);
+    const handleChange = (e: MediaQueryListEvent) => setIsHoverSupported(e.matches);
     mediaQuery.addEventListener('change', handleChange);
 
     return () => {
