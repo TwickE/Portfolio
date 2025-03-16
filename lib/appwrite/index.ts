@@ -44,3 +44,18 @@ export const createAdminClient = async () => {
         }
     }
 }
+
+export const createPublicClient = () => {
+    const client = new Client()
+        .setEndpoint(appwriteConfig.endpointUrl)
+        .setProject(appwriteConfig.projectId);
+
+    return {
+        get databases() {
+            return new Databases(client);
+        },
+        get storage() {
+            return new Storage(client);
+        }
+    }
+}

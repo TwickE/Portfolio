@@ -1,13 +1,13 @@
 "use server";
 
-import { createAdminClient } from "@/lib/appwrite";
+import { createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query } from "node-appwrite";
 import { Skill } from "@/types/interfaces";
 
 export const getSkills = async ({isMainSkill}: {isMainSkill: boolean}): Promise<Skill[] | undefined> => {
     try {
-        const { databases } = await createAdminClient();
+        const { databases } = await createPublicClient();
 
         const result = await databases.listDocuments(
             appwriteConfig.databaseId,
