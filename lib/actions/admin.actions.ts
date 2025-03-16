@@ -24,7 +24,6 @@ export const sendEmailOTP = async ({ email }: { email: string; }) => {
     try {
         const session = await account.createEmailToken(ID.unique(), email);
 
-        console.log(session);
         return session.userId;
     } catch (error) {
         handleError(error, "Failed to send email OTP");
@@ -43,7 +42,7 @@ export const verifySecret = async ({ accountId, password }: { accountId: string;
             sameSite: 'strict',
             secure: true,
         });
-        console.log(session);
+
         return parseStringify({ sessionId: session.$id });
     } catch (error) {
         handleError(error, "Failed to verify OTP");
@@ -75,6 +74,23 @@ export const logOutAdmin = async () => {
         handleError(error, "Failed to log out admin");
     } finally {
         redirect("/");
+    }
+}
+
+export async function checkAdminAuth({shouldRedirect = false}: {shouldRedirect?: boolean} = {}) {
+    try {
+        const { account } = await createSessionClient();
+        await account.getSession('current');
+
+        return true;
+    } catch (error) {
+        handleError(error, "Admin authentication failed:");
+        
+        if (shouldRedirect) {
+            redirect("/login");
+        }
+        
+        return false;
     }
 }
 
