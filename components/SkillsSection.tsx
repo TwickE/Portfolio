@@ -1,9 +1,13 @@
 "use client";
 
-import { SkillCardProps } from "@/types/interfaces"
+import { Skill, SkillCardProps } from "@/types/interfaces"
 import Image from "next/image"
 import useHoverSupport from "@/hooks/useHoverSupport"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
+import { getSkills } from "@/lib/actions/file.actions"
+import { Skeleton } from "@/components/ui/skeleton"
+
+const NUMBER_OF_SKELETONS = 8;
 
 const SkillsSection = () => {
     // State to store the mouse position
@@ -14,6 +18,10 @@ const SkillsSection = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
     // Custom hook to check if the browser supports hover
     const isHoverSupported = useHoverSupport();
+    // State to store if the main skills are loading
+    const [isLoadingMainSkills, setIsLoadingMainSkills] = useState(true);
+    // State to store the main skills
+    const [mainSkills, setMainSkills] = useState<Skill[]>([]);
 
     // Handle mouse movement within the section
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -37,6 +45,26 @@ const SkillsSection = () => {
         setIsMouseInSection(false);
     };
 
+    // Fetches the main skills when the component mounts
+    useEffect(() => {
+        const fetchSkills = async () => {
+            setIsLoadingMainSkills(true);
+            try {
+                const skills = await getSkills({ isMainSkill: true });
+                if (skills) {
+                    setMainSkills([...skills].sort((a, b) => a.order - b.order));
+                }
+            } catch (error) {
+                console.error("Failed to fetch skills:", error);
+            } finally {
+                setIsLoadingMainSkills(false);
+            }
+        };
+        fetchSkills();
+    }, []);
+
+
+
     return (
         <section className="bg-light-mode-200 dark:bg-dark-mode-200 w-full py-12 overflow-hidden">
             <div
@@ -58,31 +86,20 @@ const SkillsSection = () => {
                 )}
                 <h2 className="font-bold text-4xl text-gradient">My Main Skills</h2>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
+                    {isLoadingMainSkills ? (
+                        Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="w-[140px] h-[140px] rounded-3xl" />
+                        ))
+                    ) : (
+                        mainSkills.map((skill) => (
+                            <SkillCard
+                                key={skill.$id}
+                                link={skill.link}
+                                image={skill.icon}
+                                text={skill.skillName}
+                            />
+                        ))
+                    )}
                 </div>
                 <h2 className="font-bold text-4xl text-gradient mt-12">My Other Skills</h2>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">

@@ -28,3 +28,11 @@ export interface SkillCardProps {
     image: string;
     text: string;
 }
+
+export interface Skill {
+    $id: string;
+    skillName: string;
+    link: string;
+    icon: string;
+    order: number;
+}
