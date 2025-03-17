@@ -7,6 +7,11 @@ import { ID, Query } from "node-appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+const handleError = (error: unknown, message: string) => {
+    console.log(error, message);
+    throw error;
+}
+
 const getAdminByEmail = async (email: string) => {
     const { databases } = await createAdminClient();
 
@@ -68,7 +73,9 @@ export const logOutAdmin = async () => {
     const { account } = await createSessionClient();
 
     try {
-        await account.deleteSession('current');
+        if (account) {
+            await account.deleteSession('current');
+        }
         (await cookies()).delete('appwrite-session');
     } catch (error) {
         handleError(error, "Failed to log out admin");
@@ -77,24 +84,17 @@ export const logOutAdmin = async () => {
     }
 }
 
-export async function checkAdminAuth({shouldRedirect = false}: {shouldRedirect?: boolean} = {}) {
+export const checkAdminAuth = async () => {
     try {
-        const { account } = await createSessionClient();
-        await account.getSession('current');
-
-        return true;
-    } catch (error) {
-        handleError(error, "Admin authentication failed:");
+        const client = await createSessionClient();
         
-        if (shouldRedirect) {
-            redirect("/login");
+        if (!client.hasSession) {
+            return false
+        } else {
+            return true
         }
-        
-        return false;
+    } catch (error) {
+        handleError(error, 'Failed to check authentication');
+        return false
     }
-}
-
-const handleError = (error: unknown, message: string) => {
-    console.log(error, message);
-    throw error;
-}
+};

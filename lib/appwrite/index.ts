@@ -10,20 +10,28 @@ export const createSessionClient = async () => {
     const session = (await cookies()).get('appwrite-session');
 
     if (!session || !session.value) {
-        console.log(session)
-        throw new Error('No session found');
+        return {
+            hasSession: false,
+            get account() {
+                throw new Error('No active session');
+            },
+            get databases() {
+                throw new Error('No active session');
+            }
+        };
     }
 
     client.setSession(session.value);
 
     return {
+        hasSession: true,
         get account() {
             return new Account(client);
         },
         get databases() {
             return new Databases(client);
         }
-    }
+    };
 }
 
 export const createAdminClient = async () => {
