@@ -27,3 +27,12 @@ export const getSkills = async ({isMainSkill}: {isMainSkill: boolean}): Promise<
         return undefined;
     }
 }
+
+export const addSkill = async () => {
+
+}
+
+
+export const updateSkill = async () => {
+    
+}
