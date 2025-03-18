@@ -28,7 +28,7 @@
     --color-primary: #283aff;
     --color-secondary: #0A1264;
     --color-tertiary-light: #E3EBFF;
-    --color-tertiary-dark: #0E0C1C;
+    --color-tertiary-dark: #272440;
 
     --color-light-mode-100: #F3F3FC;
     --color-light-mode-200: #F3F2F2;
@@ -62,6 +62,10 @@
 }
 
 @layer components {
+    .responsive-container {
+        @apply m-auto w-[1320px] max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px] max-lg:w-full max-lg:px-3;
+    }
+
     .text-gradient {
         @apply bg-linear-to-r from-primary to-secondary dark:to-white bg-clip-text text-transparent;
     }

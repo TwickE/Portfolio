@@ -36,3 +36,8 @@ export interface Skill {
     icon: string;
     order: number;
 }
+
+export interface AdminInputProps {
+    icon: string;
+    inputValue: string;
+}
