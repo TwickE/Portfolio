@@ -1,6 +1,6 @@
 "use server";
 
-import { createPublicClient } from "@/lib/appwrite";
+import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query } from "node-appwrite";
 import { Skill } from "@/types/interfaces";
@@ -10,7 +10,7 @@ const handleError = (error: unknown, message: string) => {
     throw error;
 }
 
-export const getSkills = async ({isMainSkill}: {isMainSkill: boolean}): Promise<Skill[] | undefined> => {
+export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Promise<Skill[] | undefined> => {
     try {
         const { databases } = await createPublicClient();
 
@@ -32,7 +32,49 @@ export const addSkill = async () => {
 
 }
 
+export const updateSkill = async ({ $id, skillName, link, icon, order }: Skill): Promise<Skill | undefined> => {
+    try {
+        const { databases } = await createAdminClient();
 
-export const updateSkill = async () => {
-    
+        // Build the update object with only provided fields
+        const updateData: Partial<Skill> = {};
+
+        if (skillName !== undefined) updateData.skillName = skillName;
+        if (icon !== undefined) updateData.icon = icon;
+        if (link !== undefined) updateData.link = link;
+        if (order !== undefined) updateData.order = order;
+
+        // If no fields to update, return early
+        if (Object.keys(updateData).length === 0) {
+            throw new Error("No new data provided for update");
+        }
+
+        const updatedSkill = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.skillsCollectionId,
+            $id,
+            updateData
+        );
+        console.log(updatedSkill); //Comentário a ser removido
+        return updatedSkill as unknown as Skill;
+    } catch (error) {
+        handleError(error, 'Failed to update skill');
+        return undefined;
+    }
+}
+
+export const deleteSkill = async (id: string) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        const deletedSkill = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.skillsCollectionId,
+            id
+        );
+
+        console.log(deletedSkill); //Comentário a ser removido
+    } catch (error) {
+        handleError(error, 'Failed to delete skill');
+    }
 }

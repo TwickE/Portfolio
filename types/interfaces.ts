@@ -38,6 +38,7 @@ export interface Skill {
 }
 
 export interface AdminInputProps {
-    icon: string;
+    icon: 'link' | 'text';
     inputValue: string;
+    onChange?: (value: string) => void;
 }
