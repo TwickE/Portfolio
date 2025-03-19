@@ -45,6 +45,8 @@ export interface AdminSkill {
     order: number;
     iconFile?: File;
     bucketFileId: string;
+    mainSkill: boolean;
+    newSkill: boolean;
 }
 
 export interface DeleteSkillProps {

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { AdminInput } from "@/components/AdminSmallComponents";
-import { getSkills, updateSkill, deleteSkill } from "@/lib/actions/file.actions";
+import { getSkills, updateSkill, deleteSkill, addSkill } from "@/lib/actions/file.actions";
 import { AdminSkill } from "@/types/interfaces";
 import { toast } from "sonner";
 import usePickImage from "@/hooks/usePickImage";
@@ -49,8 +49,8 @@ const SkillSection = () => {
                         }, {} as Record<string, AdminSkill>)
                     );
                 }
-            } catch (error) {
-                console.error("Failed to fetch skills:", error);
+            } catch {
+                toast.error("Failed to fetch skills");
             }
         };
         fetchSkills();
@@ -93,23 +93,48 @@ const SkillSection = () => {
     const handleUpdateSkills = async () => {
         setIsSaving(true);
         for (const skill of Object.values(mainSkills)) {
-            try {
-                const response = await updateSkill({
-                    $id: skill.$id,
-                    skillName: skill.skillName,
-                    link: skill.link,
-                    icon: skill.icon,
-                    order: skill.order,
-                    iconFile: skill.iconFile,
-                    bucketFileId: skill.bucketFileId
-                });
+            if (checkEmptyFields(skill.$id)) {
+                setIsSaving(false);
+                return;
+            }
 
-                if (!response) {
-                    toast.error(`Failed to update skill: ${skill.skillName}`);
-                    return; // This now exits the entire function
+            try {
+                if (skill.newSkill) {
+                    const response = await addSkill({
+                        $id: skill.$id,
+                        skillName: skill.skillName,
+                        link: skill.link,
+                        icon: skill.icon,
+                        order: skill.order,
+                        iconFile: skill.iconFile,
+                        mainSkill: skill.mainSkill,
+                        newSkill: skill.newSkill,
+                        bucketFileId: skill.bucketFileId
+                    });
+
+                    if (!response) {
+                        toast.error(`Failed to add skill: ${skill.skillName}`);
+                        return; // This now exits the entire function
+                    }
+                } else {
+                    const response = await updateSkill({
+                        $id: skill.$id,
+                        skillName: skill.skillName,
+                        link: skill.link,
+                        icon: skill.icon,
+                        order: skill.order,
+                        iconFile: skill.iconFile,
+                        bucketFileId: skill.bucketFileId,
+                        mainSkill: skill.mainSkill,
+                        newSkill: skill.newSkill
+                    });
+
+                    if (!response) {
+                        toast.error(`Failed to update skill: ${skill.skillName}`);
+                        return; // This now exits the entire function
+                    }
                 }
-            } catch (error) {
-                console.error("Failed to update skill:", error);
+            } catch {
                 toast.error(`Error updating skill: ${skill.skillName}`);
                 return; // This now exits the entire function
             } finally {
@@ -120,7 +145,7 @@ const SkillSection = () => {
         toast.success("Skills updated successfully");
     }
 
-    const handleDeleteSkill = async (skillId: string, bucketFileId: string) => {
+    const handleDeleteSkill = async (skillId: string, bucketFileId: string, newSkill: boolean) => {
         // Optional: Add confirmation before deletion
         if (!confirm("Are you sure you want to delete this skill? This action cannot be undone.")) {
             return;
@@ -133,18 +158,19 @@ const SkillSection = () => {
                 return newState;
             }); // Remove the skill from local state
 
+            if (newSkill) {
+                toast.success("Skill deleted successfully");
+                return; // If the skill is new, there's no need to delete from the database
+            }
+
             await deleteSkill({ skillId, fileId: bucketFileId });
 
             toast.success("Skill deleted successfully");
-        } catch (error) {
-            console.error("Failed to delete skill:", error);
+        } catch {
+            toast.error("Failed to delete skill");
         }
     }
 
-    const handleAddNewSkill = () => {
-        console.log("Add new skill");
-    }
-    
     const handleUpdateIcon = async (skillId: string) => {
         const image = await pickImage();
 
@@ -161,18 +187,61 @@ const SkillSection = () => {
         }));
     }
 
+    const handleAddNewSkill = () => {
+        const tempId = `temp-${Date.now()}`; // Generate a temporary ID for the new skill
+
+        const newSkill: AdminSkill = {
+            $id: tempId,
+            skillName: "",
+            link: "",
+            icon: "",
+            bucketFileId: "",
+            mainSkill: true,
+            order: 1,
+            newSkill: true
+        }
+
+        setMainSkills(prev => ({
+            [newSkill.$id]: newSkill,
+            ...prev
+        })); // Add the new skill to the state
+    }
+
+    const checkEmptyFields = (skillId: string) => {
+        const skill = mainSkills[skillId];
+        if (!skill) return false;
+
+        if (!skill.skillName.trim()) {
+            toast.error(`Please provide a name for the skill`);
+            return true;
+        }
+
+        if (!skill.link.trim()) {
+            toast.error(`Please provide a link for the skill`);
+            return true;
+        }
+
+        if (!skill.icon) {
+            toast.error("Please upload an icon for the skill");
+            return true;
+        }
+
+        // If all required fields are filled, return false (no empty fields)
+        return false;
+    }
+
     return (
         <section className="text-white">
             <div className="flex items-start justify-between">
                 <h2 className="text-3xl font-bold text-gradient w-fit mb-4">My Main Skills</h2>
                 <div className="flex items-center gap-4">
-                    <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
-                        {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
-                        Save Changes
-                    </Button>
                     <Button onClick={handleAddNewSkill}>
                         <FaPlus />
                         Add New Skill
+                    </Button>
+                    <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
+                        {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
+                        Save Changes
                     </Button>
                 </div>
             </div>
@@ -190,7 +259,7 @@ const SkillSection = () => {
                                             <p>{skill.order}</p>
                                             <div className="grid place-content-center rounded-xl bg-light-mode-100 dark:bg-dark-mode-100 w-[76px] h-[76px]">
                                                 <Image
-                                                    src={skill.icon}
+                                                    src={skill.icon || "/assets/images/noImage.webp"}
                                                     width={60}
                                                     height={60}
                                                     alt="Skill Icon"
@@ -211,7 +280,7 @@ const SkillSection = () => {
                                                 inputValue={skill.link}
                                                 onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
                                             />
-                                            <Button variant="destructive" className="ml-auto" onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId)}>
+                                            <Button variant="destructive" className="ml-auto" onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}>
                                                 <FaTrash />
                                                 Delete Skill
                                             </Button>

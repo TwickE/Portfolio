@@ -32,10 +32,6 @@ export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Prom
     }
 }
 
-export const addSkill = async () => {
-
-}
-
 export const updateSkill = async ({ $id, skillName, link, order, iconFile, bucketFileId }: AdminSkill) => {
     try {
         const { databases, storage } = await createAdminClient();
@@ -82,7 +78,7 @@ export const updateSkill = async ({ $id, skillName, link, order, iconFile, bucke
     }
 }
 
-export const deleteSkill = async ({skillId, fileId}: DeleteSkillProps) => {
+export const deleteSkill = async ({ skillId, fileId }: DeleteSkillProps) => {
     try {
         const { databases, storage } = await createAdminClient();
 
@@ -92,13 +88,46 @@ export const deleteSkill = async ({skillId, fileId}: DeleteSkillProps) => {
             skillId
         );
 
-        if(deletedSkill) {
-           await storage.deleteFile(
+        if (deletedSkill) {
+            await storage.deleteFile(
                 appwriteConfig.storageImagesId,
                 fileId
             )
         }
     } catch (error) {
         handleError(error, 'Failed to delete skill');
+    }
+}
+
+export const addSkill = async ({ skillName, link, order, iconFile, mainSkill }: AdminSkill) => {
+    try {
+        const { databases, storage } = await createAdminClient();
+
+        const bucketFile = await storage.createFile(
+            appwriteConfig.storageImagesId,
+            ID.unique(),
+            iconFile!
+        );
+
+        const newSkill: Partial<AdminSkill> = {
+            skillName,
+            link,
+            icon: constructFileUrl(bucketFile.$id),
+            order,
+            bucketFileId: bucketFile.$id,
+            mainSkill
+        }
+
+        await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.skillsCollectionId,
+            ID.unique(),
+            newSkill
+        );
+
+        return true;
+    } catch (error) {
+        console.log("Failed to update skill", error);
+        return false;
     }
 }
