@@ -5,6 +5,8 @@
 @layer base {
     * {
         @apply box-border transition-[background] duration-600;
+        scrollbar-width: thin;
+        scrollbar-color: #283aff #0A1264;
     }
 
     body {

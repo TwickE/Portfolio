@@ -22,6 +22,10 @@ const SkillsSection = () => {
     const [isLoadingMainSkills, setIsLoadingMainSkills] = useState(true);
     // State to store the main skills
     const [mainSkills, setMainSkills] = useState<Skill[]>([]);
+    // State to store if the main skills are loading
+    const [isLoadingOtherSkills, setIsLoadingOtherSkills] = useState(true);
+    // State to store the main skills
+    const [otherSkills, setOtherSkills] = useState<Skill[]>([]);
 
     // Handle mouse movement within the section
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -49,15 +53,27 @@ const SkillsSection = () => {
     useEffect(() => {
         const fetchSkills = async () => {
             setIsLoadingMainSkills(true);
+            setIsLoadingOtherSkills(true);
             try {
-                const skills = await getSkills({ isMainSkill: true });
-                if (skills) {
-                    setMainSkills(skills);
+                // Fetch both types of skills in parallel
+                const [mainSkillsData, otherSkillsData] = await Promise.all([
+                    getSkills({ isMainSkill: true }),
+                    getSkills({ isMainSkill: false })
+                ]);
+
+                // Update state with the results
+                if (mainSkillsData) {
+                    setMainSkills(mainSkillsData);
+                }
+
+                if (otherSkillsData) {
+                    setOtherSkills(otherSkillsData);
                 }
             } catch (error) {
                 console.error("Failed to fetch skills:", error);
             } finally {
                 setIsLoadingMainSkills(false);
+                setIsLoadingOtherSkills(false);
             }
         };
         fetchSkills();
@@ -103,26 +119,20 @@ const SkillsSection = () => {
                 </div>
                 <h2 className="font-bold text-4xl text-gradient mt-12">My Other Skills</h2>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
-                    <SkillCard
-                        link="https://reactjs.org/"
-                        image="/assets/images/react.svg"
-                        text="React"
-                    />
+                {isLoadingOtherSkills ? (
+                        Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="w-[140px] h-[140px] rounded-3xl" />
+                        ))
+                    ) : (
+                        otherSkills.map((skill) => (
+                            <SkillCard
+                                key={skill.$id}
+                                link={skill.link}
+                                image={skill.icon}
+                                text={skill.skillName}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </section>
@@ -178,7 +188,7 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
                     alt={`${text} Logo`}
                     width={60}
                     height={60}
-                    className={isHoverSupported ? 'grayscale-100 group-hover:grayscale-0 transition-all duration-300' : 'grayscale-0'}
+                    className={`${isHoverSupported ? 'grayscale-100 group-hover:grayscale-0 transition-all duration-300' : 'grayscale-0'} object-contain object-center max-w-[60px] max-h-[60px]`}
                 />
                 <p className={`${isHoverSupported ? 'text-gray-500 group-hover:text-primary transition-colors duration-300' : 'text-primary'} text-base font-bold`}>{text}</p>
             </a>

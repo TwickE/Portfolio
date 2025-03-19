@@ -19,7 +19,8 @@ const Admin = () => {
         <>
             <AdminNavbar />
             <div className='flex flex-col mt-12 responsive-container'>
-                <SkillSection />
+                <SkillSection isMainSkill={true} />
+                <SkillSection isMainSkill={false} />
             </div>
         </>
     )
@@ -27,9 +28,9 @@ const Admin = () => {
 
 export default Admin;
 
-const SkillSection = () => {
+const SkillSection = ({isMainSkill}: {isMainSkill: boolean}) => {
     // State to store the main skills and tracks their changes
-    const [mainSkills, setMainSkills] = useState<Record<string, AdminSkill>>({});
+    const [skillData, setSkillData] = useState<Record<string, AdminSkill>>({});
     // State to track if the data is being saved
     const [isSaving, setIsSaving] = useState(false);
 
@@ -40,9 +41,9 @@ const SkillSection = () => {
     useEffect(() => {
         const fetchSkills = async () => {
             try {
-                const skills = await getSkills({ isMainSkill: true });
+                const skills = await getSkills({ isMainSkill });
                 if (skills) {
-                    setMainSkills(
+                    setSkillData(
                         skills.reduce((acc, skill) => {
                             acc[skill.$id] = skill;
                             return acc;
@@ -54,13 +55,13 @@ const SkillSection = () => {
             }
         };
         fetchSkills();
-    }, []);
+    }, [isMainSkill]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDragEnd = (result: any) => {
         if (!result.destination) return; // Prevent errors if dropped outside the list
 
-        const reorderedSkills = Object.values(mainSkills);
+        const reorderedSkills = Object.values(skillData);
         const [movedSkill] = reorderedSkills.splice(result.source.index, 1);
         reorderedSkills.splice(result.destination.index, 0, movedSkill);
 
@@ -70,18 +71,18 @@ const SkillSection = () => {
             order: index + 1 // Update order based on new position
         }));
 
-        setMainSkills(updatedSkills.reduce((acc, skill) => {
+        setSkillData(updatedSkills.reduce((acc, skill) => {
             acc[skill.$id] = skill;
             return acc;
         }, {} as Record<string, AdminSkill>));
     }
 
     const handleSkillInputChange = (skillId: string, field: 'skillName' | 'link', value: string) => {
-        const skill = mainSkills[skillId];
+        const skill = skillData[skillId];
         if (!skill) return;
 
         // Track the change
-        setMainSkills(prev => ({
+        setSkillData(prev => ({
             ...prev,
             [skillId]: {
                 ...prev[skillId] || skill,
@@ -92,7 +93,7 @@ const SkillSection = () => {
 
     const handleUpdateSkills = async () => {
         setIsSaving(true);
-        for (const skill of Object.values(mainSkills)) {
+        for (const skill of Object.values(skillData)) {
             if (checkEmptyFields(skill.$id)) {
                 setIsSaving(false);
                 return;
@@ -152,7 +153,7 @@ const SkillSection = () => {
         }
 
         try {
-            setMainSkills(prev => {
+            setSkillData(prev => {
                 const newState = { ...prev };
                 delete newState[skillId];
                 return newState;
@@ -177,7 +178,7 @@ const SkillSection = () => {
         if (!image) return;
 
         // Update the preview icon of the skill
-        setMainSkills(prev => ({
+        setSkillData(prev => ({
             ...prev,
             [skillId]: {
                 ...prev[skillId],
@@ -196,19 +197,19 @@ const SkillSection = () => {
             link: "",
             icon: "",
             bucketFileId: "",
-            mainSkill: true,
+            mainSkill: isMainSkill,
             order: 1,
             newSkill: true
         }
 
-        setMainSkills(prev => ({
+        setSkillData(prev => ({
             [newSkill.$id]: newSkill,
             ...prev
         })); // Add the new skill to the state
     }
 
     const checkEmptyFields = (skillId: string) => {
-        const skill = mainSkills[skillId];
+        const skill = skillData[skillId];
         if (!skill) return false;
 
         if (!skill.skillName.trim()) {
@@ -231,68 +232,72 @@ const SkillSection = () => {
     }
 
     return (
-        <section className="text-white">
-            <div className="flex items-start justify-between">
-                <h2 className="text-3xl font-bold text-gradient w-fit mb-4">My Main Skills</h2>
-                <div className="flex items-center gap-4">
-                    <Button onClick={handleAddNewSkill}>
-                        <FaPlus />
-                        Add New Skill
-                    </Button>
-                    <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
-                        {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
-                        Save Changes
-                    </Button>
+        <>
+            <section className={`${!isMainSkill ? 'mt-12' : ''} text-white`} id={isMainSkill ? 'main-skills' : 'other-skills'}>
+                <div className="flex items-start justify-between">
+                    <h2 className="text-3xl font-bold text-gradient w-fit mb-4">{isMainSkill ? 'My Main Skills' : 'My Other Skills'}</h2>
+                    <div className="flex items-center gap-4">
+                        <Button onClick={handleAddNewSkill}>
+                            <FaPlus />
+                            Add New Skill
+                        </Button>
+                        <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
+                            {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
+                            Save Changes
+                        </Button>
+                    </div>
                 </div>
-            </div>
-            <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="list">
-                    {(provided) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps}>
-                            {Object.values(mainSkills).map((skill, index) => (
-                                <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-tertiary-light dark:bg-tertiary-dark ${snapshot.isDragging ? "ring-2 ring-primary" : ""}`}>
-                                            <span {...provided.dragHandleProps} className="h-6 bg-secondary py-0.5 rounded-sm">
-                                                <GripVertical size={20} />
-                                            </span>
-                                            <p>{skill.order}</p>
-                                            <div className="grid place-content-center rounded-xl bg-light-mode-100 dark:bg-dark-mode-100 w-[76px] h-[76px]">
-                                                <Image
-                                                    src={skill.icon || "/assets/images/noImage.webp"}
-                                                    width={60}
-                                                    height={60}
-                                                    alt="Skill Icon"
-                                                    className="object-contain object-center max-w-[60px] max-h-[60px]"
-                                                />
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="list">
+                        {(provided) => (
+                            <div ref={provided.innerRef} {...provided.droppableProps} className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-light-mode-200 dark:bg-dark-mode-200">
+                                {Object.values(skillData).map((skill, index) => (
+                                    <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
+                                        {(provided, snapshot) => (
+                                            <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-tertiary-light dark:bg-tertiary-dark ${snapshot.isDragging ? "ring-2 ring-primary" : ""}`}>
+                                                <span {...provided.dragHandleProps} className="h-6 bg-secondary py-0.5 rounded-sm">
+                                                    <GripVertical size={20} />
+                                                </span>
+                                                <div className="flex items-center gap-4 flex-wrap w-full">
+                                                    <p className="text-black dark:text-white">{skill.order}</p>
+                                                    <div className="grid place-content-center rounded-xl bg-light-mode-100 dark:bg-dark-mode-100 w-[76px] h-[76px]">
+                                                        <Image
+                                                            src={skill.icon || "/assets/images/noImage.webp"}
+                                                            width={60}
+                                                            height={60}
+                                                            alt="Skill Icon"
+                                                            className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                                        />
+                                                    </div>
+                                                    <Button onClick={() => handleUpdateIcon(skill.$id)}>
+                                                        <FaCloudUploadAlt size={16} />
+                                                        Upload Icon
+                                                    </Button>
+                                                    <AdminInput
+                                                        icon="text"
+                                                        inputValue={skill.skillName}
+                                                        onChange={(value) => handleSkillInputChange(skill.$id, 'skillName', value)}
+                                                    />
+                                                    <AdminInput
+                                                        icon="link"
+                                                        inputValue={skill.link}
+                                                        onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
+                                                    />
+                                                    <Button variant="destructive" className="ml-auto max-4xl:mx-auto" onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}>
+                                                        <FaTrash />
+                                                        Delete Skill
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            <Button onClick={() => handleUpdateIcon(skill.$id)}>
-                                                <FaCloudUploadAlt size={16} />
-                                                Upload Icon
-                                            </Button>
-                                            <AdminInput
-                                                icon="text"
-                                                inputValue={skill.skillName}
-                                                onChange={(value) => handleSkillInputChange(skill.$id, 'skillName', value)}
-                                            />
-                                            <AdminInput
-                                                icon="link"
-                                                inputValue={skill.link}
-                                                onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
-                                            />
-                                            <Button variant="destructive" className="ml-auto" onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}>
-                                                <FaTrash />
-                                                Delete Skill
-                                            </Button>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-        </section>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </section>
+        </>
     )
 }
