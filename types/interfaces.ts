@@ -37,6 +37,21 @@ export interface Skill {
     order: number;
 }
 
+export interface AdminSkill {
+    $id: string;
+    skillName: string;
+    link: string;
+    icon: string;
+    order: number;
+    iconFile?: File;
+    bucketFileId: string;
+}
+
+export interface DeleteSkillProps {
+    skillId: string;
+    fileId: string;
+}
+
 export interface AdminInputProps {
     icon: 'link' | 'text';
     inputValue: string;

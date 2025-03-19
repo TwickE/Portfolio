@@ -2,26 +2,30 @@
 
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
-import { Query } from "node-appwrite";
-import { Skill } from "@/types/interfaces";
+import { Query, ID } from "node-appwrite";
+import { AdminSkill, DeleteSkillProps } from "@/types/interfaces";
+import { constructFileUrl } from "@/lib/utils";
 
 const handleError = (error: unknown, message: string) => {
     console.log(error, message);
     throw error;
 }
 
-export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Promise<Skill[] | undefined> => {
+export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Promise<AdminSkill[] | undefined> => {
     try {
         const { databases } = await createPublicClient();
 
         const result = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.skillsCollectionId,
-            [Query.equal('mainSkill', [isMainSkill])],
+            [
+                Query.equal('mainSkill', [isMainSkill]),
+                Query.orderAsc('order')
+            ],
         );
 
         // Transform the data to match your Skill interface
-        return result.documents as unknown as Skill[];
+        return result.documents as unknown as AdminSkill[];
     } catch (error) {
         handleError(error, `Failed to get ${isMainSkill ? 'main' : 'other'} skills`);
         return undefined;
@@ -32,48 +36,68 @@ export const addSkill = async () => {
 
 }
 
-export const updateSkill = async ({ $id, skillName, link, icon, order }: Skill): Promise<Skill | undefined> => {
+export const updateSkill = async ({ $id, skillName, link, order, iconFile, bucketFileId }: AdminSkill) => {
     try {
-        const { databases } = await createAdminClient();
+        const { databases, storage } = await createAdminClient();
 
         // Build the update object with only provided fields
-        const updateData: Partial<Skill> = {};
+        const updateData: Partial<AdminSkill> = {};
 
         if (skillName !== undefined) updateData.skillName = skillName;
-        if (icon !== undefined) updateData.icon = icon;
         if (link !== undefined) updateData.link = link;
         if (order !== undefined) updateData.order = order;
+
+        if (iconFile !== undefined && bucketFileId !== undefined) {
+            await storage.deleteFile(
+                appwriteConfig.storageImagesId,
+                bucketFileId
+            );
+
+            const bucketFile = await storage.createFile(
+                appwriteConfig.storageImagesId,
+                ID.unique(),
+                iconFile
+            );
+
+            updateData.bucketFileId = bucketFile.$id;
+            updateData.icon = constructFileUrl(bucketFile.$id);
+        }
 
         // If no fields to update, return early
         if (Object.keys(updateData).length === 0) {
             throw new Error("No new data provided for update");
         }
 
-        const updatedSkill = await databases.updateDocument(
+        await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.skillsCollectionId,
             $id,
             updateData
         );
-        console.log(updatedSkill); //Comentário a ser removido
-        return updatedSkill as unknown as Skill;
+
+        return true;
     } catch (error) {
-        handleError(error, 'Failed to update skill');
-        return undefined;
+        console.log("Failed to update skill", error);
+        return false;
     }
 }
 
-export const deleteSkill = async (id: string) => {
+export const deleteSkill = async ({skillId, fileId}: DeleteSkillProps) => {
     try {
-        const { databases } = await createAdminClient();
+        const { databases, storage } = await createAdminClient();
 
         const deletedSkill = await databases.deleteDocument(
             appwriteConfig.databaseId,
             appwriteConfig.skillsCollectionId,
-            id
+            skillId
         );
 
-        console.log(deletedSkill); //Comentário a ser removido
+        if(deletedSkill) {
+           await storage.deleteFile(
+                appwriteConfig.storageImagesId,
+                fileId
+            )
+        }
     } catch (error) {
         handleError(error, 'Failed to delete skill');
     }

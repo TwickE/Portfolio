@@ -52,7 +52,7 @@ const SkillsSection = () => {
             try {
                 const skills = await getSkills({ isMainSkill: true });
                 if (skills) {
-                    setMainSkills([...skills].sort((a, b) => a.order - b.order));
+                    setMainSkills(skills);
                 }
             } catch (error) {
                 console.error("Failed to fetch skills:", error);
