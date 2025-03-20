@@ -55,14 +55,14 @@ const Navbar = () => {
             <div className='flex items-center justify-between h-25 responsive-container'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
-                        src="/assets/icons/logoLight.svg"
+                        src="/icons/logoLight.svg"
                         width={60}
                         height={60}
                         alt="Logo Light"
                         className="block dark:hidden"
                     />
                     <Image
-                        src="/assets/icons/logoDark.svg"
+                        src="/icons/logoDark.svg"
                         width={60}
                         height={60}
                         alt="Logo dark"

@@ -30,7 +30,7 @@ const useDownloadCV = () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const handle = await (window as any).showSaveFilePicker(options);
                 const writable = await handle.createWritable();
-                const CV = '/assets/CV.pdf';
+                const CV = '/CV.pdf';
                 const response = await fetch(CV);
                 const blob = await response.blob();
                 await writable.write(blob);
@@ -38,7 +38,7 @@ const useDownloadCV = () => {
             } else {
                 // Fallback for browsers that don't support the API
                 const link = document.createElement('a');
-                link.href = '/assets/CV.pdf';
+                link.href = '/CV.pdf';
                 link.download = 'CV_Frederico_Silva.pdf';
                 document.body.appendChild(link);
                 link.click();

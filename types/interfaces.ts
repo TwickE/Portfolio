@@ -59,3 +59,8 @@ export interface AdminInputProps {
     inputValue: string;
     onChange?: (value: string) => void;
 }
+
+export interface TechBadgeProps {
+    imgSrc: string;
+    text: string;
+}

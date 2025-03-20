@@ -67,14 +67,14 @@ const Login = () => {
                 <div className="w-full max-w-md bg-tertiary-light dark:bg-tertiary-dark rounded-xl shadow-lg p-8 transition-all">
                     <div className="flex justify-center mb-6">
                         <Image
-                            src="/assets/icons/logoLight.svg"
+                            src="/icons/logoLight.svg"
                             width={80}
                             height={80}
                             alt="Logo"
                             className="block dark:hidden"
                         />
                         <Image
-                            src="/assets/icons/logoDark.svg"
+                            src="/icons/logoDark.svg"
                             width={80}
                             height={80}
                             alt="Logo"

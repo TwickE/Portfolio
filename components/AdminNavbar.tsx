@@ -13,7 +13,7 @@ const AdminNavbar = () => {
             <div className='flex items-center justify-between responsive-container'>
                 <Link href='/admin' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
-                        src="/assets/icons/logoDark.svg"
+                        src="/icons/logoDark.svg"
                         width={60}
                         height={60}
                         alt="Logo Dark"
