@@ -97,7 +97,7 @@
     }
 
     .otp-slot {
-        @apply !text-4xl font-normal !rounded-xl !ring-secondary !justify-center !flex !border-2 !border-secondary !size-12 md:!size-16 !gap-5;
+        @apply !text-4xl !rounded-xl bg-blue-200 dark:bg-blue-950 !ring-primary !justify-center !flex !border-2 !border-primary !size-12 md:!size-16 !gap-5;
     }
 
 }

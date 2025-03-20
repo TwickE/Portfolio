@@ -83,23 +83,21 @@ const Login = () => {
                     </div>
                     <h1 className="text-3xl font-bold text-center mb-2">Admin Dashboard</h1>
                     <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Enter your email below to login to your account</p>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label
-                                htmlFor="email"
-                                className="block text-base font-bold text-gray-700 dark:text-gray-300"
-                            >
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                type="text"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="m@example.com"
-                                className="w-full px-4 py-3 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-all"
-                            />
-                        </div>
+                    <form onSubmit={handleSubmit}>
+                        <label
+                            htmlFor="email"
+                            className="block mb-2 text-base font-bold text-gray-700 dark:text-gray-300"
+                        >
+                            Email
+                        </label>
+                        <input
+                            id="email"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="m@example.com"
+                            className="w-full px-4 py-3 mb-8 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-all"
+                        />
                         <Button
                             disabled={isLoading}
                             type='submit'
@@ -111,7 +109,7 @@ const Login = () => {
                     </form>
                 </div>
             </main>
-            {accountId && <OTPModal email={email} accountId={accountId}  />}
+            {accountId && <OTPModal email={email} accountId={accountId} />}
         </>
     )
 }
@@ -127,7 +125,7 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
         setIsLoading(true);
         try {
             const sessionId = await verifySecret({ accountId, password });
-            if(sessionId) {
+            if (sessionId) {
                 router.push("/admin");
             }
         } catch (error) {
@@ -168,10 +166,9 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
                         <InputOTPSlot index={5} className="otp-slot" />
                     </InputOTPGroup>
                 </InputOTP>
-
                 <AlertDialogFooter>
                     <div className="flex w-full flex-col gap-4">
-                        <AlertDialogAction onClick={handleSubmit} className="w-full h-12 text-base cursor-pointer" type="button" disabled={isLoading}>
+                        <AlertDialogAction onClick={handleSubmit} className="w-full h-12 text-base text-white cursor-pointer" type="button" disabled={isLoading}>
                             Submit
                             {isLoading && <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
                         </AlertDialogAction>
