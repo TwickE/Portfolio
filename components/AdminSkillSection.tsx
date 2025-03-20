@@ -249,7 +249,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
 
     return (
         <>
-            <section className={`${!isMainSkill ? 'mt-12' : ''} text-white`} id={isMainSkill ? 'main-skills' : 'other-skills'}>
+            <section className={`${!isMainSkill ? 'mt-12' : ''} text-white`}>
                 <div className="flex items-start justify-between">
                     <h2 className="text-3xl font-bold text-gradient w-fit mb-4">{isMainSkill ? 'My Main Skills' : 'My Other Skills'}</h2>
                     <div className="flex items-center gap-4">
