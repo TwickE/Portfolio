@@ -2,6 +2,7 @@ import OutlineButton from "@/components/OutlineButton"
 import { FaGithub, FaArrowUp } from 'react-icons/fa'
 import useOpenLink from "@/hooks/useOpenLink"
 import TechBadge from "./TechBadge"
+import Image from "next/image"
 
 const ProjectCard = () => {
     return (
@@ -62,8 +63,23 @@ const ProjectCard = () => {
                     text="React"
                 />
             </div>
-            <div>
-
+            <div className="flex gap-4">
+                <div className="w-30 h-[300px] flex flex-col gap-4 overflow-y-auto px-2">
+                    <Image
+                        src="/images/projectImage1.png"
+                        alt="Project Image"
+                        width={104}
+                        height={58.5}
+                        className="object-contain object-center border border-slate-400"
+                    />
+                </div>
+                <Image
+                    src="/images/projectImage1.png"
+                    alt="Project Image"
+                    width={300}
+                    height={80}
+                    className="object-contain object-center max-w-[300px]"
+                />
             </div>
         </div>
     )
