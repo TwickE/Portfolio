@@ -3,7 +3,7 @@ import { TechBadgeProps } from "@/types/interfaces"
 
 const TechBadge = ({ imgSrc, text }: TechBadgeProps) => {
     return (
-        <div className="flex items-center gap-1 text-sm font-bold px-5 py-2 bg-primary dark:bg-secondary border border-secondary dark:border-primary rounded-full">
+        <div className="flex items-center gap-1 text-sm text-white font-bold px-5 py-2 bg-primary dark:bg-secondary border border-secondary dark:border-primary rounded-full">
             <Image
                 src={imgSrc}
                 alt={`${text} Logo`}
