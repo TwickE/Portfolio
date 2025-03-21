@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { AdminSkill, DeleteSkillProps } from "@/types/interfaces";
+import { AdminSkill, DeleteSkillProps, TechBadgeType } from "@/types/interfaces";
 import { constructFileUrl } from "@/lib/utils";
 
 const handleError = (error: unknown, message: string) => {
@@ -45,12 +45,12 @@ export const updateSkill = async ({ $id, skillName, link, order, iconFile, bucke
 
         if (iconFile !== undefined && bucketFileId !== undefined) {
             await storage.deleteFile(
-                appwriteConfig.storageImagesId,
+                appwriteConfig.storageSkillIconsId,
                 bucketFileId
             );
 
             const bucketFile = await storage.createFile(
-                appwriteConfig.storageImagesId,
+                appwriteConfig.storageSkillIconsId,
                 ID.unique(),
                 iconFile
             );
@@ -90,7 +90,7 @@ export const deleteSkill = async ({ skillId, fileId }: DeleteSkillProps) => {
 
         if (deletedSkill) {
             await storage.deleteFile(
-                appwriteConfig.storageImagesId,
+                appwriteConfig.storageSkillIconsId,
                 fileId
             )
         }
@@ -104,7 +104,7 @@ export const addSkill = async ({ skillName, link, order, iconFile, mainSkill }: 
         const { databases, storage } = await createAdminClient();
 
         const bucketFile = await storage.createFile(
-            appwriteConfig.storageImagesId,
+            appwriteConfig.storageSkillIconsId,
             ID.unique(),
             iconFile!
         );
@@ -129,5 +129,22 @@ export const addSkill = async ({ skillName, link, order, iconFile, mainSkill }: 
     } catch (error) {
         console.log("Failed to update skill", error);
         return false;
+    }
+}
+
+export const getTechBadges = async () => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.techBadgesCollectionId
+        );
+
+        // Transform the data to match your Skill interface
+        return result.documents as unknown as TechBadgeType[];
+    } catch (error) {
+        handleError(error, "Failed to get Tech Badges");
+        return undefined;
     }
 }

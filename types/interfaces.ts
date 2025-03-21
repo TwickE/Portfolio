@@ -64,3 +64,10 @@ export interface TechBadgeProps {
     imgSrc: string;
     text: string;
 }
+
+export interface TechBadgeType {
+    $id: string;
+    techBadgeName: string;
+    icon: string;
+    bucketFileId: string;
+}

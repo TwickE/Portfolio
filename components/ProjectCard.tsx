@@ -120,6 +120,7 @@ const ProjectCard = () => {
                                 alt={image.alt}
                                 width={104}
                                 height={58.5}
+                                style={{ width: 'auto', height: 'auto' }}
                                 className={`${image.src === mainImageData.src
                                     ? 'border-primary shadow-[0_0_10px] shadow-primary'
                                     : 'border-slate-700 dark:border-slate-400'}
@@ -135,13 +136,14 @@ const ProjectCard = () => {
                         alt={mainImageData.alt}
                         width={300}
                         height={80}
+                        style={{ width: 'auto', height: 'auto' }}
                         className="object-contain object-center cursor-pointer flex-1 max-h-[300px] max-lg:order-1"
                         onClick={() => setDialogOpen(true)}
                     />
                 </div>
             </div>
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary !min-w-[90dvw]">
+                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary !min-w-[90dvw] outline-none">
                     <AlertDialogHeader className="relative flex justify-center">
                         <AlertDialogTitle className="text-center text-2xl font-bold max-md:text-xl">
                             {mainImageData.alt}
@@ -151,21 +153,13 @@ const ProjectCard = () => {
                                 className='absolute -right-4 -top-4 cursor-pointer'
                             />
                         </AlertDialogTitle>
-                        <AlertDialogDescription></AlertDialogDescription>
+                        <AlertDialogDescription className="invisible h-0">{mainImageData.alt}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="object-contain object-center max-w-[calc(90dvw-48px)] max-h-[70dvh] mx-auto">
                         <EasyZoomOnMove
-                            mainImage={{
-                                src: mainImageData.src,
-                                alt: mainImageData.alt
-                            }}
-                            zoomImage={{
-                                src: mainImageData.src,
-                                alt: mainImageData.alt
-                            }}
-                            loadingIndicator={
-                                <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />
-                            }
+                            mainImage={{ src: mainImageData.src, alt: mainImageData.alt }}
+                            zoomImage={{ src: mainImageData.src, alt: mainImageData.alt }}
+                            loadingIndicator={<AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
                         />
                     </div>
                 </AlertDialogContent>

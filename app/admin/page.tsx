@@ -2,6 +2,7 @@
 
 import AdminNavbar from "@/components/AdminNavbar";
 import AdminSkillSection from "@/components/AdminSkillSection";
+import AdminTechBadges from "@/components/AdminTechBadges";
 
 
 const Admin = () => {
@@ -11,6 +12,7 @@ const Admin = () => {
             <div className='flex flex-col mt-12 responsive-container'>
                 <AdminSkillSection isMainSkill={true} />
                 <AdminSkillSection isMainSkill={false} />
+                <AdminTechBadges />
             </div>
         </>
     )

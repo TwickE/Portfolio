@@ -255,7 +255,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     <div className="flex items-center gap-4">
                         <Button onClick={handleAddNewSkill}>
                             <FaPlus />
-                            Add New Skill
+                            Add Skill
                         </Button>
                         <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
                             {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
