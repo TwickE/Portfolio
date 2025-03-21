@@ -4,6 +4,7 @@ import useOpenLink from "@/hooks/useOpenLink"
 import TechBadge from "./TechBadge"
 import Image from "next/image"
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useState, useRef } from "react"
 import {
     AlertDialog,
@@ -12,8 +13,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-
-
+import { EasyZoomOnMove } from "easy-magnify";
 
 const imagesData = [
     {
@@ -141,27 +141,33 @@ const ProjectCard = () => {
                 </div>
             </div>
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary !min-w-[90dvw] !w-[90dvw]">
+                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary !min-w-[90dvw]">
                     <AlertDialogHeader className="relative flex justify-center">
                         <AlertDialogTitle className="text-center text-2xl font-bold max-md:text-xl">
                             {mainImageData.alt}
                             <IoIosCloseCircleOutline
                                 size={20}
                                 onClick={() => setDialogOpen(false)}
-                                className='absolute -right-2 -top-4 cursor-pointer'
+                                className='absolute -right-4 -top-4 cursor-pointer'
                             />
                         </AlertDialogTitle>
                         <AlertDialogDescription></AlertDialogDescription>
                     </AlertDialogHeader>
-                    <Image
-                        ref={mainImage}
-                        src={mainImageData.src}
-                        alt={mainImageData.alt}
-                        width={1000}
-                        height={80}
-                        style={{ width: 'auto', height: 'auto' }}
-                        className="object-contain object-center max-w-[calc(90dvw-48px)] max-h-[70dvh] mx-auto"
-                    />
+                    <div className="object-contain object-center max-w-[calc(90dvw-48px)] max-h-[70dvh] mx-auto">
+                        <EasyZoomOnMove
+                            mainImage={{
+                                src: mainImageData.src,
+                                alt: mainImageData.alt
+                            }}
+                            zoomImage={{
+                                src: mainImageData.src,
+                                alt: mainImageData.alt
+                            }}
+                            loadingIndicator={
+                                <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />
+                            }
+                        />
+                    </div>
                 </AlertDialogContent>
             </AlertDialog>
         </>
