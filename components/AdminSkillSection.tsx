@@ -24,7 +24,7 @@ import {
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
-    // State to store the main skills and tracks their changes
+    // State to store the main skills and track their changes
     const [skillData, setSkillData] = useState<Record<string, AdminSkill>>({});
     // State to track if the data is being saved
     const [isSaving, setIsSaving] = useState(false);

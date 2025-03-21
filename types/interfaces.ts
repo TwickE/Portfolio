@@ -70,4 +70,6 @@ export interface TechBadgeType {
     techBadgeName: string;
     icon: string;
     bucketFileId: string;
+    iconFile?: File;
+    newTechBadge: boolean;
 }
