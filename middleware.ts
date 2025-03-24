@@ -1,18 +1,24 @@
+"use server";
+
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminAuth } from "@/lib/actions/admin.actions";
 
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
+    const hasSession = await checkAdminAuth();
 
     if (path.startsWith('/admin')) {
-        const hasSession = await checkAdminAuth();
-        if(!hasSession) {
+        if (!hasSession) {
             const url = new URL('/login', request.url);
             return NextResponse.redirect(url);
         }
-    } else if(path.startsWith('/login')) {
-        const hasSession = await checkAdminAuth();
-        if(hasSession) {
+
+        if (path === '/admin') {
+            const url = new URL('/admin/main-skills', request.url);
+            return NextResponse.redirect(url);
+        }
+    } else if (path.startsWith('/login')) {
+        if (hasSession) {
             const url = new URL('/admin', request.url);
             return NextResponse.redirect(url);
         }
@@ -25,6 +31,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         '/admin/:path*',
-        '/login/:path*',
+        '/login',
     ],
 };

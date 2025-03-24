@@ -249,9 +249,9 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
 
     return (
         <>
-            <section className={`${!isMainSkill ? 'mt-12' : ''} text-white`}>
-                <div className="flex items-start justify-between">
-                    <h2 className="text-3xl font-bold text-gradient w-fit mb-4">{isMainSkill ? 'My Main Skills' : 'My Other Skills'}</h2>
+            <section className="h-full">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl w-fit">{isMainSkill ? 'My Main Skills' : 'My Other Skills'}</h2>
                     <div className="flex items-center gap-4">
                         <Button onClick={handleAddNewSkill}>
                             <FaPlus />
@@ -266,13 +266,13 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId="list">
                         {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-my-background-200">
+                            <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
                                 {Object.values(skillData).map((skill, index) => (
                                     <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
                                         {(provided, snapshot) => (
                                             <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
                                                 <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
-                                                    <GripVertical size={20} />
+                                                    <GripVertical color='white' size={20} />
                                                 </span>
                                                 <div className="flex items-center gap-4 flex-wrap w-full">
                                                     <p className="text-black dark:text-white">{skill.order}</p>

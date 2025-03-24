@@ -183,15 +183,15 @@ const AdminTechBadges = () => {
     }
 
     return (
-        <section className="mt-12">
-            <div className="flex items-start justify-between">
-                <h2 className="text-3xl font-bold text-gradient w-fit mb-4">Tech Badges</h2>
+        <section className="h-full">
+            <div className="flex items-start justify-between mb-4">
+                <h2 className="text-2xl w-fit">Tech Badges</h2>
                 <Button onClick={handleAddNewTechBadge}>
                     <FaPlus />
                     Add Tech Badge
                 </Button>
             </div>
-            <div className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-my-background-200">
+            <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
                 {Object.values(techBadgesData).map((techBadge, index) => (
                     <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
                         <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">

@@ -19,8 +19,8 @@ export const AdminInput = ({ icon, inputValue, onChange }: AdminInputProps) => {
 
     return (
         <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm ">
-            {icon === 'link' && <FaLink size={16} />}
-            {icon === 'text' && <FaFont size={16} />}
+            {icon === 'link' && <FaLink color="white" size={16} />}
+            {icon === 'text' && <FaFont color="white" size={16} />}
             <input
                 type="text"
                 value={value}
