@@ -22,12 +22,12 @@ const AdminNavbar = () => {
                 </Link>
                 <nav className='flex items-center gap-3'>
                     <Link href='/'>
-                        <Button>
+                        <Button variant="primary">
                             <FaGlobe size={16} />
                             Go to Portfolio
                         </Button>
                     </Link>
-                    <Button type='button' onClick={logOutAdmin}>
+                    <Button variant="primary" onClick={logOutAdmin}>
                         <FaArrowRightFromBracket size={16} />
                         Log Out
                     </Button>

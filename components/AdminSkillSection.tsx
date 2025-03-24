@@ -272,7 +272,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                             <FaRotate />
                             Refresh
                         </Button>
-                        <Button onClick={handleAddNewSkill}>
+                        <Button variant="primary" onClick={handleAddNewSkill}>
                             <FaPlus />
                             Add Skill
                         </Button>
@@ -309,8 +309,8 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                                 className="object-contain object-center max-w-[60px] max-h-[60px]"
                                                             />
                                                         </div>
-                                                        <Button onClick={() => handleUpdateIcon(skill.$id)}>
-                                                            <FaCloudUploadAlt size={16} />
+                                                        <Button variant="primary" onClick={() => handleUpdateIcon(skill.$id)}>
+                                                            <FaCloudUploadAlt />
                                                             Upload Icon
                                                         </Button>
                                                         <AdminInput

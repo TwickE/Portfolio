@@ -263,7 +263,7 @@ const AdminTechBadges = () => {
                             <FaRotate />
                             Refresh
                         </Button>
-                        <Button onClick={handleAddNewTechBadge}>
+                        <Button variant="primary" onClick={handleAddNewTechBadge}>
                             <FaPlus />
                             Add Tech Badge
                         </Button>
@@ -287,8 +287,8 @@ const AdminTechBadges = () => {
                                         className="object-contain object-center max-w-[60px] max-h-[60px]"
                                     />
                                 </div>
-                                <Button onClick={() => handleUpdateIcon(techBadge.$id)}>
-                                    <FaCloudUploadAlt size={16} />
+                                <Button variant="primary" onClick={() => handleUpdateIcon(techBadge.$id)}>
+                                    <FaCloudUploadAlt />
                                     Upload Icon
                                 </Button>
                                 <AdminInput
