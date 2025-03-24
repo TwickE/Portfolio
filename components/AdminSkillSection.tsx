@@ -1,9 +1,10 @@
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GripVertical } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
+import { FaRotate } from "react-icons/fa6";
 import { AdminInput } from "@/components/AdminSmallComponents";
 import { getSkills, updateSkill, deleteSkill, addSkill } from "@/lib/actions/file.actions";
 import { AdminSkill } from "@/types/interfaces";
@@ -20,8 +21,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog"
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const NUMBER_OF_SKELETONS = 5;
 
 const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
     // State to store the main skills and track their changes
@@ -30,31 +33,43 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
     const [isSaving, setIsSaving] = useState(false);
     // State to track the if the alert dialog is open
     const [alertOpen, setAlertOpen] = useState(false);
+    // State to track if the data is being fetched
+    const [isFetchingData, setIsFetchingData] = useState(false);
     // State to store the delete action
     const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
 
     // Custom hook to pick an image from the user's device
     const pickImage = usePickImage();
 
-    // Fetches the main skills when the component mounts
-    useEffect(() => {
-        const fetchSkills = async () => {
-            try {
-                const skills = await getSkills({ isMainSkill });
-                if (skills) {
-                    setSkillData(
-                        skills.reduce((acc, skill) => {
-                            acc[skill.$id] = skill;
-                            return acc;
-                        }, {} as Record<string, AdminSkill>)
-                    );
-                }
-            } catch {
-                toast.error("Failed to fetch skills");
+    // Gets the skills from the database
+    const fetchSkills = useCallback(async () => {
+        setIsFetchingData(true);
+        try {
+            const skills = await getSkills({ isMainSkill });
+            if (skills) {
+                setSkillData(
+                    skills.reduce((acc, skill) => {
+                        acc[skill.$id] = skill;
+                        return acc;
+                    }, {} as Record<string, AdminSkill>)
+                );
             }
-        };
-        fetchSkills();
+        } catch (error) {
+            console.error("Failed to fetch skills:", error);
+            toast.error("Failed to fetch skills");
+        } finally {
+            setIsFetchingData(false);
+        }
     }, [isMainSkill]);
+
+    // Fetches the skills when the component mounts
+    useEffect(() => {
+        fetchSkills();
+    }, [fetchSkills]);
+
+    const handleRefresh = () => {
+        fetchSkills();
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDragEnd = (result: any) => {
@@ -150,7 +165,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                 setIsSaving(false);
             }
         }
-
+        fetchSkills();  // Refetch the skills to update the UI
         toast.success("Skills updated successfully");
     }
 
@@ -253,6 +268,10 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-2xl w-fit">{isMainSkill ? 'My Main Skills' : 'My Other Skills'}</h2>
                     <div className="flex items-center gap-4">
+                        <Button onClick={handleRefresh}>
+                            <FaRotate />
+                            Refresh
+                        </Button>
                         <Button onClick={handleAddNewSkill}>
                             <FaPlus />
                             Add Skill
@@ -263,60 +282,66 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                         </Button>
                     </div>
                 </div>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="list">
-                        {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
-                                {Object.values(skillData).map((skill, index) => (
-                                    <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
-                                        {(provided, snapshot) => (
-                                            <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
-                                                <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
-                                                    <GripVertical color='white' size={20} />
-                                                </span>
-                                                <div className="flex items-center gap-4 flex-wrap w-full">
-                                                    <p className="text-black dark:text-white">{skill.order}</p>
-                                                    <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
-                                                        <Image
-                                                            src={skill.icon || "/images/noImage.webp"}
-                                                            width={60}
-                                                            height={60}
-                                                            alt="Skill Icon"
-                                                            className="object-contain object-center max-w-[60px] max-h-[60px]"
+                {isFetchingData ? (
+                    Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                        <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
+                    ))
+                ) : (
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="list">
+                            {(provided) => (
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                                    {Object.values(skillData).map((skill, index) => (
+                                        <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
+                                            {(provided, snapshot) => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
+                                                    <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
+                                                        <GripVertical color='white' size={20} />
+                                                    </span>
+                                                    <div className="flex items-center gap-4 flex-wrap w-full">
+                                                        <p className="text-black dark:text-white">{skill.order}</p>
+                                                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
+                                                            <Image
+                                                                src={skill.icon || "/images/noImage.webp"}
+                                                                width={60}
+                                                                height={60}
+                                                                alt="Skill Icon"
+                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                                            />
+                                                        </div>
+                                                        <Button onClick={() => handleUpdateIcon(skill.$id)}>
+                                                            <FaCloudUploadAlt size={16} />
+                                                            Upload Icon
+                                                        </Button>
+                                                        <AdminInput
+                                                            icon="text"
+                                                            inputValue={skill.skillName}
+                                                            onChange={(value) => handleSkillInputChange(skill.$id, 'skillName', value)}
                                                         />
+                                                        <AdminInput
+                                                            icon="link"
+                                                            inputValue={skill.link}
+                                                            onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
+                                                        />
+                                                        <Button
+                                                            variant="destructive"
+                                                            className="ml-auto max-4xl:mx-auto"
+                                                            onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}
+                                                        >
+                                                            <FaTrash />
+                                                            Delete
+                                                        </Button>
                                                     </div>
-                                                    <Button onClick={() => handleUpdateIcon(skill.$id)}>
-                                                        <FaCloudUploadAlt size={16} />
-                                                        Upload Icon
-                                                    </Button>
-                                                    <AdminInput
-                                                        icon="text"
-                                                        inputValue={skill.skillName}
-                                                        onChange={(value) => handleSkillInputChange(skill.$id, 'skillName', value)}
-                                                    />
-                                                    <AdminInput
-                                                        icon="link"
-                                                        inputValue={skill.link}
-                                                        onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
-                                                    />
-                                                    <Button
-                                                        variant="destructive"
-                                                        className="ml-auto max-4xl:mx-auto"
-                                                        onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}
-                                                    >
-                                                        <FaTrash />
-                                                        Delete
-                                                    </Button>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                )}
             </section>
             <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
                 <AlertDialogContent className="bg-my-accent border-my-secondary">

@@ -138,7 +138,10 @@ export const getTechBadges = async () => {
 
         const result = await databases.listDocuments(
             appwriteConfig.databaseId,
-            appwriteConfig.techBadgesCollectionId
+            appwriteConfig.techBadgesCollectionId,
+            [
+                Query.orderDesc('$updatedAt')
+            ],
         );
 
         // Transform the data to match your Skill interface
@@ -220,5 +223,26 @@ export const addTechBadge = async ({ techBadgeName, iconFile }: TechBadgeType) =
     } catch (error) {
         console.log("Failed to update skill", error);
         return false;
+    }
+}
+
+export const deleteTechBadge = async ({ $id, bucketFileId }: TechBadgeType) => {
+    try {
+        const { databases, storage } = await createAdminClient();
+
+        const deletedTechBadge = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.techBadgesCollectionId,
+            $id
+        );
+
+        if (deletedTechBadge) {
+            await storage.deleteFile(
+                appwriteConfig.storageTechBadgesIconsId,
+                bucketFileId
+            )
+        }
+    } catch (error) {
+        handleError(error, 'Failed to delete Tech Badge');
     }
 }

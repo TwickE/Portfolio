@@ -1,50 +1,80 @@
 import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
-import { useState, useEffect } from "react";
-import { getTechBadges, updateTechBadge, addTechBadge } from "@/lib/actions/file.actions";
+import { FaRotate } from "react-icons/fa6";
+import { useState, useEffect, useCallback } from "react";
+import { getTechBadges, updateTechBadge, addTechBadge, deleteTechBadge } from "@/lib/actions/file.actions";
 import { TechBadgeType } from "@/types/interfaces";
 import Image from "next/image";
 import { AdminInput } from "@/components/AdminSmallComponents";
 import usePickImage from "@/hooks/usePickImage";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const NUMBER_OF_SKELETONS = 5;
 
 const AdminTechBadges = () => {
     // State to store the tech badges and track their changes
     const [techBadgesData, setTechBadgesData] = useState<Record<string, TechBadgeType>>({});
     // State to track the saving status of each tech badge
     const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
+    // State to track the if the alert dialog is open
+    const [alertOpen, setAlertOpen] = useState(false);
+    // State to track if the data is being fetched
+    const [isFetchingData, setIsFetchingData] = useState(false);
+    // State to store the delete action
+    const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
 
     // Custom hook to pick an image from the user's device
     const pickImage = usePickImage();
 
-    useEffect(() => {
-        const fetchTechBadges = async () => {
-            try {
-                const techBadges = await getTechBadges();
+    // Gets the tech badges from the database
+    const fetchTechBadges = useCallback(async () => {
+        setIsFetchingData(true);
+        try {
+            const techBadges = await getTechBadges();
 
-                if (techBadges) {
-                    setTechBadgesData(
-                        techBadges.reduce((acc, techBadge) => {
-                            acc[techBadge.$id] = techBadge;
-                            return acc;
-                        }, {} as Record<string, TechBadgeType>)
-                    );
-                    setIsSaving(
-                        techBadges.reduce((acc, techBadge) => {
-                            acc[techBadge.$id] = false;
-                            return acc;
-                        }, {} as Record<string, boolean>)
-                    );
-                }
-            } catch (error) {
-                console.error("Failed to fetch tech badges:", error);
+            if (techBadges) {
+                setTechBadgesData(
+                    techBadges.reduce((acc, techBadge) => {
+                        acc[techBadge.$id] = techBadge;
+                        return acc;
+                    }, {} as Record<string, TechBadgeType>)
+                );
+                setIsSaving(
+                    techBadges.reduce((acc, techBadge) => {
+                        acc[techBadge.$id] = false;
+                        return acc;
+                    }, {} as Record<string, boolean>)
+                );
             }
-        };
-        fetchTechBadges();
+        } catch (error) {
+            console.error("Failed to fetch tech badges:", error);
+            toast.error("Failed to load tech badges");
+        } finally {
+            setIsFetchingData(false);
+        }
     }, []);
+
+    // Fetches the tech badges when the component mounts
+    useEffect(() => {
+        fetchTechBadges();
+    }, [fetchTechBadges]);
+
+    const handleRefresh = () => {
+        fetchTechBadges();
+    };
 
     const handleTechBadgeInputChange = (techBadgeId: string, value: string) => {
         const techBadge = techBadgesData[techBadgeId];
@@ -118,7 +148,7 @@ const AdminTechBadges = () => {
                 });
 
                 if (!response) {
-                    toast.error(`Failed to add skill: ${techBadge.techBadgeName}`);
+                    toast.error(`Failed to add tech badge: ${techBadge.techBadgeName}`);
                     return; // This now exits the entire function
                 }
             } else {
@@ -145,7 +175,7 @@ const AdminTechBadges = () => {
                 [techBadgeId]: false
             }));
         }
-
+        fetchTechBadges(); // Refetch the tech badges to update the UI
         toast.success("Tech Badge updated successfully");
     }
 
@@ -182,58 +212,140 @@ const AdminTechBadges = () => {
         })); // Add the new tech badge to the state
     }
 
+    const handleDeleteTechBadge = (techBadgeId: string, bucketFileId: string, newTechBadge: boolean) => {
+        // Create the delete function with the current skill data captured in closure
+        const executeDeleteTechBadge = async () => {
+            try {
+                // Remove the skill from local state
+                setTechBadgesData(prev => {
+                    const newState = { ...prev };
+                    delete newState[techBadgeId];
+                    return newState;
+                });
+
+                const techBadge = techBadgesData[techBadgeId];
+
+                // Only call the API if it's not a new skill
+                if (!newTechBadge) {
+                    await deleteTechBadge({
+                        $id: techBadgeId,
+                        bucketFileId,
+                        newTechBadge: techBadge.newTechBadge,
+                        icon: techBadge.icon,
+                        iconFile: techBadge.iconFile,
+                        techBadgeName: techBadge.techBadgeName
+                    });
+                }
+
+                toast.success("Tech Badge deleted successfully");
+            } catch (error) {
+                console.error("Delete error:", error);
+                toast.error("Failed to delete Tech Badge");
+            } finally {
+                // Reset and close dialog
+                setDeleteAction(null);
+                setAlertOpen(false);
+            }
+        };
+
+        // Store the delete function and open dialog
+        setDeleteAction(() => executeDeleteTechBadge);
+        setAlertOpen(true);
+    };
+
     return (
-        <section className="h-full">
-            <div className="flex items-start justify-between mb-4">
-                <h2 className="text-2xl w-fit">Tech Badges</h2>
-                <Button onClick={handleAddNewTechBadge}>
-                    <FaPlus />
-                    Add Tech Badge
-                </Button>
-            </div>
-            <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
-                {Object.values(techBadgesData).map((techBadge, index) => (
-                    <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
-                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
-                            <Image
-                                src={techBadge.icon || "/images/noImage.webp"}
-                                width={60}
-                                height={60}
-                                alt="Skill Icon"
-                                className="object-contain object-center max-w-[60px] max-h-[60px]"
-                            />
-                        </div>
-                        <Button onClick={() => handleUpdateIcon(techBadge.$id)}>
-                            <FaCloudUploadAlt size={16} />
-                            Upload Icon
+        <>
+            <section className="h-full">
+                <div className="flex items-start justify-between mb-4">
+                    <h2 className="text-2xl w-fit">Tech Badges</h2>
+                    <div className="flex items-center gap-4">
+                        <Button onClick={handleRefresh}>
+                            <FaRotate />
+                            Refresh
                         </Button>
-                        <AdminInput
-                            icon="text"
-                            inputValue={techBadge.techBadgeName}
-                            onChange={(value) => handleTechBadgeInputChange(techBadge.$id, value)}
-                        />
-                        <div className="flex items-center gap-4 ml-auto">
-                            <Button
-                                variant="save"
-                                onClick={() => handleUpdateTechBadge(techBadge.$id)}
-                                disabled={isSaving[techBadge.$id]}
-                            >
-                                {isSaving[techBadge.$id] ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
-                                Save
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                className="ml-auto max-4xl:mx-auto"
-                            /* onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)} */
-                            >
-                                <FaTrash />
-                                Delete
-                            </Button>
-                        </div>
+                        <Button onClick={handleAddNewTechBadge}>
+                            <FaPlus />
+                            Add Tech Badge
+                        </Button>
                     </div>
-                ))}
-            </div>
-        </section>
+
+                </div>
+                <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                    {isFetchingData ? (
+                        Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
+                        ))
+                    ) : (
+                        Object.values(techBadgesData).map((techBadge, index) => (
+                            <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                                <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
+                                    <Image
+                                        src={techBadge.icon || "/images/noImage.webp"}
+                                        width={60}
+                                        height={60}
+                                        alt="Skill Icon"
+                                        className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                    />
+                                </div>
+                                <Button onClick={() => handleUpdateIcon(techBadge.$id)}>
+                                    <FaCloudUploadAlt size={16} />
+                                    Upload Icon
+                                </Button>
+                                <AdminInput
+                                    icon="text"
+                                    inputValue={techBadge.techBadgeName}
+                                    onChange={(value) => handleTechBadgeInputChange(techBadge.$id, value)}
+                                />
+                                <div className="flex items-center gap-4 ml-auto">
+                                    <Button
+                                        variant="save"
+                                        onClick={() => handleUpdateTechBadge(techBadge.$id)}
+                                        disabled={isSaving[techBadge.$id]}
+                                    >
+                                        {isSaving[techBadge.$id] ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
+                                        Save
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        className="ml-auto max-4xl:mx-auto"
+                                        onClick={() => handleDeleteTechBadge(techBadge.$id, techBadge.bucketFileId, techBadge.newTechBadge)}
+                                    >
+                                        <FaTrash />
+                                        Delete
+                                    </Button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </section>
+            <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+                <AlertDialogContent className="bg-my-accent border-my-secondary">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Skill</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete this tech badge? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            onClick={() => {
+                                setDeleteAction(null);
+                                setAlertOpen(false);
+                            }}
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => deleteAction && deleteAction()}
+                            className="bg-destructive text-white shadow-sm hover:bg-destructive/90"
+                        >
+                            Delete Tech Badge
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     )
 }
 
