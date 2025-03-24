@@ -222,7 +222,7 @@
     }
 
     .otp-slot {
-        @apply !text-4xl !rounded-xl bg-blue-200 dark:bg-blue-950 !ring-primary !justify-center !flex !border-2 !border-primary !size-12 md:!size-16 !gap-5;
+        @apply !text-4xl !rounded-xl bg-blue-200 dark:bg-blue-950 !ring-my-primary !justify-center !flex !border-2 !border-my-primary !size-12 md:!size-16 !gap-5;
     }
 
     .active-menu-trigger {

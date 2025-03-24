@@ -63,8 +63,8 @@ const Login = () => {
 
     return (
         <>
-            <main className="w-full min-h-[calc(100vh-196px)] grid place-items-center bg-light-mode-100 dark:bg-dark-mode-100 px-4 my-12">
-                <div className="w-full max-w-md bg-tertiary-light dark:bg-tertiary-dark rounded-xl shadow-lg p-8 transition-all">
+            <main className="w-full min-h-[calc(100vh-196px)] grid place-items-center bg-my-background-100 px-4 my-12">
+                <div className="w-full max-w-md bg-my-accent border border-border rounded-xl shadow-lg p-8 transition-all">
                     <div className="flex justify-center mb-6">
                         <Image
                             src="/icons/logoLight.svg"
@@ -82,7 +82,7 @@ const Login = () => {
                         />
                     </div>
                     <h1 className="text-3xl font-bold text-center mb-2">Admin Dashboard</h1>
-                    <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Enter your email below to login to your account</p>
+                    <p className="text-center text-accent-foreground mb-8">Enter your email below to login to your account</p>
                     <form onSubmit={handleSubmit}>
                         <label
                             htmlFor="email"
@@ -99,6 +99,7 @@ const Login = () => {
                             className="w-full px-4 py-3 mb-8 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-all"
                         />
                         <Button
+                            variant="primary"
                             disabled={isLoading}
                             type='submit'
                             className="w-full h-12 text-base cursor-pointer"
@@ -142,7 +143,7 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogContent className="space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-tertiary-light dark:bg-tertiary-dark border-secondary outline-none">
+            <AlertDialogContent className="space-y-4 max-w-[95%] sm:w-fit rounded-xl md:rounded-[30px] px-4 md:px-8 py-10 bg-my-accent border-my-secondary outline-none">
                 <AlertDialogHeader className="relative flex justify-center">
                     <AlertDialogTitle className="text-center text-2xl font-bold">
                         Enter your OTP
@@ -153,7 +154,7 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
                         />
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-base text-center text-light-100">
-                        We&apos;ve sent an OTP code to <span className="pl-1 text-primary">{email}</span>
+                        We&apos;ve sent an OTP code to <span className="pl-1 text-my-primary">{email}</span>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <InputOTP maxLength={6} value={password} onChange={setPassword}>
@@ -168,16 +169,15 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
                 </InputOTP>
                 <AlertDialogFooter>
                     <div className="flex w-full flex-col gap-4">
-                        <AlertDialogAction onClick={handleSubmit} className="w-full h-12 text-base text-white cursor-pointer" type="button" disabled={isLoading}>
+                        <AlertDialogAction onClick={handleSubmit} className="w-full h-12 text-base bg-my-primary text-white shadow-sm hover:bg-my-primary/90" type="button" disabled={isLoading}>
                             Submit
                             {isLoading && <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
                         </AlertDialogAction>
                         <div className="text-base mt-2 text-center">
                             Didn&apos;t recive a code?
                             <Button
-                                type="button"
                                 variant="link"
-                                className="pl-1 text-primary cursor-pointer"
+                                className="pl-1 text-my-primary cursor-pointer"
                                 onClick={handleResendOTP}
                             >
                                 Click to resend OTP
