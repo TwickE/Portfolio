@@ -18,7 +18,7 @@ export const AdminInput = ({ icon, inputValue, onChange }: AdminInputProps) => {
     }, [inputValue]);
 
     return (
-        <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-primary rounded-sm ">
+        <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm ">
             {icon === 'link' && <FaLink size={16} />}
             {icon === 'text' && <FaFont size={16} />}
             <input
@@ -26,7 +26,7 @@ export const AdminInput = ({ icon, inputValue, onChange }: AdminInputProps) => {
                 value={value}
                 onChange={handleChange}
                 placeholder={icon === 'link' ? 'Link' : 'Skill Name'}
-                className="bg-secondary h-full w-56 ps-2 text-base border border-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+                className="bg-secondary h-full w-56 ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
             />
         </div>
     );

@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 
 const AdminNavbar = () => {
     return (
-        <header className='flex items-center justify-between h-25 bg-secondary text-white sticky top-0 z-50'>
+        <header className='flex items-center justify-between h-25 bg-my-secondary text-white sticky top-0 z-50'>
             <div className='flex items-center justify-between responsive-container'>
                 <Link href='/admin' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
@@ -22,12 +22,12 @@ const AdminNavbar = () => {
                 </Link>
                 <nav className='flex items-center gap-3'>
                     <Link href='/'>
-                        <Button className="cursor-pointer">
+                        <Button>
                             <FaGlobe size={16} />
                             Go to Portfolio
                         </Button>
                     </Link>
-                    <Button type='button' onClick={logOutAdmin} className="cursor-pointer">
+                    <Button type='button' onClick={logOutAdmin}>
                         <FaArrowRightFromBracket size={16} />
                         Log Out
                     </Button>

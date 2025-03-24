@@ -64,7 +64,7 @@ const HeroSection = () => {
                         alt="Profile Photo"
                         width={475}
                         height={510}
-                        className="border-2 border-secondary bg-light-photo-bg dark:bg-dark-photo-bg rounded-[38px] hover:border-primary transition-colors duration-300 max-2xl:my-8 max-lg:w-full max-lg:h-auto max-md:my-4 max-sm:my-2"
+                        className="border-2 border-my-secondary bg-my-photo-background rounded-[38px] hover:border-my-primary transition-colors duration-300 max-2xl:my-8 max-lg:w-full max-lg:h-auto max-md:my-4 max-sm:my-2"
                     />
                 </div>
                 <p className="mb-16 max-4xl:text-[1.1rem] max-3xl:text-base max-3xl:mb-5 max-2xl:text-2xl max-2xl:text-center max-lg:text-[1.1rem] max-lg:w-full max-md:text-base max-sm:text-[0.8rem]">I&apos;m a technology enthusiast with a focus on Web Development. I consider myself a curious individual, always eager to learn new things.</p>
@@ -103,7 +103,7 @@ const HeroSection = () => {
                     alt="Profile Photo"
                     width={475}
                     height={510}
-                    className="border-2 border-secondary bg-dark-photo-bg rounded-[38px] rotate-5 hover:rotate-0 hover:border-primary transition-all duration-300 max-4xl:w-[80%] max-4xl:h-auto"
+                    className="border-2 border-my-secondary bg-my-photo-background rounded-[38px] rotate-5 hover:rotate-0 hover:border-my-primary transition-all duration-300 max-4xl:w-[80%] max-4xl:h-auto"
                 />
             </div>
         </main>

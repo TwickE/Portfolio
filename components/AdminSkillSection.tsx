@@ -259,24 +259,24 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                         </Button>
                         <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
                             {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
-                            Save Changes
+                            Save
                         </Button>
                     </div>
                 </div>
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId="list">
                         {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-light-mode-200 dark:bg-dark-mode-200">
+                            <div ref={provided.innerRef} {...provided.droppableProps} className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-my-background-200">
                                 {Object.values(skillData).map((skill, index) => (
                                     <Draggable key={skill.$id} draggableId={skill.$id} index={index}>
                                         {(provided, snapshot) => (
-                                            <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-tertiary-light dark:bg-tertiary-dark ${snapshot.isDragging ? "ring-2 ring-primary" : ""}`}>
-                                                <span {...provided.dragHandleProps} className="h-6 bg-secondary py-0.5 rounded-sm">
+                                            <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
+                                                <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
                                                     <GripVertical size={20} />
                                                 </span>
                                                 <div className="flex items-center gap-4 flex-wrap w-full">
                                                     <p className="text-black dark:text-white">{skill.order}</p>
-                                                    <div className="grid place-content-center rounded-xl bg-light-mode-100 dark:bg-dark-mode-100 w-[76px] h-[76px]">
+                                                    <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
                                                         <Image
                                                             src={skill.icon || "/images/noImage.webp"}
                                                             width={60}
@@ -305,7 +305,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                         onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)}
                                                     >
                                                         <FaTrash />
-                                                        Delete Skill
+                                                        Delete
                                                     </Button>
                                                 </div>
                                             </div>
@@ -319,7 +319,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                 </DragDropContext>
             </section>
             <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
-                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary">
+                <AlertDialogContent className="bg-my-accent border-my-secondary">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Delete Skill</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -332,13 +332,12 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                 setDeleteAction(null);
                                 setAlertOpen(false);
                             }}
-                            className="bg-slate-700 hover:bg-slate-800 text-white border-white"
                         >
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => deleteAction && deleteAction()}
-                            className="bg-red-600 text-white shadow-xs hover:bg-red-600/90 focus-visible:ring-red-600/20 dark:focus-visible:ring-red-600/40 dark:bg-red-600/60"
+                            className="bg-destructive text-white shadow-sm hover:bg-destructive/90"
                         >
                             Delete Skill
                         </AlertDialogAction>

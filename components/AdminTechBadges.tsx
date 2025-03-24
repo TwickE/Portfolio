@@ -191,10 +191,10 @@ const AdminTechBadges = () => {
                     Add Tech Badge
                 </Button>
             </div>
-            <div className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-light-mode-200 dark:bg-dark-mode-200">
+            <div className="max-h-[500px] overflow-y-auto p-3 pb-1 rounded-md bg-my-background-200">
                 {Object.values(techBadgesData).map((techBadge, index) => (
-                    <div key={index} className="p-3 flex items-center gap-4 rounded-md mb-2 bg-tertiary-light dark:bg-tertiary-dark">
-                        <div className="grid place-content-center rounded-xl bg-light-mode-100 dark:bg-dark-mode-100 w-[76px] h-[76px]">
+                    <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
                             <Image
                                 src={techBadge.icon || "/images/noImage.webp"}
                                 width={60}
@@ -219,7 +219,7 @@ const AdminTechBadges = () => {
                                 disabled={isSaving[techBadge.$id]}
                             >
                                 {isSaving[techBadge.$id] ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
-                                Save Changes
+                                Save
                             </Button>
                             <Button
                                 variant="destructive"
@@ -227,7 +227,7 @@ const AdminTechBadges = () => {
                             /* onClick={() => handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)} */
                             >
                                 <FaTrash />
-                                Delete Tech Badge
+                                Delete
                             </Button>
                         </div>
                     </div>

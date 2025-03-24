@@ -17,7 +17,6 @@
     "@tailwindcss/postcss": "^4.0.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "easy-magnify": "^1.1.4",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.479.0",
     "next": "15.2.1",

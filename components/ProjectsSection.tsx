@@ -10,7 +10,7 @@ const ProjectsSection = () => {
     };
 
     return (
-        <section className="flex flex-col items-center bg-light-mode-100 dark:bg-dark-mode-100 w-full py-12">
+        <section className="flex flex-col items-center w-full py-12">
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>

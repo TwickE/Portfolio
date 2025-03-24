@@ -2,111 +2,7 @@
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:where(.dark, .dark *));
 
-@layer base {
-    * {
-        @apply box-border transition-[background] duration-600;
-        scrollbar-width: thin;
-        scrollbar-color: #283aff #0A1264;
-    }
-
-    body {
-        @apply font-sora text-xl text-black dark:text-white bg-light-mode-100 dark:bg-dark-mode-100;
-    }
-}
-
-@theme {
-    --font-sora: var(--font-sora);
-
-    --breakpoint-*: initial;
-    --breakpoint-5xl: 1400px;
-    --breakpoint-4xl: 1200px;
-    --breakpoint-3xl: 1000px;
-    --breakpoint-2xl: 830px;
-    --breakpoint-xl: 720px;
-    --breakpoint-lg: 575px;
-    --breakpoint-md: 450px;
-    --breakpoint-sm: 390px;
-
-    --color-primary: #283aff;
-    --color-secondary: #0A1264;
-    --color-tertiary-light: #E3EBFF;
-    --color-tertiary-dark: #0E0C1C;
-
-    --color-light-mode-100: #F3F3FC;
-    --color-light-mode-200: #F3F2F2;
-
-    --color-dark-mode-100: #070915;
-    --color-dark-mode-200: #050509;
-
-    --color-light-secondary-glass-bg: rgba(10, 18, 100, 0.1);
-    --color-dark-secondary-glass-bg: rgba(10, 18, 100, 0.25);
-
-    --color-light-glass-bg: rgba(255, 255, 255, 0.5);
-    --color-dark-glass-bg: rgba(7, 9, 21, 0.5);
-
-    --color-light-photo-bg: #F0F0F0;
-    --color-dark-photo-bg: #0F0F0F;
-
-    --animate-caret-blink: caret-blink 1.25s ease-out infinite;
-
-    @keyframes caret-blink {
-
-        0%,70%,100% {
-            opacity: 1;
-        }
-
-        20%,50% {
-            opacity: 0;
-        }
-    }
-
-    /* --background-image-hero-pattern: url("/hero-bg.png"); */
-}
-
-@layer components {
-    .responsive-container {
-        @apply m-auto w-[1320px] max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px] max-lg:w-full max-lg:px-3;
-    }
-
-    .text-gradient {
-        @apply bg-linear-to-r from-primary to-secondary dark:to-white bg-clip-text text-transparent;
-    }
-
-    .section-title {
-        @apply font-bold text-4xl bg-linear-to-r from-primary to-secondary dark:to-white bg-clip-text text-transparent;
-    }
-
-    .outline-button {
-        @apply flex items-center justify-center gap-1 border border-primary text-primary text-base bg-transparent rounded-full cursor-pointer hover:bg-primary hover:text-white transition-all duration-300;
-    }
-
-    .filled-button {
-        @apply text-white text-base font-bold rounded-full bg-[length:200%] bg-gradient-to-r from-primary from-0% via-secondary via-50% to-primary to-100% cursor-pointer hover:bg-[-100%] transition-all duration-400;
-    }
-
-    .hero-glow1 {
-        @apply relative before:content-[""] before:absolute before:top-0 before:right-0 before:w-[320px] before:h-[320px] before:rounded-full before:blur-[150px] before:mt-[-5%] before:-z-10 before:bg-primary;
-    }
-
-    .hero-glow2 {
-        @apply relative before:content-[""] before:absolute before:bottom-0 before:left-0 before:w-[220px] before:h-[220px] before:rounded-full before:blur-[150px] before:ms-[-5%] before:-z-10 before:bg-primary;
-    }
-
-    .nav-selected-btn {
-        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-linear-to-r after:from-primary after:to-secondary cursor-pointer;
-    }
-
-    .nav-hover-btn {
-        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-linear-to-r after:from-primary after:to-secondary after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
-    }
-
-    .otp-slot {
-        @apply !text-4xl !rounded-xl bg-blue-200 dark:bg-blue-950 !ring-primary !justify-center !flex !border-2 !border-primary !size-12 md:!size-16 !gap-5;
-    }
-
-}
-
-/* :root {
+:root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -140,6 +36,19 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* My custom variables */
+    --sora: 'Sora', sans-serif;
+
+    --my-primary: #283aff;
+    --my-secondary: #0A1264;
+    --my-accent: #E3EBFF;
+    --my-background-100: #F3F3FC;
+    --my-background-200: #F3F2F2;
+    --my-secondary-glass: rgba(10, 18, 100, 0.1);
+    --my-glass: rgba(255, 255, 255, 0.5);
+    --my-photo-background: #F0F0F0;
+    --my-save: oklch(0.55 0.18 145);
 }
 
 .dark {
@@ -175,6 +84,15 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+
+    /* My custom variables */
+    --my-accent: #0E0C1C;
+    --my-background-100: #070915;
+    --my-background-200: #050509;
+    --my-secondary-glass: rgba(10, 18, 100, 0.25);
+    --my-glass: rgba(7, 9, 21, 0.5);
+    --my-photo-background: #0F0F0F;
+    --my-save: oklch(0.45 0.15 145);
 }
 
 @theme inline {
@@ -214,13 +132,97 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+    @keyframes caret-blink {
+
+        0%,
+        70%,
+        100% {
+            opacity: 1;
+        }
+
+        20%,
+        50% {
+            opacity: 0;
+        }
+    }
+
+    /* My custom variables */
+    --breakpoint-*: initial;
+    --breakpoint-5xl: 1400px;
+    --breakpoint-4xl: 1200px;
+    --breakpoint-3xl: 1000px;
+    --breakpoint-2xl: 830px;
+    --breakpoint-xl: 720px;
+    --breakpoint-lg: 575px;
+    --breakpoint-md: 450px;
+    --breakpoint-sm: 390px;
+
+    --font-sora: var(--sora);
+
+    --color-my-primary: var(--my-primary);
+    --color-my-secondary: var(--my-secondary);
+    --color-my-accent: var(--my-accent);
+    --color-my-background-100: var(--my-background-100);
+    --color-my-background-200: var(--my-background-200);
+    --color-my-secondary-glass: var(--my-secondary-glass);
+    --color-my-glass: var(--my-glass);
+    --color-my-photo-background: var(--my-photo-background);
+    --color-my-save: var(--my-save);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50 box-border transition-[background] duration-600;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-my-primary) var(--color-my-secondary);
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-my-background-100 text-foreground font-sora text-xl;
     }
-} */
+}
+
+@layer components {
+    .responsive-container {
+        @apply m-auto w-[1320px] max-5xl:w-[1140px] max-4xl:w-[960px] max-3xl:w-[800px] max-2xl:w-[700px] max-xl:w-[540px] max-lg:w-full max-lg:px-3;
+    }
+
+    .text-gradient {
+        @apply bg-linear-to-r from-my-primary to-secondary dark:to-white bg-clip-text text-transparent;
+    }
+
+    .section-title {
+        @apply font-bold text-4xl bg-linear-to-r from-my-primary to-my-secondary dark:to-white bg-clip-text text-transparent;
+    }
+
+    .outline-button {
+        @apply flex items-center justify-center gap-1 border border-my-primary text-my-primary text-base bg-transparent rounded-full cursor-pointer hover:bg-my-primary hover:text-white transition-all duration-300;
+    }
+
+    .filled-button {
+        @apply text-white text-base font-bold rounded-full bg-[length:200%] bg-gradient-to-r from-my-primary from-0% via-my-secondary via-50% to-my-primary to-100% cursor-pointer hover:bg-[-100%] transition-all duration-400;
+    }
+
+    .hero-glow1 {
+        @apply relative before:content-[""] before:absolute before:top-0 before:right-0 before:w-[320px] before:h-[320px] before:rounded-full before:blur-[150px] before:mt-[-5%] before:-z-10 before:bg-my-primary;
+    }
+
+    .hero-glow2 {
+        @apply relative before:content-[""] before:absolute before:bottom-0 before:left-0 before:w-[220px] before:h-[220px] before:rounded-full before:blur-[150px] before:ms-[-5%] before:-z-10 before:bg-my-primary;
+    }
+
+    .nav-selected-btn {
+        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-linear-to-r after:from-my-primary after:to-my-secondary cursor-pointer;
+    }
+
+    .nav-hover-btn {
+        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-linear-to-r after:from-my-primary after:to-my-secondary after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
+    }
+
+    .otp-slot {
+        @apply !text-4xl !rounded-xl bg-blue-200 dark:bg-blue-950 !ring-primary !justify-center !flex !border-2 !border-primary !size-12 md:!size-16 !gap-5;
+    }
+
+}

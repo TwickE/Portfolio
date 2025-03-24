@@ -3,17 +3,7 @@ import { FaGithub, FaArrowUp } from 'react-icons/fa'
 import useOpenLink from "@/hooks/useOpenLink"
 import TechBadge from "./TechBadge"
 import Image from "next/image"
-import { IoIosCloseCircleOutline } from "react-icons/io";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useState, useRef } from "react"
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { EasyZoomOnMove } from "easy-magnify";
+import { useState, useRef } from "react";
 
 const imagesData = [
     {
@@ -39,8 +29,6 @@ const imagesData = [
 ];
 
 const ProjectCard = () => {
-    // State to manage the dialog open state
-    const [dialogOpen, setDialogOpen] = useState(false);
     // State to manage the main image data
     const [mainImageData, setMainImageData] = useState({
         src: imagesData[0].src,
@@ -54,7 +42,7 @@ const ProjectCard = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center bg-tertiary-light dark:bg-tertiary-dark w-[650px] p-10 border border-secondary rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full">
+            <div className="flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full">
                 <h3 className="text-3xl font-bold mb-8">Título do Projeto</h3>
                 <span className="text-sm mb-2">Mar 2023 - Mar 2023</span>
                 <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis">Uma breve descrição do projeto. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam reprehenderit delectus unde commodi sed nostrum, pariatur sint facere voluptatibus cum. Eligendi distinctio consectetur maxime accusantium illum placeat eius vel perferendis.</p>
@@ -122,7 +110,7 @@ const ProjectCard = () => {
                                 height={58.5}
                                 style={{ width: 'auto', height: 'auto' }}
                                 className={`${image.src === mainImageData.src
-                                    ? 'border-primary shadow-[0_0_10px] shadow-primary'
+                                    ? 'border-my-primary shadow-[0_0_10px] shadow-my-primary'
                                     : 'border-slate-700 dark:border-slate-400'}
                                 object-contain object-center border cursor-pointer`
                                 }
@@ -130,40 +118,17 @@ const ProjectCard = () => {
                             />
                         ))}
                     </div>
-                    <Image
+                     <Image
                         ref={mainImage}
                         src={mainImageData.src}
                         alt={mainImageData.alt}
                         width={300}
                         height={80}
                         style={{ width: 'auto', height: 'auto' }}
-                        className="object-contain object-center cursor-pointer flex-1 max-h-[300px] max-lg:order-1"
-                        onClick={() => setDialogOpen(true)}
+                        className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1"
                     />
                 </div>
             </div>
-            <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent className="bg-tertiary-light dark:bg-tertiary-dark border-secondary !min-w-[90dvw] outline-none">
-                    <AlertDialogHeader className="relative flex justify-center">
-                        <AlertDialogTitle className="text-center text-2xl font-bold max-md:text-xl">
-                            {mainImageData.alt}
-                            <IoIosCloseCircleOutline
-                                size={20}
-                                onClick={() => setDialogOpen(false)}
-                                className='absolute -right-4 -top-4 cursor-pointer'
-                            />
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className="invisible h-0">{mainImageData.alt}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="object-contain object-center max-w-[calc(90dvw-48px)] max-h-[70dvh] mx-auto">
-                        <EasyZoomOnMove
-                            mainImage={{ src: mainImageData.src, alt: mainImageData.alt }}
-                            zoomImage={{ src: mainImageData.src, alt: mainImageData.alt }}
-                            loadingIndicator={<AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
-                        />
-                    </div>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     )
 }

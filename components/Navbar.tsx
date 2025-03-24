@@ -51,7 +51,7 @@ const Navbar = () => {
   }, [scrolled]);
 
     return (
-        <header className={`${scrolled ? 'bg-light-glass-bg dark:bg-dark-glass-bg shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
+        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between h-25 responsive-container'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
@@ -134,9 +134,9 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                 </div>
                 <span className='absolute inset-x-0 h-[38px] top-full' />{/* Invisible hover extender */}
                 {/* Dropdown menu that shows on hover or click */}
-                <ul className={`absolute top-[62px] flex flex-col gap-1 left-0 bg-light-mode-100 dark:bg-dark-mode-100 rounded-md p-1 shadow-[0_0_20px_rgba(40,58,255,0.5)] transition-[transform,opacity,scale] duration-600 origin-top ${isThemeDropdownOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100'}`}>
+                <ul className={`absolute top-[62px] flex flex-col gap-1 left-0 bg-my-background-100 rounded-md p-1 shadow-[0_0_20px_rgba(40,58,255,0.5)] transition-[transform,opacity,scale] duration-600 origin-top ${isThemeDropdownOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100'}`}>
                     <li
-                        className={`${activeTheme === 'light' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'light' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('light');
                             setIsThemeDropdownOpen(false);
@@ -146,7 +146,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Light</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'dark' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'dark' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('dark');
                             setIsThemeDropdownOpen(false);
@@ -156,7 +156,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Dark</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'system' ? 'bg-primary text-white' : 'hover:bg-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'system' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('system');
                             setIsThemeDropdownOpen(false);
@@ -257,7 +257,7 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
             <DrawerTrigger className="items-center justify-center">
                 <CgMenuRight size={56} className='hidden max-xl:flex cursor-pointer' />
             </DrawerTrigger>
-            <DrawerContent className='bg-light-mode-200 dark:bg-dark-mode-200 font-bold !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
+            <DrawerContent className='font-bold !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
                 <VisuallyHidden.Root>
                     <DrawerTitle>Mobile Navigation Menu</DrawerTitle>
                     <DrawerDescription></DrawerDescription>
@@ -268,11 +268,11 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                     <Link href="/projects" className='w-full text-center' onClick={() => setIsDrawerOpen(false)}>Projects</Link>
                     <Link href="/contact" className='w-full text-center' onClick={() => setIsDrawerOpen(false)}>Contact</Link>
                     <div className='w-full text-center'>
-                        <div className='relative flex justify-center bg-slate-300 dark:bg-dark-mode-100 py-2 px-2 rounded-full w-fit m-auto text-base font-normal my-8'>
+                        <div className='relative flex justify-center bg-my-background-100 py-2 px-2 rounded-full w-fit m-auto text-base font-normal my-8'>
                             {/* The sliding indicator - only show after the position is calculated */}
                             {hasInitializedSlider && (
                                 <div
-                                    className='absolute top-2 bottom-2 bg-primary rounded-full transition-all duration-300 ease-out'
+                                    className='absolute top-2 bottom-2 bg-my-primary rounded-full transition-all duration-300 ease-out'
                                     style={{
                                         left: `${sliderStyle.left}px`,
                                         width: `${sliderStyle.width}px`
