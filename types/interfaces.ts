@@ -31,7 +31,7 @@ export interface SkillCardProps {
 
 export interface Skill {
     $id: string;
-    skillName: string;
+    name: string;
     link: string;
     icon: string;
     order: number;
@@ -39,7 +39,7 @@ export interface Skill {
 
 export interface AdminSkill {
     $id: string;
-    skillName: string;
+    name: string;
     link: string;
     icon: string;
     order: number;
@@ -67,7 +67,7 @@ export interface TechBadgeProps {
 
 export interface TechBadgeType {
     $id: string;
-    techBadgeName: string;
+    name: string;
     icon: string;
     bucketFileId: string;
     iconFile?: File;

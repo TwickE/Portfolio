@@ -19,7 +19,7 @@ import {
 import {
     InputOTP,
     InputOTPGroup,
-    InputOTPSlot
+    InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { verifySecret, sendEmailOTP } from "@/lib/actions/admin.actions";
 import { useRouter } from "next/navigation";
@@ -96,7 +96,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="m@example.com"
-                            className="w-full px-4 py-3 mb-8 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-all"
+                            className="w-full px-4 py-3 mb-8 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-my-primary focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-all"
                         />
                         <Button
                             variant="primary"

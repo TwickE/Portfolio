@@ -10,10 +10,8 @@ import {
 } from "@/components/ui/menubar";
 import { useRouter, usePathname } from "next/navigation";
 
-
-
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
+    // Get the current router and pathname
     const router = useRouter();
     const pathname = usePathname();
     
@@ -42,7 +40,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(projectPaths)}`}>Projects</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem className="cursor-pointer">Project Cards</MenubarItem>
+                            <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/project-cards')}>Project Cards</MenubarItem>
                             <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/tech-badges')}>Tech Badges</MenubarItem>
                         </MenubarContent>
                     </MenubarMenu>

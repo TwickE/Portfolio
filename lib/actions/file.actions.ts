@@ -32,14 +32,14 @@ export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Prom
     }
 }
 
-export const updateSkill = async ({ $id, skillName, link, order, iconFile, bucketFileId }: AdminSkill) => {
+export const updateSkill = async ({ $id, name, link, order, iconFile, bucketFileId }: AdminSkill) => {
     try {
         const { databases, storage } = await createAdminClient();
 
         // Build the update object with only provided fields
         const updateData: Partial<AdminSkill> = {};
 
-        if (skillName !== undefined) updateData.skillName = skillName;
+        if (name !== undefined) updateData.name = name;
         if (link !== undefined) updateData.link = link;
         if (order !== undefined) updateData.order = order;
 
@@ -99,7 +99,7 @@ export const deleteSkill = async ({ skillId, fileId }: DeleteSkillProps) => {
     }
 }
 
-export const addSkill = async ({ skillName, link, order, iconFile, mainSkill }: AdminSkill) => {
+export const addSkill = async ({ name, link, order, iconFile, mainSkill }: AdminSkill) => {
     try {
         const { databases, storage } = await createAdminClient();
 
@@ -110,7 +110,7 @@ export const addSkill = async ({ skillName, link, order, iconFile, mainSkill }: 
         );
 
         const newSkill: Partial<AdminSkill> = {
-            skillName,
+            name,
             link,
             icon: constructFileUrl(appwriteConfig.storageSkillIconsId ,bucketFile.$id),
             order,
@@ -152,14 +152,14 @@ export const getTechBadges = async () => {
     }
 }
 
-export const updateTechBadge = async ({ $id, techBadgeName, iconFile, bucketFileId }: TechBadgeType) => {
+export const updateTechBadge = async ({ $id, name, iconFile, bucketFileId }: TechBadgeType) => {
     try {
         const { databases, storage } = await createAdminClient();
 
         // Build the update object with only provided fields
         const updateData: Partial<TechBadgeType> = {};
 
-        if (techBadgeName !== undefined) updateData.techBadgeName = techBadgeName;
+        if (name !== undefined) updateData.name = name;
 
         if (iconFile !== undefined && bucketFileId !== undefined) {
             await storage.deleteFile(
@@ -196,7 +196,7 @@ export const updateTechBadge = async ({ $id, techBadgeName, iconFile, bucketFile
     }
 }
 
-export const addTechBadge = async ({ techBadgeName, iconFile }: TechBadgeType) => {
+export const addTechBadge = async ({ name, iconFile }: TechBadgeType) => {
     try {
         const { databases, storage } = await createAdminClient();
 
@@ -207,7 +207,7 @@ export const addTechBadge = async ({ techBadgeName, iconFile }: TechBadgeType) =
         );
 
         const newTechBadge: Partial<TechBadgeType> = {
-            techBadgeName,
+            name,
             icon: constructFileUrl(appwriteConfig.storageTechBadgesIconsId ,bucketFile.$id),
             bucketFileId: bucketFile.$id
         }

@@ -85,7 +85,7 @@ const AdminTechBadges = () => {
             ...prev,
             [techBadgeId]: {
                 ...prev[techBadgeId] || techBadge,
-                ["techBadgeName"]: value
+                ["name"]: value
             }
         }));
     }
@@ -94,7 +94,7 @@ const AdminTechBadges = () => {
         const techBadge = techBadgesData[techBadgeId];
         if (!techBadge) return false;
 
-        if (!techBadge.techBadgeName.trim()) {
+        if (!techBadge.name.trim()) {
             toast.error("Please provide a name for the tech badge");
             return true;
         }
@@ -140,7 +140,7 @@ const AdminTechBadges = () => {
             if (techBadge.newTechBadge) {
                 const response = await addTechBadge({
                     $id: techBadge.$id,
-                    techBadgeName: techBadge.techBadgeName,
+                    name: techBadge.name,
                     icon: techBadge.icon,
                     iconFile: techBadge.iconFile,
                     newTechBadge: techBadge.newTechBadge,
@@ -148,13 +148,13 @@ const AdminTechBadges = () => {
                 });
 
                 if (!response) {
-                    toast.error(`Failed to add tech badge: ${techBadge.techBadgeName}`);
+                    toast.error(`Failed to add tech badge: ${techBadge.name}`);
                     return; // This now exits the entire function
                 }
             } else {
                 const response = await updateTechBadge({
                     $id: techBadge.$id,
-                    techBadgeName: techBadge.techBadgeName,
+                    name: techBadge.name,
                     icon: techBadge.icon,
                     iconFile: techBadge.iconFile,
                     bucketFileId: techBadge.bucketFileId,
@@ -162,12 +162,12 @@ const AdminTechBadges = () => {
                 });
 
                 if (!response) {
-                    toast.error(`Failed to update tech badge: ${techBadge.techBadgeName}`);
+                    toast.error(`Failed to update tech badge: ${techBadge.name}`);
                     return; // This now exits the entire function
                 }
             }
         } catch {
-            toast.error(`Error updating tech badge: ${techBadge.techBadgeName}`);
+            toast.error(`Error updating tech badge: ${techBadge.name}`);
             return; // This now exits the entire function
         } finally {
             setIsSaving(prev => ({
@@ -200,7 +200,7 @@ const AdminTechBadges = () => {
 
         const newTechBadge: TechBadgeType = {
             $id: tempId,
-            techBadgeName: "",
+            name: "",
             icon: "",
             bucketFileId: "",
             newTechBadge: true
@@ -233,7 +233,7 @@ const AdminTechBadges = () => {
                         newTechBadge: techBadge.newTechBadge,
                         icon: techBadge.icon,
                         iconFile: techBadge.iconFile,
-                        techBadgeName: techBadge.techBadgeName
+                        name: techBadge.name
                     });
                 }
 
@@ -293,7 +293,7 @@ const AdminTechBadges = () => {
                                 </Button>
                                 <AdminInput
                                     icon="text"
-                                    inputValue={techBadge.techBadgeName}
+                                    inputValue={techBadge.name}
                                     onChange={(value) => handleTechBadgeInputChange(techBadge.$id, value)}
                                 />
                                 <div className="flex items-center gap-4 ml-auto">

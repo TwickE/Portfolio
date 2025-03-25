@@ -91,7 +91,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         }, {} as Record<string, AdminSkill>));
     }
 
-    const handleSkillInputChange = (skillId: string, field: 'skillName' | 'link', value: string) => {
+    const handleSkillInputChange = (skillId: string, field: 'name' | 'link', value: string) => {
         const skill = skillData[skillId];
         if (!skill) return;
 
@@ -126,7 +126,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                 if (skill.newSkill) {
                     const response = await addSkill({
                         $id: skill.$id,
-                        skillName: skill.skillName,
+                        name: skill.name,
                         link: skill.link,
                         icon: skill.icon,
                         order: skill.order,
@@ -137,13 +137,13 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     });
 
                     if (!response) {
-                        toast.error(`Failed to add skill: ${skill.skillName}`);
+                        toast.error(`Failed to add skill: ${skill.name}`);
                         return; // This now exits the entire function
                     }
                 } else {
                     const response = await updateSkill({
                         $id: skill.$id,
-                        skillName: skill.skillName,
+                        name: skill.name,
                         link: skill.link,
                         icon: skill.icon,
                         order: skill.order,
@@ -154,12 +154,12 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     });
 
                     if (!response) {
-                        toast.error(`Failed to update skill: ${skill.skillName}`);
+                        toast.error(`Failed to update skill: ${skill.name}`);
                         return; // This now exits the entire function
                     }
                 }
             } catch {
-                toast.error(`Error updating skill: ${skill.skillName}`);
+                toast.error(`Error updating skill: ${skill.name}`);
                 return; // This now exits the entire function
             } finally {
                 setIsSaving(false);
@@ -225,7 +225,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
 
         const newSkill: AdminSkill = {
             $id: tempId,
-            skillName: "",
+            name: "",
             link: "",
             icon: "",
             bucketFileId: "",
@@ -244,13 +244,13 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         const skill = skillData[skillId];
         if (!skill) return false;
 
-        if (!skill.skillName.trim()) {
-            toast.error(`Please provide a name for the skill`);
+        if (!skill.name.trim()) {
+            toast.error("Please provide a name for the skill");
             return true;
         }
 
         if (!skill.link.trim()) {
-            toast.error(`Please provide a link for the skill`);
+            toast.error("Please provide a link for the skill");
             return true;
         }
 
@@ -315,8 +315,8 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                         </Button>
                                                         <AdminInput
                                                             icon="text"
-                                                            inputValue={skill.skillName}
-                                                            onChange={(value) => handleSkillInputChange(skill.$id, 'skillName', value)}
+                                                            inputValue={skill.name}
+                                                            onChange={(value) => handleSkillInputChange(skill.$id, 'name', value)}
                                                         />
                                                         <AdminInput
                                                             icon="link"
