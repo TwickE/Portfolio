@@ -315,11 +315,13 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                         </Button>
                                                         <AdminInput
                                                             icon="text"
+                                                            placeholder="Skill Name"
                                                             inputValue={skill.name}
                                                             onChange={(value) => handleSkillInputChange(skill.$id, 'name', value)}
                                                         />
                                                         <AdminInput
                                                             icon="link"
+                                                            placeholder="Skill Link"
                                                             inputValue={skill.link}
                                                             onChange={(value) => handleSkillInputChange(skill.$id, 'link', value)}
                                                         />

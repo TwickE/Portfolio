@@ -56,6 +56,7 @@ export interface DeleteSkillProps {
 
 export interface AdminInputProps {
     icon: 'link' | 'text';
+    placeholder: string;
     inputValue: string;
     onChange?: (value: string) => void;
 }

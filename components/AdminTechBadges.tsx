@@ -293,6 +293,7 @@ const AdminTechBadges = () => {
                                 </Button>
                                 <AdminInput
                                     icon="text"
+                                    placeholder="Tech Badge Name"
                                     inputValue={techBadge.name}
                                     onChange={(value) => handleTechBadgeInputChange(techBadge.$id, value)}
                                 />

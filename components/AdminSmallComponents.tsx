@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaFont, FaLink } from "react-icons/fa";
 import { AdminInputProps } from "@/types/interfaces";
 
-export const AdminInput = ({ icon, inputValue, onChange }: AdminInputProps) => {
+export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInputProps) => {
     const [value, setValue] = useState(inputValue);
 
     // When the input value changes, update the parent
@@ -25,7 +25,7 @@ export const AdminInput = ({ icon, inputValue, onChange }: AdminInputProps) => {
                 type="text"
                 value={value}
                 onChange={handleChange}
-                placeholder={icon === 'link' ? 'Link' : 'Skill Name'}
+                placeholder={placeholder}
                 className="bg-secondary h-full w-56 ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
             />
         </div>
