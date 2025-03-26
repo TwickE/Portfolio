@@ -70,8 +70,8 @@ export interface TechBadgeType {
 export interface ProjectCardType {
     $id: string;
     title: string;
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
     description: string;
     links: ProjectCardLink[];
     techBadges: ProjectCardTechBadge[];
@@ -82,8 +82,8 @@ export interface ProjectCardType {
 
 export interface ProjectCardProps {
     title: string;
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
     description: string;
     links: ProjectCardLink[];
     techBadges: ProjectCardTechBadge[];
@@ -104,4 +104,10 @@ export interface ProjectCardTechBadge {
 export interface ProjectCardImage {
     src: string;
     alt: string;
+}
+
+export interface AdminDatePickerProps {
+    placeholder: string;
+    inputValue: Date;
+    onChange?: (date: Date | undefined) => void;
 }

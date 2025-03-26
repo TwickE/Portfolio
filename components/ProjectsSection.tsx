@@ -17,6 +17,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Skeleton } from "@/components/ui/skeleton"
+import { format } from "date-fns"
 
 const NUMBER_OF_SKELETONS = 4;
 
@@ -138,7 +139,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                     </TooltipProvider>
                 }
                 <h3 className="text-3xl font-bold mb-8">{title}</h3>
-                <span className="text-sm mb-2">{startDate} - {endDate}</span>
+                <span className="text-sm mb-2">{format(startDate, "MMM yyyy")} - {format(endDate, "MMM yyyy")}</span>
                 <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis">{description}</p>
                 <div className="flex justify-center flex-wrap gap-2 w-full mb-7">
                     {links.map((link: ProjectCardLink, index: number) => (
