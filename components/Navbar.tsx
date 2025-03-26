@@ -21,34 +21,36 @@ import useTheme from '@/hooks/useTheme';
 
 const Navbar = () => {
     // Get theme data from the hook
-  const { activeTheme, setActiveTheme } = useTheme();
-  
-  // State to track whether the page has been scrolled
-  const [scrolled, setScrolled] = useState(false);
+    const { activeTheme, setActiveTheme } = useTheme();
 
-  // Scroll event listener
-  useEffect(() => {
-    const handleScroll = () => {
-      // Check if page is scrolled (more than 1px for a small threshold)
-      const isScrolled = window.scrollY > 1;
+    // State to track whether the page has been scrolled
+    const [scrolled, setScrolled] = useState(false);
 
-      // Only update state if the value changes
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
+    // Scroll event listener
+    useEffect(() => {
+        const handleScroll = () => {
+            // Check if page is scrolled (more than 1px for a small threshold)
+            const isScrolled = window.scrollY > 1;
 
-    // Add event listener
-    window.addEventListener('scroll', handleScroll);
-    
-    // Call once on mount to set initial state
-    handleScroll();
-    
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrolled]);
+            // Only update state if the value changes
+            if (isScrolled !== scrolled) {
+                setScrolled(isScrolled);
+            }
+        };
+
+        // Add event listener
+        window.addEventListener('scroll', handleScroll);
+
+        // Call once on mount to set initial state
+        handleScroll();
+
+        // Clean up event listener on component unmount
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [scrolled]);
+
+    const openLink = useOpenLink();
 
     return (
         <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
@@ -78,7 +80,7 @@ const Navbar = () => {
                     <FilledButton
                         text="Hire Me!"
                         containerClasses='px-8 py-4'
-                        clickFunction={useOpenLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
+                        clickFunction={() => openLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
                     />
                     <MobileMenu
                         activeTheme={activeTheme}
@@ -96,7 +98,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
 
     // Close dropdown when clicking outside
     const dropdownRef = useRef<HTMLDivElement>(null);
-    
+
     // Get current pathname
     const pathname = usePathname();
 
@@ -130,7 +132,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                 {/* Make the entire header clickable */}
                 <div className='flex items-center gap-2 cursor-pointer' onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}>
                     <p>Theme</p>
-                    <FaChevronDown size={16} className={`transition-transform duration-600 ${isThemeDropdownOpen ? 'rotate-180' : 'group-hover:rotate-180'}`}/>
+                    <FaChevronDown size={16} className={`transition-transform duration-600 ${isThemeDropdownOpen ? 'rotate-180' : 'group-hover:rotate-180'}`} />
                 </div>
                 <span className='absolute inset-x-0 h-[38px] top-full' />{/* Invisible hover extender */}
                 {/* Dropdown menu that shows on hover or click */}

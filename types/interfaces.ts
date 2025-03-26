@@ -29,14 +29,6 @@ export interface SkillCardProps {
     text: string;
 }
 
-export interface Skill {
-    $id: string;
-    name: string;
-    link: string;
-    icon: string;
-    order: number;
-}
-
 export interface AdminSkill {
     $id: string;
     name: string;
@@ -73,4 +65,28 @@ export interface TechBadgeType {
     bucketFileId: string;
     iconFile?: File;
     newTechBadge: boolean;
+}
+
+export interface ProjectCardType {
+    $id: string;
+    title: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+    links: any;
+    techBadges: any;
+    images: any;
+    order: number;
+    original: boolean;
+}
+
+export interface ProjectCardProps {
+    title: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+    links: any;
+    techBadges: any;
+    images: any;
+    original: boolean;
 }

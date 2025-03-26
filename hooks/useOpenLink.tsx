@@ -1,10 +1,10 @@
-const useOpenLink = (url:string) => {
+const useOpenLink = () => {
     // Open links in a new tab
-    const openLink = () => {
+    const openLink = (url: string) => {
         window.open(url, '_blank', 'noopener,noreferrer');
     };
 
-    return openLink
+    return openLink;
 }
 
 export default useOpenLink

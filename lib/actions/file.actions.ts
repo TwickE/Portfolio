@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { AdminSkill, DeleteSkillProps, TechBadgeType } from "@/types/interfaces";
+import { AdminSkill, DeleteSkillProps, TechBadgeType, ProjectCardType } from "@/types/interfaces";
 import { constructFileUrl } from "@/lib/utils";
 
 const handleError = (error: unknown, message: string) => {
@@ -244,5 +244,25 @@ export const deleteTechBadge = async ({ $id, bucketFileId }: TechBadgeType) => {
         }
     } catch (error) {
         handleError(error, 'Failed to delete Tech Badge');
+    }
+}
+
+export const getProjectCards = async () => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            [
+                Query.orderAsc('order')
+            ],
+        );
+
+        // Transform the data to match your Skill interface
+        return result.documents as unknown as ProjectCardType[];
+    } catch (error) {
+        handleError(error, "Failed to get Projects");
+        return undefined;
     }
 }

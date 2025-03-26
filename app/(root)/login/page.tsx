@@ -150,7 +150,7 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
                         <IoIosCloseCircleOutline
                             size={20}
                             onClick={() => setIsOpen(false)}
-                            className='absolute -right-1 -top-7 cursor-pointer sm:-right-2 sm:-top-4'
+                            className='absolute cursor-pointer -right-2 -top-4'
                         />
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-base text-center text-light-100">

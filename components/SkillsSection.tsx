@@ -1,6 +1,6 @@
 "use client";
 
-import { Skill, SkillCardProps } from "@/types/interfaces"
+import { AdminSkill, SkillCardProps } from "@/types/interfaces"
 import Image from "next/image"
 import useHoverSupport from "@/hooks/useHoverSupport"
 import { useRef, useState, useEffect } from "react"
@@ -21,11 +21,11 @@ const SkillsSection = () => {
     // State to store if the main skills are loading
     const [isLoadingMainSkills, setIsLoadingMainSkills] = useState(true);
     // State to store the main skills
-    const [mainSkills, setMainSkills] = useState<Skill[]>([]);
+    const [mainSkills, setMainSkills] = useState<AdminSkill[]>([]);
     // State to store if the main skills are loading
     const [isLoadingOtherSkills, setIsLoadingOtherSkills] = useState(true);
     // State to store the main skills
-    const [otherSkills, setOtherSkills] = useState<Skill[]>([]);
+    const [otherSkills, setOtherSkills] = useState<AdminSkill[]>([]);
 
     // Handle mouse movement within the section
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -112,7 +112,7 @@ const SkillsSection = () => {
                                 key={skill.$id}
                                 link={skill.link}
                                 image={skill.icon}
-                                text={skill.skillName}
+                                text={skill.name}
                             />
                         ))
                     )}
@@ -129,7 +129,7 @@ const SkillsSection = () => {
                                 key={skill.$id}
                                 link={skill.link}
                                 image={skill.icon}
-                                text={skill.skillName}
+                                text={skill.name}
                             />
                         ))
                     )}
