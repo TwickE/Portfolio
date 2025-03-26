@@ -14,7 +14,7 @@ const buttonVariants = cva(
         primary:
           "bg-my-primary text-white shadow-sm hover:bg-my-primary/90",
         save:
-          "bg-my-save text-white shadow-sm hover:bg-my-save/90",
+          "bg-lime-700 text-white shadow-sm hover:bg-lime-700/90",
         destructive:
           "bg-destructive text-white shadow-sm hover:bg-destructive/90",
         outline:

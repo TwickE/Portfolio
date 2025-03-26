@@ -48,7 +48,6 @@
     --my-secondary-glass: rgba(10, 18, 100, 0.1);
     --my-glass: rgba(255, 255, 255, 0.5);
     --my-photo-background: #F0F0F0;
-    --my-save: oklch(0.55 0.18 145);
 }
 
 .dark {
@@ -92,7 +91,6 @@
     --my-secondary-glass: rgba(10, 18, 100, 0.25);
     --my-glass: rgba(7, 9, 21, 0.5);
     --my-photo-background: #0F0F0F;
-    --my-save: oklch(0.45 0.15 145);
 }
 
 @theme inline {
@@ -169,7 +167,6 @@
     --color-my-secondary-glass: var(--my-secondary-glass);
     --color-my-glass: var(--my-glass);
     --color-my-photo-background: var(--my-photo-background);
-    --color-my-save: var(--my-save);
 }
 
 @layer base {

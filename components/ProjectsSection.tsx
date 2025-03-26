@@ -16,9 +16,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Skeleton } from "@/components/ui/skeleton"
 
+const NUMBER_OF_SKELETONS = 4;
 
 const ProjectsSection = () => {
+    // State to store if the project cards are loading
+    const [isLoading, setIsLoading] = useState(true);
     // State to store the project cards
     const [projectCards, setProjectCards] = useState<ProjectCardType[]>([]);
 
@@ -31,6 +35,7 @@ const ProjectsSection = () => {
     // Fetches the project cards when the component mounts
     useEffect(() => {
         const fetchProjectCards = async () => {
+            setIsLoading(true);
             try {
                 const data = await getProjectCards();
 
@@ -57,6 +62,8 @@ const ProjectsSection = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch tech badges:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchProjectCards();
@@ -68,19 +75,25 @@ const ProjectsSection = () => {
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
                 <div className="flex justify-between flex-wrap mt-12 gap-5">
-                    {projectCards.map((card, index) => (
-                        <ProjectCard
-                            key={index}
-                            title={card.title}
-                            startDate={card.startDate}
-                            endDate={card.endDate}
-                            description={card.description}
-                            links={card.links}
-                            techBadges={card.techBadges}
-                            images={card.images}
-                            original={card.original}
-                        />
-                    ))}
+                    {isLoading ? (
+                        Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full" />
+                        ))
+                    ) : (
+                        projectCards.map((card, index) => (
+                            <ProjectCard
+                                key={index}
+                                title={card.title}
+                                startDate={card.startDate}
+                                endDate={card.endDate}
+                                description={card.description}
+                                links={card.links}
+                                techBadges={card.techBadges}
+                                images={card.images}
+                                original={card.original}
+                            />
+                        ))
+                    )}
                 </div>
                 <FilledButton
                     text="View All Projects"
