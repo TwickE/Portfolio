@@ -9,7 +9,7 @@ import TechBadge from "./TechBadge"
 import Image from "next/image"
 import { useState, useEffect } from "react";
 import { getProjectCards } from "@/lib/actions/file.actions";
-import { ProjectCardProps, ProjectCardType } from "@/types/interfaces";
+import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge } from "@/types/interfaces";
 import {
     Tooltip,
     TooltipContent,
@@ -128,7 +128,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                 <span className="text-sm mb-2">{startDate} - {endDate}</span>
                 <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis">{description}</p>
                 <div className="flex justify-center flex-wrap gap-2 w-full mb-7">
-                    {links.map((link: any, index: number) => (
+                    {links.map((link: ProjectCardLink, index: number) => (
                         <OutlineButton
                             key={index}
                             text={link.text}
@@ -148,7 +148,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                     ))}
                 </div>
                 <div className="flex justify-center flex-wrap gap-2 w-full mb-4">
-                    {techBadges.map((badge: any, index: number) => (
+                    {techBadges.map((badge: ProjectCardTechBadge, index: number) => (
                         <TechBadge
                             key={index}
                             imgSrc={badge.icon}
@@ -158,7 +158,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                 </div>
                 <div className="flex gap-4 w-full mt-auto max-lg:flex-col max-lg:items-center max-lg:gap-2">
                     <div className="w-30 h-[300px] flex flex-col gap-4 overflow-y-auto px-2 max-5xl:w-25 max-4xl:h-60 max-3xl:w-30 max-3xl:h-[300px] max-lg:flex-row max-lg:w-full max-lg:h-25 max-lg:order-2">
-                        {images.map((image: any, index: number) => (
+                        {images.map((image: ProjectCardImage, index: number) => (
                             <Image
                                 key={index}
                                 src={image.src}

@@ -73,9 +73,9 @@ export interface ProjectCardType {
     startDate: string;
     endDate: string;
     description: string;
-    links: any;
-    techBadges: any;
-    images: any;
+    links: ProjectCardLink[];
+    techBadges: ProjectCardTechBadge[];
+    images: ProjectCardImage[];
     order: number;
     original: boolean;
 }
@@ -85,8 +85,23 @@ export interface ProjectCardProps {
     startDate: string;
     endDate: string;
     description: string;
-    links: any;
-    techBadges: any;
-    images: any;
+    links: ProjectCardLink[];
+    techBadges: ProjectCardTechBadge[];
+    images: ProjectCardImage[];
     original: boolean;
+}
+
+export interface ProjectCardLink {
+    text: string;
+    url: string;
+}
+
+export interface ProjectCardTechBadge {
+    name: string;
+    icon: string;
+}
+
+export interface ProjectCardImage {
+    src: string;
+    alt: string;
 }
