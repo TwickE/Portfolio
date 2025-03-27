@@ -7,10 +7,11 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
-import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminTextArea } from "@/components/AdminSmallComponents";
+import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
 import { getProjectCards } from "@/lib/actions/file.actions";
-import { ProjectCardType } from "@/types/interfaces";
+import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
+import TechBadge from "@/components/TechBadge";
 
 const AdminProjectCards = () => {
     // State to store the project cards and track their changes
@@ -137,6 +138,29 @@ const AdminProjectCards = () => {
         }));
     };
 
+    const handleAddTechBadge = (projectCardId: string, techBadge: TechBadgeType) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard) return;
+
+        // Check if tech badge already exists
+        if (projectCard.techBadges.some(tb => tb.$id === techBadge.$id)) {
+            toast.error("Tech badge already added");
+            return;
+        }
+
+        // Create a copy of the techBadges array
+        const updatedTechBadges = [...projectCard.techBadges, techBadge];
+
+        // Update the projectCard with the new techBadges array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                techBadges: updatedTechBadges
+            }
+        }));
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDragProjectCard = (result: any) => {
         if (!result.destination) return; // Prevent errors if dropped outside the list
@@ -169,7 +193,7 @@ const AdminProjectCards = () => {
                         </Button>
                         <Button variant="primary" /* onClick={handleAddNewSkill} */>
                             <FaPlus />
-                            Add Skill
+                            Add Project
                         </Button>
                         <Button variant="save" /* onClick={handleUpdateSkills} disabled={isSaving} */>
                             {/* {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />} */}
@@ -190,7 +214,7 @@ const AdminProjectCards = () => {
                                                     <GripVertical color='white' size={20} />
                                                 </span>
                                                 <div className="flex items-center gap-4 flex-wrap w-full">
-                                                    <p className="text-black dark:text-white">{projectCard.order}</p>
+                                                    <p>{projectCard.order}</p>
                                                     <div className='flex flex-col gap-4'>
                                                         <div className="grid grid-cols-3 grid-rows-3 gap-4">
                                                             <AdminInput
@@ -239,7 +263,78 @@ const AdminProjectCards = () => {
                                                             onChange={(checked) => handleChangeAdminCheckBox(projectCard.$id, checked)}
                                                             id={projectCard.$id}
                                                         />
-                                                        
+                                                        <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
+                                                            <div className='flex justify-between items-center'>
+                                                                <h3>Tech Badges</h3>
+                                                                <AdminSearch onTechBadgeSelect={(techBadge) => handleAddTechBadge(projectCard.$id, techBadge)} />
+                                                            </div>
+                                                            <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
+                                                                {projectCard.techBadges.map(techBadge => (
+                                                                    <div
+                                                                        key={techBadge.$id}
+                                                                        className='flex items-center rounded-s-[19px] rounded-e-md bg-destructive hover:bg-destructive/90'
+                                                                    >
+                                                                        <TechBadge
+                                                                            imgSrc={techBadge.icon}
+                                                                            text={techBadge.name}
+                                                                        />
+                                                                        <button
+                                                                            className='cursor-pointer rounded-e-md w-full h-full px-3'
+                                                                            onClick={() => console.log("Delete tech badge: " + techBadge.name)}
+                                                                        >
+                                                                            <FaTrash size={16} />
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                        <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
+                                                            <div className='flex justify-between items-center'>
+                                                                <h3>Images</h3>
+                                                                <Button
+                                                                    variant="primary"
+                                                                    onClick={() => console.log("Add new image")}
+                                                                >
+                                                                    <FaPlus />
+                                                                    Add Image
+                                                                </Button>
+                                                            </div>
+                                                            <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
+                                                                {projectCard.images.map(image => (
+                                                                    <div key={image.$id} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                                                                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
+                                                                            <Image
+                                                                                src={image.src || "/images/noImage.webp"}
+                                                                                width={60}
+                                                                                height={60}
+                                                                                alt={image.alt}
+                                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                                                            />
+                                                                        </div>
+                                                                        <AdminInput
+                                                                            icon="link"
+                                                                            placeholder="Image URL"
+                                                                            inputValue={image.src}
+                                                                            onChange={() => console.log("Change image URL")} /* (value) => handleTechBadgeInputChange(techBadge.$id, value) */
+                                                                        />
+                                                                        <AdminInput
+                                                                            icon="text"
+                                                                            placeholder="Image alt text"
+                                                                            inputValue={image.alt}
+                                                                            onChange={() => console.log("Change image alt")} /* (value) => handleTechBadgeInputChange(techBadge.$id, value) */
+                                                                        />
+                                                                        <Button
+                                                                            variant="destructive"
+                                                                            className="ml-auto max-4xl:mx-auto"
+                                                                            onClick={() => console.log(image.$id)}
+                                                                        >
+                                                                            <FaTrash />
+                                                                            Delete
+                                                                        </Button>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <Button
                                                         variant="destructive"

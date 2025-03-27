@@ -283,7 +283,7 @@ const AdminTechBadges = () => {
                                         src={techBadge.icon || "/images/noImage.webp"}
                                         width={60}
                                         height={60}
-                                        alt="Skill Icon"
+                                        alt="Tech Badge Icon"
                                         className="object-contain object-center max-w-[60px] max-h-[60px]"
                                     />
                                 </div>

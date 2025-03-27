@@ -97,11 +97,13 @@ export interface ProjectCardLink {
 }
 
 export interface ProjectCardTechBadge {
+    $id: string;
     name: string;
     icon: string;
 }
 
 export interface ProjectCardImage {
+    $id: string;
     src: string;
     alt: string;
 }
@@ -123,4 +125,8 @@ export interface AdminCheckBoxProps {
     checked: boolean;
     onChange?: (checked: boolean) => void;
     id?: string;
+}
+
+export interface AdminSearchProps {
+    onTechBadgeSelect: (techBadge: TechBadgeType) => void;
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle } from "react-icons/fa";
-import { AdminCheckBoxProps, AdminDatePickerProps, AdminInputProps, AdminLinkProps } from "@/types/interfaces";
+import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch } from "react-icons/fa";
+import { AdminCheckBoxProps, AdminDatePickerProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
@@ -16,6 +16,8 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Checkbox } from "@/components/ui/checkbox"
+import { getTechBadgesByName } from "@/lib/actions/file.actions";
+import Image from "next/image";
 
 export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInputProps) => {
     const [value, setValue] = useState(inputValue);
@@ -239,3 +241,87 @@ export const AdminCheckBox = ({ checked, onChange, id }: AdminCheckBoxProps) => 
         </div>
     )
 }
+
+export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBadge: TechBadgeType) => void }) => {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState<TechBadgeType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    
+    // Debounce search to avoid too many requests
+    useEffect(() => {
+        const searchTimer = setTimeout(async () => {
+            if (query.trim().length >= 2) {
+                setIsLoading(true);
+                try {
+                    const data = await getTechBadgesByName(query);
+                    setResults(data || []);
+                    setIsOpen(true);
+                } catch (error) {
+                    console.error("Error searching tech badges:", error);
+                    setResults([]);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                setResults([]);
+                setIsOpen(false);
+            }
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(searchTimer);
+    }, [query]);
+
+    const handleSelectTechBadge = (techBadge: TechBadgeType) => {
+        onTechBadgeSelect(techBadge);
+        setQuery("");
+        setResults([]);
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="relative">
+            <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm">
+                <FaSearch color="white" size={16} />
+                <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search for Tech Badges"
+                    className="bg-secondary h-full w-56 ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+                />
+            </div>
+            {isOpen && (
+                <div className="text-base absolute z-10 mt-1 bg-secondary border border-my-primary rounded-md shadow-lg w-full max-h-60 overflow-y-auto">
+                    {isLoading ? (
+                        <div className="p-2 text-center">Loading...</div>
+                    ) : results.length > 0 ? (
+                        <ul>
+                            {results.map((techBadge) => (
+                                <li key={techBadge.$id} className="flex items-center gap-1 p-2 hover:bg-my-secondary/20 cursor-pointer">
+                                    <Image
+                                        src={techBadge.icon}
+                                        alt={techBadge.name}
+                                        width={24}
+                                        height={24}
+                                        className="object-contain object-center max-w-[24px] max-h-[24px]"
+                                    />
+                                    <p className="">{techBadge.name}</p>
+                                    <Button
+                                        className="ml-auto"
+                                        variant="save"
+                                        onClick={() => handleSelectTechBadge(techBadge)}
+                                    >
+                                        Add
+                                    </Button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : query.length >= 2 ? (
+                        <div className="p-2">No tech badges found</div>
+                    ) : null}
+                </div>
+            )}
+        </div>
+    );
+};

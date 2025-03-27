@@ -259,10 +259,32 @@ export const getProjectCards = async () => {
             ],
         );
 
-        // Transform the data to match your Skill interface
+        // Transform the data to match the ProjectCardType interface
         return result.documents as unknown as ProjectCardType[];
     } catch (error) {
         handleError(error, "Failed to get Projects");
+        return undefined;
+    }
+}
+
+export const getTechBadgesByName = async (query: string) => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.techBadgesCollectionId,
+            [
+                Query.contains('name', query)
+            ],
+        );
+
+        if(result.documents.length <= 0) return [];
+
+        // Transform the data to match the TechBadgeType interface
+        return result.documents as unknown as TechBadgeType[];
+    } catch (error) {
+        handleError(error, "Failed to get Tech Badges");
         return undefined;
     }
 }
