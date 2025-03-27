@@ -111,3 +111,16 @@ export interface AdminDatePickerProps {
     inputValue: Date;
     onChange?: (date: Date | undefined) => void;
 }
+
+export interface AdminLinkProps {
+    linkType: string;
+    inputValue: string;
+    onChange?: (value: string, linkType: string) => void;
+    onRemove?: () => void;
+}
+
+export interface AdminCheckBoxProps {
+    checked: boolean;
+    onChange?: (checked: boolean) => void;
+    id?: string;
+}

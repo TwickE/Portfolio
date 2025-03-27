@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
-import { AdminDatePicker, AdminInput, AdminLinkInput, AdminTextArea } from "@/components/AdminSmallComponents";
+import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminTextArea } from "@/components/AdminSmallComponents";
 import { getProjectCards } from "@/lib/actions/file.actions";
 import { ProjectCardType } from "@/types/interfaces";
 import { toast } from "sonner";
@@ -60,7 +60,7 @@ const AdminProjectCards = () => {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSkillInputChange = (projectCardId: string, field: string, value: any) => {
+    const handleChangeInput = (projectCardId: string, field: string, value: any) => {
         const projectCard = projectCardsData[projectCardId];
         if (!projectCard) return;
 
@@ -73,6 +73,69 @@ const AdminProjectCards = () => {
             }
         }));
     }
+
+    const handleChangeAdminLink = (projectCardId: string, linkIndex: number, url: string, linkType: string) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard) return;
+
+        // Create a copy of the links array (ensuring it exists)
+        const updatedLinks = [...(projectCard.links || [])];
+
+        // Ensure the array has enough elements
+        while (updatedLinks.length <= linkIndex) {
+            updatedLinks.push({ text: "Website", url: "" });
+        }
+
+        // Update the specific link at the given index
+        updatedLinks[linkIndex] = {
+            ...updatedLinks[linkIndex],
+            text: linkType,
+            url: url
+        };
+
+        // Update the project card with the new links array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                links: updatedLinks
+            }
+        }));
+    };
+
+    const handleRemoveAdminLink = (projectCardId: string, linkIndex: number) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard || !projectCard.links || projectCard.links.length <= linkIndex) return;
+
+        // Create a copy of the links array
+        const updatedLinks = [...projectCard.links];
+
+        // Remove the link at the specified index
+        updatedLinks.splice(linkIndex, 1);
+
+        // Update the project card with the new links array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                links: updatedLinks
+            }
+        }));
+    };
+
+    const handleChangeAdminCheckBox = (projectCardId: string, checked: boolean) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard) return;
+
+        // Update the project card with the new original value
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                original: checked
+            }
+        }));
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDragProjectCard = (result: any) => {
@@ -128,50 +191,53 @@ const AdminProjectCards = () => {
                                                 </span>
                                                 <div className="flex items-center gap-4 flex-wrap w-full">
                                                     <p className="text-black dark:text-white">{projectCard.order}</p>
-                                                    <div className="grid grid-cols-3 grid-rows-3 gap-4">
-                                                        <AdminInput
-                                                            icon="text"
-                                                            placeholder="Title"
-                                                            inputValue={projectCard.title}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'title', value)}
-                                                        />
-                                                        <AdminTextArea
-                                                            icon="text"
-                                                            placeholder="Description"
-                                                            inputValue={projectCard.description}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'description', value)}
-                                                        />
-                                                        <AdminLinkInput
-
-                                                        />
-                                                        {/* <AdminInput
-                                                            icon="text"
-                                                            placeholder="Link 1"
-                                                            inputValue={projectCard.title}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'title', value)}
-                                                        /> */}
-                                                        <AdminDatePicker
-                                                            placeholder="Starting Date"
-                                                            inputValue={projectCard.startDate}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'startDate', value)}
-                                                        />
-                                                        <AdminInput
-                                                            icon="text"
-                                                            placeholder="Link 2"
-                                                            inputValue={projectCard.title}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'title', value)}
-                                                        />
-                                                        <AdminDatePicker
-                                                            placeholder="Ending Date"
-                                                            inputValue={projectCard.endDate}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'endDate', value)}
-                                                        />
-                                                        
-                                                        <AdminInput
-                                                            icon="text"
-                                                            placeholder="Link 3"
-                                                            inputValue={projectCard.title}
-                                                            onChange={(value) => handleSkillInputChange(projectCard.$id, 'title', value)}
+                                                    <div className='flex flex-col gap-4'>
+                                                        <div className="grid grid-cols-3 grid-rows-3 gap-4">
+                                                            <AdminInput
+                                                                icon="text"
+                                                                placeholder="Title"
+                                                                inputValue={projectCard.title}
+                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'title', value)}
+                                                            />
+                                                            <AdminTextArea
+                                                                icon="text"
+                                                                placeholder="Description"
+                                                                inputValue={projectCard.description}
+                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'description', value)}
+                                                            />
+                                                            <AdminLink
+                                                                linkType={projectCard.links?.[0]?.text || "Github"}
+                                                                inputValue={projectCard.links?.[0]?.url || ""}
+                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 0, url, linkType)}
+                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 0)}
+                                                            />
+                                                            <AdminDatePicker
+                                                                placeholder="Starting Date"
+                                                                inputValue={projectCard.startDate}
+                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'startDate', value)}
+                                                            />
+                                                            <AdminLink
+                                                                linkType={projectCard.links?.[1]?.text || "Website"}
+                                                                inputValue={projectCard.links?.[1]?.url || ""}
+                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 1, url, linkType)}
+                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 1)}
+                                                            />
+                                                            <AdminDatePicker
+                                                                placeholder="Ending Date"
+                                                                inputValue={projectCard.endDate}
+                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'endDate', value)}
+                                                            />
+                                                            <AdminLink
+                                                                linkType={projectCard.links?.[2]?.text || "Figma"}
+                                                                inputValue={projectCard.links?.[2]?.url || ""}
+                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 2, url, linkType)}
+                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 2)}
+                                                            />
+                                                        </div>
+                                                        <AdminCheckBox
+                                                            checked={projectCard.original}
+                                                            onChange={(checked) => handleChangeAdminCheckBox(projectCard.$id, checked)}
+                                                            id={projectCard.$id}
                                                         />
                                                         
                                                     </div>
