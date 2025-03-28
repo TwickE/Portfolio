@@ -107,67 +107,80 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
 
     const handleUpdateSkills = async () => {
         setIsSaving(true);
+
+        // First validate all skills
+        let hasValidationErrors = false;
         for (const skill of Object.values(skillData)) {
             if (checkEmptyFields(skill.$id)) {
-                setIsSaving(false);
-                return;
-            }
-
-            try {
-                // Check if the icon file is provided and within the size limit
-                if (skill.iconFile) {
-                    if (skill.iconFile?.size > MAX_FILE_SIZE) {
-                        toast.error("Image size should not exceed 50MB");
-                        setIsSaving(false);
-                        return;
-                    }
-                }
-
-                if (skill.newSkill) {
-                    const response = await addSkill({
-                        $id: skill.$id,
-                        name: skill.name,
-                        link: skill.link,
-                        icon: skill.icon,
-                        order: skill.order,
-                        iconFile: skill.iconFile,
-                        mainSkill: skill.mainSkill,
-                        newSkill: skill.newSkill,
-                        bucketFileId: skill.bucketFileId
-                    });
-
-                    if (!response) {
-                        toast.error(`Failed to add skill: ${skill.name}`);
-                        return; // This now exits the entire function
-                    }
-                } else {
-                    const response = await updateSkill({
-                        $id: skill.$id,
-                        name: skill.name,
-                        link: skill.link,
-                        icon: skill.icon,
-                        order: skill.order,
-                        iconFile: skill.iconFile,
-                        bucketFileId: skill.bucketFileId,
-                        mainSkill: skill.mainSkill,
-                        newSkill: skill.newSkill
-                    });
-
-                    if (!response) {
-                        toast.error(`Failed to update skill: ${skill.name}`);
-                        return; // This now exits the entire function
-                    }
-                }
-            } catch {
-                toast.error(`Error updating skill: ${skill.name}`);
-                return; // This now exits the entire function
-            } finally {
-                setIsSaving(false);
+                hasValidationErrors = true;
+                break;
             }
         }
-        fetchSkills();  // Refetch the skills to update the UI
-        toast.success("Skills updated successfully");
-    }
+
+        if (hasValidationErrors) {
+            setIsSaving(false);
+            return;
+        }
+
+        // Then process all skills
+        let hasProcessingErrors = false;
+        try {
+            for (const skill of Object.values(skillData)) {
+                try {
+                    // Check if the icon file is provided and within the size limit
+                    if (skill.iconFile && skill.iconFile.size > MAX_FILE_SIZE) {
+                        toast.error("Image size should not exceed 50MB");
+                        hasProcessingErrors = true;
+                        break;
+                    }
+
+                    // Process the skill
+                    const response = await (skill.newSkill
+                        ? addSkill({
+                            $id: skill.$id,
+                            name: skill.name,
+                            link: skill.link,
+                            icon: skill.icon,
+                            order: skill.order,
+                            iconFile: skill.iconFile,
+                            mainSkill: skill.mainSkill,
+                            newSkill: skill.newSkill,
+                            bucketFileId: skill.bucketFileId
+                        })
+                        : updateSkill({
+                            $id: skill.$id,
+                            name: skill.name,
+                            link: skill.link,
+                            icon: skill.icon,
+                            order: skill.order,
+                            iconFile: skill.iconFile,
+                            bucketFileId: skill.bucketFileId,
+                            mainSkill: skill.mainSkill,
+                            newSkill: skill.newSkill
+                        })
+                    );
+
+                    if (!response) {
+                        toast.error(`Failed to ${skill.newSkill ? 'add' : 'update'} skill: ${skill.name}`);
+                        hasProcessingErrors = true;
+                        break;
+                    }
+                } catch (error) {
+                    toast.error(`Error processing skill: ${skill.name}`);
+                    console.error("Error processing skill:", error);
+                    hasProcessingErrors = true;
+                    break;
+                }
+            }
+        } finally {
+            setIsSaving(false);
+        }
+
+        if (!hasProcessingErrors) {
+            await fetchSkills();  // Refetch the skills to update the UI
+            toast.success("Skills updated successfully");
+        }
+    };
 
     const handleDeleteSkill = (skillId: string, bucketFileId: string, newSkill: boolean) => {
         // Create the delete function with the current skill data captured in closure

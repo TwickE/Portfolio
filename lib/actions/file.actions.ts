@@ -288,3 +288,52 @@ export const getTechBadgesByName = async (query: string) => {
         return undefined;
     }
 }
+
+
+export const updateProjectCard = async ({ 
+    $id,
+    title,
+    startDate,
+    endDate,
+    description,
+    links,
+    techBadges,
+    images,
+    order,
+    original }: ProjectCardType) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        // Build the update object with only provided fields
+        const updateData: Partial<ProjectCardType> = {};
+
+        if(title !== undefined) updateData.title = title;
+        if(startDate !== undefined) updateData.startDate = startDate;
+        if(endDate !== undefined) updateData.endDate = endDate;
+        if(description !== undefined) updateData.description = description;
+        if(links !== undefined) updateData.links = links;
+        if(techBadges !== undefined) updateData.techBadges = techBadges;
+        if(images !== undefined) updateData.images = images;
+        if(order !== undefined) updateData.order = order;
+        if(original !== undefined) updateData.original = original;
+
+        // If no fields to update, return early
+        if (Object.keys(updateData).length === 0) {
+            throw new Error("No new data provided for update");
+        }
+
+        /* await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            $id,
+            updateData
+        ); */
+
+        console.log(updateData);
+
+        return true;
+    } catch (error) {
+        console.log("Failed to update skill", error);
+        return false;
+    }
+}

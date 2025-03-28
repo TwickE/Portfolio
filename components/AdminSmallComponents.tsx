@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch } from "react-icons/fa";
+import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch, FaBan } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AdminCheckBoxProps, AdminDatePickerProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
 import { Button } from "@/components/ui/button";
@@ -149,6 +149,7 @@ export const AdminLink = ({ linkType, inputValue, onChange, onRemove }: AdminLin
             <Popover>
                 <PopoverTrigger asChild>
                     <button className="cursor-pointer flex items-center gap-[6px] ps-[10px] pe-2 h-[36px] bg-my-primary rounded-s-sm">
+                        {selectedLinkType === "NoLink" && <FaBan color="red" size={16} />}
                         {selectedLinkType === "Github" && <FaGithub color="white" size={16} />}
                         {selectedLinkType === "Website" && <FaGlobe color="white" size={16} />}
                         {selectedLinkType === "Figma" && <FaFigma color="white" size={16} />}
@@ -248,7 +249,7 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
     const [results, setResults] = useState<TechBadgeType[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    
+
     // Debounce search to avoid too many requests
     useEffect(() => {
         const searchTimer = setTimeout(async () => {

@@ -295,6 +295,137 @@ const AdminProjectCards = () => {
         }, {} as Record<string, ProjectCardType>));
     }
 
+    const validateFields = (projectCardId: string) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard) return true;
+
+        if (!projectCard.title) {
+            toast.error("Please provide a title");
+            return true;
+        }
+
+        if (!projectCard.description) {
+            toast.error("Please provide a description");
+            return true;
+        }
+
+        if (!projectCard.startDate) {
+            toast.error("Please provide a starting date");
+            return true;
+        }
+
+        if (!projectCard.endDate) {
+            toast.error("Please provide an ending date");
+            return true;
+        }
+
+        if (projectCard.links.some(link => !link.url)) {
+            toast.error("Please provide a URL for all links");
+            return true;
+        }
+
+        if (projectCard.links.some(link => !isValidURL(link.url))) {
+            toast.error("Please provide valid URLs for all links");
+            return true;
+        }
+
+        if (projectCard.images.some(image => !image.alt)) {
+            toast.error("Please provide alt text for all images");
+            return true;
+        }
+
+        if (projectCard.images.some(image => !image.src)) {
+            toast.error("Please provide a URL for all images");
+            return true;
+        }
+
+        if (projectCard.images.some(image => !isValidURL(image.src))) {
+            toast.error("Please provide a valid URL for all images");
+            return true;
+        }
+
+        return false;
+    }
+
+
+    const handleUpdateProjectCards = async () => {
+        //setIsSaving(true);
+
+        // First validate all skills
+        let hasValidationErrors = false;
+        for (const projectCard of Object.values(projectCardsData)) {
+            if (validateFields(projectCard.$id)) {
+                hasValidationErrors = true;
+                break;
+            }
+        }
+
+        if (hasValidationErrors) {
+            //setIsSaving(false);
+            return;
+        }
+        toast.success("All fields are valid");
+
+        // Then process all skills
+        /* let hasProcessingErrors = false;
+        try {
+            for (const skill of Object.values(skillData)) {
+                try {
+                    // Check if the icon file is provided and within the size limit
+                    if (skill.iconFile && skill.iconFile.size > MAX_FILE_SIZE) {
+                        toast.error("Image size should not exceed 50MB");
+                        hasProcessingErrors = true;
+                        break;
+                    }
+
+                    // Process the skill
+                    const response = await (skill.newSkill
+                        ? addSkill({
+                            $id: skill.$id,
+                            name: skill.name,
+                            link: skill.link,
+                            icon: skill.icon,
+                            order: skill.order,
+                            iconFile: skill.iconFile,
+                            mainSkill: skill.mainSkill,
+                            newSkill: skill.newSkill,
+                            bucketFileId: skill.bucketFileId
+                        })
+                        : updateSkill({
+                            $id: skill.$id,
+                            name: skill.name,
+                            link: skill.link,
+                            icon: skill.icon,
+                            order: skill.order,
+                            iconFile: skill.iconFile,
+                            bucketFileId: skill.bucketFileId,
+                            mainSkill: skill.mainSkill,
+                            newSkill: skill.newSkill
+                        })
+                    );
+
+                    if (!response) {
+                        toast.error(`Failed to ${skill.newSkill ? 'add' : 'update'} skill: ${skill.name}`);
+                        hasProcessingErrors = true;
+                        break;
+                    }
+                } catch (error) {
+                    toast.error(`Error processing skill: ${skill.name}`);
+                    console.error("Error processing skill:", error);
+                    hasProcessingErrors = true;
+                    break;
+                }
+            }
+        } finally {
+            setIsSaving(false);
+        }
+
+        if (!hasProcessingErrors) {
+            await fetchSkills();  // Refetch the skills to update the UI
+            toast.success("Skills updated successfully");
+        } */
+    };
+
     return (
         <>
             <section className="h-full">
@@ -309,7 +440,7 @@ const AdminProjectCards = () => {
                             <FaPlus />
                             Add Project
                         </Button>
-                        <Button variant="save" /* onClick={handleUpdateSkills} disabled={isSaving} */>
+                        <Button variant="save" onClick={handleUpdateProjectCards} /* disabled={isSaving} */>
                             {/* {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />} */}
                             <FaSave />
                             Save
@@ -344,7 +475,7 @@ const AdminProjectCards = () => {
                                                                 onChange={(value) => handleChangeInput(projectCard.$id, 'description', value)}
                                                             />
                                                             <AdminLink
-                                                                linkType={projectCard.links?.[0]?.text || "Github"}
+                                                                linkType={projectCard.links?.[0]?.text || "NoLink"}
                                                                 inputValue={projectCard.links?.[0]?.url || ""}
                                                                 onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 0, url, linkType)}
                                                                 onRemove={() => handleRemoveAdminLink(projectCard.$id, 0)}
@@ -355,7 +486,7 @@ const AdminProjectCards = () => {
                                                                 onChange={(value) => handleChangeInput(projectCard.$id, 'startDate', value)}
                                                             />
                                                             <AdminLink
-                                                                linkType={projectCard.links?.[1]?.text || "Website"}
+                                                                linkType={projectCard.links?.[1]?.text || "NoLink"}
                                                                 inputValue={projectCard.links?.[1]?.url || ""}
                                                                 onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 1, url, linkType)}
                                                                 onRemove={() => handleRemoveAdminLink(projectCard.$id, 1)}
@@ -366,7 +497,7 @@ const AdminProjectCards = () => {
                                                                 onChange={(value) => handleChangeInput(projectCard.$id, 'endDate', value)}
                                                             />
                                                             <AdminLink
-                                                                linkType={projectCard.links?.[2]?.text || "Figma"}
+                                                                linkType={projectCard.links?.[2]?.text || "NoLink"}
                                                                 inputValue={projectCard.links?.[2]?.url || ""}
                                                                 onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 2, url, linkType)}
                                                                 onRemove={() => handleRemoveAdminLink(projectCard.$id, 2)}
@@ -481,19 +612,18 @@ const AdminProjectCards = () => {
 
 export default AdminProjectCards
 
+const isValidURL = (url: string): boolean => {
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
 const SafeImage = ({ src, alt }: { src: string, alt: string }) => {
     const [, setImgSrc] = useState(src);
     const [error, setError] = useState(false);
-
-    // Function to validate URL
-    const isValidURL = (url: string): boolean => {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    };
 
     const fallbackSrc = "/images/noImage.webp";
 
