@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { GripVertical } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { FaTrash, FaPlus, FaSave } from "react-icons/fa";
+import { FaTrash, FaPlus, FaSave, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
 import { getProjectCards } from "@/lib/actions/file.actions";
@@ -161,6 +161,120 @@ const AdminProjectCards = () => {
         }));
     };
 
+    const handleDeleteTechBadge = (projectCardId: string, techBadgeId: string) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard || !projectCard.techBadges) return;
+
+        // Find the tech badge to be deleted
+        const techBadgeIndex = projectCard.techBadges.findIndex(tb => tb.$id === techBadgeId);
+
+        // If tech badge not found, return
+        if (techBadgeIndex === -1) {
+            toast.error(`Tech badge with ID ${techBadgeId} not found in project card ${projectCardId}`);
+            return;
+        }
+
+        // Create a copy of the tech badges array
+        const updatedTechBadges = [...projectCard.techBadges];
+
+        // Remove the tech badge at the found index
+        updatedTechBadges.splice(techBadgeIndex, 1);
+
+        // Update the project card with the new tech badges array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                techBadges: updatedTechBadges
+            }
+        }));
+
+        toast.success("Tech badge removed");
+    };
+
+    const handleChangeImageField = (projectCardId: string, imageIndex: number, field: string, value: string) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard || !projectCard.images) return;
+
+        // Create a copy of the images array
+        const updatedImages = [...projectCard.images];
+
+        // Ensure the array has enough elements
+        if (imageIndex >= updatedImages.length) {
+            console.error(`Image index ${imageIndex} is out of bounds for project card ${projectCardId}`);
+            return;
+        }
+
+        // Update the specific field of the image at the given index
+        updatedImages[imageIndex] = {
+            ...updatedImages[imageIndex],
+            [field]: value
+        };
+
+        // Update the project card with the new images array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                images: updatedImages
+            }
+        }));
+    };
+
+    const handleDeleteImage = (projectCardId: string, imageIndex: number) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard || !projectCard.images || projectCard.images.length <= imageIndex) return;
+
+        // Create a copy of the images array
+        const updatedImages = [...projectCard.images];
+
+        // Remove the image at the specified index
+        updatedImages.splice(imageIndex, 1);
+
+        // Update the project card with the new images array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                images: updatedImages
+            }
+        }));
+
+        toast.success("Image removed");
+    };
+
+    // Add a new image to the top or bottom of the images array
+    const handleAddImage = (projectCardId: string, top: boolean) => {
+        const projectCard = projectCardsData[projectCardId];
+        if (!projectCard) return;
+
+        // Create a copy of the images array (ensuring it exists)
+        const updatedImages = [...(projectCard.images || [])];
+
+        if (top) {
+            // Add a new empty image at the beginning of the array
+            updatedImages.unshift({
+                src: '',
+                alt: ''
+            });
+        } else {
+            // Add a new empty image at the end of the array
+            updatedImages.push({
+                src: '',
+                alt: ''
+            });
+        }
+
+        // Update the project card with the new images array
+        setProjectCardsData(prev => ({
+            ...prev,
+            [projectCardId]: {
+                ...prev[projectCardId],
+                images: updatedImages
+            }
+        }));
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDragProjectCard = (result: any) => {
         if (!result.destination) return; // Prevent errors if dropped outside the list
@@ -280,7 +394,7 @@ const AdminProjectCards = () => {
                                                                         />
                                                                         <button
                                                                             className='cursor-pointer rounded-e-md w-full h-full px-3'
-                                                                            onClick={() => console.log("Delete tech badge: " + techBadge.name)}
+                                                                            onClick={() => handleDeleteTechBadge(projectCard.$id, techBadge.$id)}
                                                                         >
                                                                             <FaTrash size={16} />
                                                                         </button>
@@ -291,42 +405,48 @@ const AdminProjectCards = () => {
                                                         <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
                                                             <div className='flex justify-between items-center'>
                                                                 <h3>Images</h3>
-                                                                <Button
-                                                                    variant="primary"
-                                                                    onClick={() => console.log("Add new image")}
-                                                                >
-                                                                    <FaPlus />
-                                                                    Add Image
-                                                                </Button>
+                                                                <div className='flex gap-4'>
+                                                                    <Button
+                                                                        variant="primary"
+                                                                        onClick={() => handleAddImage(projectCard.$id, true)}
+                                                                    >
+                                                                        <FaArrowUp />
+                                                                        Add Image Top
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="primary"
+                                                                        onClick={() => handleAddImage(projectCard.$id, false)}
+                                                                    >
+                                                                        <FaArrowDown />
+                                                                        Add Image Bottom
+                                                                    </Button>
+                                                                </div>
                                                             </div>
                                                             <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
-                                                                {projectCard.images.map(image => (
-                                                                    <div key={image.$id} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                                                                {projectCard.images.map((image, index) => (
+                                                                    <div key={index} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
                                                                         <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
-                                                                            <Image
-                                                                                src={image.src || "/images/noImage.webp"}
-                                                                                width={60}
-                                                                                height={60}
+                                                                            <SafeImage
+                                                                                src={image.src}
                                                                                 alt={image.alt}
-                                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
                                                                             />
                                                                         </div>
                                                                         <AdminInput
                                                                             icon="link"
                                                                             placeholder="Image URL"
                                                                             inputValue={image.src}
-                                                                            onChange={() => console.log("Change image URL")} /* (value) => handleTechBadgeInputChange(techBadge.$id, value) */
+                                                                            onChange={(value) => handleChangeImageField(projectCard.$id, index, 'src', value)}
                                                                         />
                                                                         <AdminInput
                                                                             icon="text"
                                                                             placeholder="Image alt text"
                                                                             inputValue={image.alt}
-                                                                            onChange={() => console.log("Change image alt")} /* (value) => handleTechBadgeInputChange(techBadge.$id, value) */
+                                                                            onChange={(value) => handleChangeImageField(projectCard.$id, index, 'alt', value)}
                                                                         />
                                                                         <Button
                                                                             variant="destructive"
                                                                             className="ml-auto max-4xl:mx-auto"
-                                                                            onClick={() => console.log(image.$id)}
+                                                                            onClick={() => handleDeleteImage(projectCard.$id, index)}
                                                                         >
                                                                             <FaTrash />
                                                                             Delete
@@ -360,3 +480,37 @@ const AdminProjectCards = () => {
 }
 
 export default AdminProjectCards
+
+const SafeImage = ({ src, alt }: { src: string, alt: string }) => {
+    const [, setImgSrc] = useState(src);
+    const [error, setError] = useState(false);
+
+    // Function to validate URL
+    const isValidURL = (url: string): boolean => {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const fallbackSrc = "/images/noImage.webp";
+
+    // Use either the provided source or the fallback
+    const effectiveSrc = src && isValidURL(src) ? src : fallbackSrc;
+
+    return (
+        <Image
+            src={error ? fallbackSrc : effectiveSrc}
+            width={60}
+            height={60}
+            alt={alt}
+            className="object-contain object-center max-w-[60px] max-h-[60px]"
+            onError={() => {
+                setError(true);
+                setImgSrc(fallbackSrc);
+            }}
+        />
+    );
+};

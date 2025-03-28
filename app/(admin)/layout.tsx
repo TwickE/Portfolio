@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <>
             <AdminNavbar />
-            <div className='flex flex-col mt-12 responsive-container'>
+            <div className='flex flex-col mt-4 responsive-container'>
                 <Menubar className="w-fit">
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(skillPaths)}`}>Skills</MenubarTrigger>
@@ -52,7 +52,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         </MenubarContent>
                     </MenubarMenu>
                 </Menubar>
-                <div className="w-full h-[calc(100dvh-32px-36px-48px-100px-48px)] bg-my-background-200 border border-border rounded-md mt-8 p-6">
+                <div className="w-full h-[calc(100dvh-32px-36px-16px-100px-16px)] bg-my-background-200 border border-border rounded-md mt-2 p-6">
                     {children}
                 </div>
             </div>

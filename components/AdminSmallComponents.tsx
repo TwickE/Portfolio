@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AdminCheckBoxProps, AdminDatePickerProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns"
@@ -281,7 +282,7 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
 
     return (
         <div className="relative">
-            <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm">
+            <div className="relative flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm">
                 <FaSearch color="white" size={16} />
                 <input
                     type="text"
@@ -292,13 +293,16 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
                 />
             </div>
             {isOpen && (
-                <div className="text-base absolute z-10 mt-1 bg-secondary border border-my-primary rounded-md shadow-lg w-full max-h-60 overflow-y-auto">
+                <div className="text-base absolute mt-1 bg-secondary border border-my-primary rounded-md shadow-lg w-full max-h-60 overflow-y-auto">
                     {isLoading ? (
-                        <div className="p-2 text-center">Loading...</div>
+                        <div className="flex gap-1 items-center p-2">
+                            <AiOutlineLoading3Quarters className="animate-spin" />
+                            Loading...
+                        </div>
                     ) : results.length > 0 ? (
                         <ul>
                             {results.map((techBadge) => (
-                                <li key={techBadge.$id} className="flex items-center gap-1 p-2 hover:bg-my-secondary/20 cursor-pointer">
+                                <li key={techBadge.$id} className="flex items-center gap-1 p-2">
                                     <Image
                                         src={techBadge.icon}
                                         alt={techBadge.name}
@@ -306,10 +310,10 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
                                         height={24}
                                         className="object-contain object-center max-w-[24px] max-h-[24px]"
                                     />
-                                    <p className="">{techBadge.name}</p>
+                                    <p className="max-w-[163px] truncate">{techBadge.name}</p>
                                     <Button
                                         className="ml-auto"
-                                        variant="save"
+                                        variant="primary"
                                         onClick={() => handleSelectTechBadge(techBadge)}
                                     >
                                         Add

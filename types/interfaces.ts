@@ -103,7 +103,6 @@ export interface ProjectCardTechBadge {
 }
 
 export interface ProjectCardImage {
-    $id: string;
     src: string;
     alt: string;
 }
