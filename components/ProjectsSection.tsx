@@ -38,7 +38,7 @@ const ProjectsSection = () => {
         const fetchProjectCards = async () => {
             setIsLoading(true);
             try {
-                const data = await getProjectCards();
+                const data = await getProjectCards(false);
 
                 if (data) {
                     // Process the data to parse stringified fields

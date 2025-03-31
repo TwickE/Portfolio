@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { AdminSkill, DeleteSkillProps, TechBadgeType, ProjectCardType } from "@/types/interfaces";
+import { AdminSkill, DeleteSkillProps, TechBadgeType, ProjectCardType, ProjectCardDatabase } from "@/types/interfaces";
 import { constructFileUrl } from "@/lib/utils";
 
 const handleError = (error: unknown, message: string) => {
@@ -56,7 +56,7 @@ export const updateSkill = async ({ $id, name, link, order, iconFile, bucketFile
             );
 
             updateData.bucketFileId = bucketFile.$id;
-            updateData.icon = constructFileUrl(appwriteConfig.storageSkillIconsId ,bucketFile.$id);
+            updateData.icon = constructFileUrl(appwriteConfig.storageSkillIconsId, bucketFile.$id);
         }
 
         // If no fields to update, return early
@@ -112,7 +112,7 @@ export const addSkill = async ({ name, link, order, iconFile, mainSkill }: Admin
         const newSkill: Partial<AdminSkill> = {
             name,
             link,
-            icon: constructFileUrl(appwriteConfig.storageSkillIconsId ,bucketFile.$id),
+            icon: constructFileUrl(appwriteConfig.storageSkillIconsId, bucketFile.$id),
             order,
             bucketFileId: bucketFile.$id,
             mainSkill
@@ -174,7 +174,7 @@ export const updateTechBadge = async ({ $id, name, iconFile, bucketFileId }: Tec
             );
 
             updateData.bucketFileId = bucketFile.$id;
-            updateData.icon = constructFileUrl(appwriteConfig.storageTechBadgesIconsId ,bucketFile.$id);
+            updateData.icon = constructFileUrl(appwriteConfig.storageTechBadgesIconsId, bucketFile.$id);
         }
 
         // If no fields to update, return early
@@ -208,7 +208,7 @@ export const addTechBadge = async ({ name, iconFile }: TechBadgeType) => {
 
         const newTechBadge: Partial<TechBadgeType> = {
             name,
-            icon: constructFileUrl(appwriteConfig.storageTechBadgesIconsId ,bucketFile.$id),
+            icon: constructFileUrl(appwriteConfig.storageTechBadgesIconsId, bucketFile.$id),
             bucketFileId: bucketFile.$id
         }
 
@@ -247,17 +247,29 @@ export const deleteTechBadge = async ({ $id, bucketFileId }: TechBadgeType) => {
     }
 }
 
-export const getProjectCards = async () => {
+export const getProjectCards = async (all: boolean) => {
     try {
         const { databases } = await createPublicClient();
 
-        const result = await databases.listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.projectCardsCollectionId,
-            [
-                Query.orderAsc('order')
-            ],
-        );
+        let result;
+        if (!all) {
+            result = await databases.listDocuments(
+                appwriteConfig.databaseId,
+                appwriteConfig.projectCardsCollectionId,
+                [
+                    Query.orderAsc('order'),
+                    Query.limit(4)
+                ],
+            );
+        } else {
+            result = await databases.listDocuments(
+                appwriteConfig.databaseId,
+                appwriteConfig.projectCardsCollectionId,
+                [
+                    Query.orderAsc('order')
+                ],
+            );
+        }
 
         // Transform the data to match the ProjectCardType interface
         return result.documents as unknown as ProjectCardType[];
@@ -279,7 +291,7 @@ export const getTechBadgesByName = async (query: string) => {
             ],
         );
 
-        if(result.documents.length <= 0) return [];
+        if (result.documents.length <= 0) return [];
 
         // Transform the data to match the TechBadgeType interface
         return result.documents as unknown as TechBadgeType[];
@@ -290,7 +302,7 @@ export const getTechBadgesByName = async (query: string) => {
 }
 
 
-export const updateProjectCard = async ({ 
+export const updateProjectCard = async ({
     $id,
     title,
     startDate,
@@ -305,35 +317,79 @@ export const updateProjectCard = async ({
         const { databases } = await createAdminClient();
 
         // Build the update object with only provided fields
-        const updateData: Partial<ProjectCardType> = {};
+        const updateData: Partial<ProjectCardDatabase> = {};
 
-        if(title !== undefined) updateData.title = title;
-        if(startDate !== undefined) updateData.startDate = startDate;
-        if(endDate !== undefined) updateData.endDate = endDate;
-        if(description !== undefined) updateData.description = description;
-        if(links !== undefined) updateData.links = links;
-        if(techBadges !== undefined) updateData.techBadges = techBadges;
-        if(images !== undefined) updateData.images = images;
-        if(order !== undefined) updateData.order = order;
-        if(original !== undefined) updateData.original = original;
+        if (title !== undefined) updateData.title = title;
+        if (startDate !== undefined) updateData.startDate = startDate;
+        if (endDate !== undefined) updateData.endDate = endDate;
+        if (description !== undefined) updateData.description = description;
+        if (links !== undefined) updateData.links = JSON.stringify(links);
+        if (techBadges !== undefined) {
+            // Extract just the $id values from techBadges for proper Appwrite document references
+            const techBadgeIds = techBadges.map(badge => badge.$id);
+            updateData.techBadges = techBadgeIds;
+        }
+        if (images !== undefined) updateData.images = JSON.stringify(images);
+        if (order !== undefined) updateData.order = order;
+        if (original !== undefined) updateData.original = original;
 
         // If no fields to update, return early
         if (Object.keys(updateData).length === 0) {
             throw new Error("No new data provided for update");
         }
 
-        /* await databases.updateDocument(
+        await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.projectCardsCollectionId,
             $id,
             updateData
-        ); */
-
-        console.log(updateData);
+        );
 
         return true;
     } catch (error) {
-        console.log("Failed to update skill", error);
+        console.log("Failed to update project card", error);
+        return false;
+    }
+}
+
+export const addProjectCard = async ({
+    title,
+    startDate,
+    endDate,
+    description,
+    links,
+    techBadges,
+    images,
+    order,
+    original }: ProjectCardType) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        // Extract just the $id values from techBadges for proper Appwrite document references
+        const techBadgeIds = techBadges.map(badge => badge.$id);
+
+        const newProjectCard: Partial<ProjectCardDatabase> = {
+            title,
+            startDate,
+            endDate,
+            description,
+            links: JSON.stringify(links),
+            techBadges: techBadgeIds,
+            images: JSON.stringify(images),
+            order,
+            original
+        }
+
+        await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            ID.unique(),
+            newProjectCard
+        );
+
+        return true;
+    } catch (error) {
+        console.log("Failed to add project card", error);
         return false;
     }
 }

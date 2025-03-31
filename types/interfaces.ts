@@ -78,6 +78,20 @@ export interface ProjectCardType {
     images: ProjectCardImage[];
     order: number;
     original: boolean;
+    new: boolean;
+}
+
+export interface ProjectCardDatabase {
+    $id: string;
+    title: string;
+    startDate: Date;
+    endDate: Date;
+    description: string;
+    links: string;
+    techBadges: string[];
+    images: string;
+    order: number;
+    original: boolean;
 }
 
 export interface ProjectCardProps {

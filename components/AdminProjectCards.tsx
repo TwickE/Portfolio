@@ -8,19 +8,28 @@ import { Button } from "@/components/ui/button";
 import { FaTrash, FaPlus, FaSave, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
-import { getProjectCards } from "@/lib/actions/file.actions";
+import { addProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/file.actions";
 import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
 import TechBadge from "@/components/TechBadge";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const NUMBER_OF_SKELETONS = 3;
 
 const AdminProjectCards = () => {
     // State to store the project cards and track their changes
     const [projectCardsData, setProjectCardsData] = useState<Record<string, ProjectCardType>>({});
+    // State to track if the data is being saved
+    const [isSaving, setIsSaving] = useState(false);
+    // State to track if the data is being fetched
+    const [isFetchingData, setIsFetchingData] = useState(false);
 
     // Gets the tech badges from the database
     const fetchProjectCards = useCallback(async () => {
+        setIsFetchingData(true);
         try {
-            const projectCards = await getProjectCards();
+            const projectCards = await getProjectCards(true);
 
             if (projectCards) {
                 const processedData = projectCards.map(card => {
@@ -48,6 +57,8 @@ const AdminProjectCards = () => {
         } catch (error) {
             console.error("Failed to fetch tech badges:", error);
             toast.error("Failed to load tech badges");
+        } finally {
+            setIsFetchingData(false);
         }
     }, []);
 
@@ -319,6 +330,11 @@ const AdminProjectCards = () => {
             return true;
         }
 
+        if (projectCard.links.length === 0) {
+            toast.error("Please provide at least one link");
+            return true;
+        }
+
         if (projectCard.links.some(link => !link.url)) {
             toast.error("Please provide a URL for all links");
             return true;
@@ -331,6 +347,11 @@ const AdminProjectCards = () => {
 
         if (projectCard.links.some(link => link.text === "NoLink")) {
             toast.error("Please provide a link type for all links");
+            return true;
+        }
+
+        if (projectCard.images.length === 0) {
+            toast.error("Please provide at least one image");
             return true;
         }
 
@@ -352,9 +373,8 @@ const AdminProjectCards = () => {
         return false;
     }
 
-
     const handleUpdateProjectCards = async () => {
-        //setIsSaving(true);
+        setIsSaving(true);
 
         // First validate all skills
         let hasValidationErrors = false;
@@ -366,57 +386,52 @@ const AdminProjectCards = () => {
         }
 
         if (hasValidationErrors) {
-            //setIsSaving(false);
+            setIsSaving(false);
             return;
         }
-        toast.success("All fields are valid");
 
         // Then process all skills
-        /* let hasProcessingErrors = false;
+        let hasProcessingErrors = false;
         try {
-            for (const skill of Object.values(skillData)) {
+            for (const projectCard of Object.values(projectCardsData)) {
                 try {
-                    // Check if the icon file is provided and within the size limit
-                    if (skill.iconFile && skill.iconFile.size > MAX_FILE_SIZE) {
-                        toast.error("Image size should not exceed 50MB");
-                        hasProcessingErrors = true;
-                        break;
-                    }
-
-                    // Process the skill
-                    const response = await (skill.newSkill
-                        ? addSkill({
-                            $id: skill.$id,
-                            name: skill.name,
-                            link: skill.link,
-                            icon: skill.icon,
-                            order: skill.order,
-                            iconFile: skill.iconFile,
-                            mainSkill: skill.mainSkill,
-                            newSkill: skill.newSkill,
-                            bucketFileId: skill.bucketFileId
+                    const response = await (projectCard.new
+                        ? addProjectCard({
+                            $id: projectCard.$id,
+                            title: projectCard.title,
+                            startDate: projectCard.startDate,
+                            endDate: projectCard.endDate,
+                            description: projectCard.description,
+                            links: projectCard.links,
+                            techBadges: projectCard.techBadges,
+                            images: projectCard.images,
+                            order: projectCard.order,
+                            original: projectCard.original,
+                            new: projectCard.new
                         })
-                        : updateSkill({
-                            $id: skill.$id,
-                            name: skill.name,
-                            link: skill.link,
-                            icon: skill.icon,
-                            order: skill.order,
-                            iconFile: skill.iconFile,
-                            bucketFileId: skill.bucketFileId,
-                            mainSkill: skill.mainSkill,
-                            newSkill: skill.newSkill
+                        : updateProjectCard({
+                            $id: projectCard.$id,
+                            title: projectCard.title,
+                            startDate: projectCard.startDate,
+                            endDate: projectCard.endDate,
+                            description: projectCard.description,
+                            links: projectCard.links,
+                            techBadges: projectCard.techBadges,
+                            images: projectCard.images,
+                            order: projectCard.order,
+                            original: projectCard.original,
+                            new: projectCard.new
                         })
                     );
 
                     if (!response) {
-                        toast.error(`Failed to ${skill.newSkill ? 'add' : 'update'} skill: ${skill.name}`);
+                        toast.error(`Failed to ${projectCard.new ? 'add' : 'update'} project card: ${projectCard.title}`);
                         hasProcessingErrors = true;
                         break;
                     }
                 } catch (error) {
-                    toast.error(`Error processing skill: ${skill.name}`);
-                    console.error("Error processing skill:", error);
+                    toast.error(`Error processing project card: ${projectCard.title}`);
+                    console.error("Error processing project card:", error);
                     hasProcessingErrors = true;
                     break;
                 }
@@ -426,10 +441,34 @@ const AdminProjectCards = () => {
         }
 
         if (!hasProcessingErrors) {
-            await fetchSkills();  // Refetch the skills to update the UI
-            toast.success("Skills updated successfully");
-        } */
+            await fetchProjectCards();  // Refetch the project cards to update the UI
+            toast.success("Project cards updated successfully");
+        }
     };
+
+    const handleAddNewProjectCard = () => {
+        const tempId = `temp-${Date.now()}`; // Generate a temporary ID for the new skill
+        const currentDate = new Date();
+
+        const newProjectCard: ProjectCardType = {
+            $id: tempId,
+            title: "",
+            startDate: currentDate,
+            endDate: currentDate,
+            description: "",
+            links: [],
+            techBadges: [],
+            images: [],
+            order: 1,
+            original: false,
+            new: true
+        }
+
+        setProjectCardsData(prev => ({
+            [newProjectCard.$id]: newProjectCard,
+            ...prev
+        })); // Add the new project card to the state
+    }
 
     return (
         <>
@@ -441,175 +480,182 @@ const AdminProjectCards = () => {
                             <FaRotate />
                             Refresh
                         </Button>
-                        <Button variant="primary" /* onClick={handleAddNewSkill} */>
+                        <Button variant="primary" onClick={handleAddNewProjectCard}>
                             <FaPlus />
                             Add Project
                         </Button>
-                        <Button variant="save" onClick={handleUpdateProjectCards} /* disabled={isSaving} */>
-                            {/* {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />} */}
-                            <FaSave />
+                        <Button variant="save" onClick={handleUpdateProjectCards} disabled={isSaving}>
+                            {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
                             Save
                         </Button>
                     </div>
                 </div>
-                <DragDropContext onDragEnd={handleDragProjectCard}>
-                    <Droppable droppableId="list">
-                        {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
-                                {Object.values(projectCardsData).map((projectCard, index) => (
-                                    <Draggable key={projectCard.$id} draggableId={projectCard.$id} index={index}>
-                                        {(provided, snapshot) => (
-                                            <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
-                                                <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
-                                                    <GripVertical color='white' size={20} />
-                                                </span>
-                                                <div className="flex items-center gap-4 flex-wrap w-full">
-                                                    <p>{projectCard.order}</p>
-                                                    <div className='flex flex-col gap-4'>
-                                                        <div className="grid grid-cols-3 grid-rows-3 gap-4">
-                                                            <AdminInput
-                                                                icon="text"
-                                                                placeholder="Title"
-                                                                inputValue={projectCard.title}
-                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'title', value)}
-                                                            />
-                                                            <AdminTextArea
-                                                                icon="text"
-                                                                placeholder="Description"
-                                                                inputValue={projectCard.description}
-                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'description', value)}
-                                                            />
-                                                            <AdminLink
-                                                                linkType={projectCard.links?.[0]?.text || "NoLink"}
-                                                                inputValue={projectCard.links?.[0]?.url || ""}
-                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 0, url, linkType)}
-                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 0)}
-                                                            />
-                                                            <AdminDatePicker
-                                                                placeholder="Starting Date"
-                                                                inputValue={projectCard.startDate}
-                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'startDate', value)}
-                                                            />
-                                                            <AdminLink
-                                                                linkType={projectCard.links?.[1]?.text || "NoLink"}
-                                                                inputValue={projectCard.links?.[1]?.url || ""}
-                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 1, url, linkType)}
-                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 1)}
-                                                            />
-                                                            <AdminDatePicker
-                                                                placeholder="Ending Date"
-                                                                inputValue={projectCard.endDate}
-                                                                onChange={(value) => handleChangeInput(projectCard.$id, 'endDate', value)}
-                                                            />
-                                                            <AdminLink
-                                                                linkType={projectCard.links?.[2]?.text || "NoLink"}
-                                                                inputValue={projectCard.links?.[2]?.url || ""}
-                                                                onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 2, url, linkType)}
-                                                                onRemove={() => handleRemoveAdminLink(projectCard.$id, 2)}
-                                                            />
-                                                        </div>
-                                                        <AdminCheckBox
-                                                            checked={projectCard.original}
-                                                            onChange={(checked) => handleChangeAdminCheckBox(projectCard.$id, checked)}
-                                                            id={projectCard.$id}
-                                                        />
-                                                        <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
-                                                            <div className='flex justify-between items-center'>
-                                                                <h3>Tech Badges</h3>
-                                                                <AdminSearch onTechBadgeSelect={(techBadge) => handleAddTechBadge(projectCard.$id, techBadge)} />
+                {isFetchingData ? (
+                    <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                        {Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="w-full h-80 rounded-md mb-2" />
+                        ))}
+                    </div>
+                ) : (
+                    <DragDropContext onDragEnd={handleDragProjectCard}>
+                        <Droppable droppableId="list">
+                            {(provided) => (
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                                    {Object.values(projectCardsData).map((projectCard, index) => (
+                                        <Draggable key={projectCard.$id} draggableId={projectCard.$id} index={index}>
+                                            {(provided, snapshot) => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
+                                                    <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
+                                                        <GripVertical color='white' size={20} />
+                                                    </span>
+                                                    <div className="flex items-center gap-4 flex-wrap w-full">
+                                                        <p>{projectCard.order}</p>
+                                                        <div className='flex flex-col gap-4'>
+                                                            <div className="grid grid-cols-3 grid-rows-3 gap-4">
+                                                                <AdminInput
+                                                                    icon="text"
+                                                                    placeholder="Title"
+                                                                    inputValue={projectCard.title}
+                                                                    onChange={(value) => handleChangeInput(projectCard.$id, 'title', value)}
+                                                                />
+                                                                <AdminTextArea
+                                                                    icon="text"
+                                                                    placeholder="Description"
+                                                                    inputValue={projectCard.description}
+                                                                    onChange={(value) => handleChangeInput(projectCard.$id, 'description', value)}
+                                                                />
+                                                                <AdminLink
+                                                                    linkType={projectCard.links?.[0]?.text || "NoLink"}
+                                                                    inputValue={projectCard.links?.[0]?.url || ""}
+                                                                    onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 0, url, linkType)}
+                                                                    onRemove={() => handleRemoveAdminLink(projectCard.$id, 0)}
+                                                                />
+                                                                <AdminDatePicker
+                                                                    placeholder="Starting Date"
+                                                                    inputValue={projectCard.startDate}
+                                                                    onChange={(value) => handleChangeInput(projectCard.$id, 'startDate', value)}
+                                                                />
+                                                                <AdminLink
+                                                                    linkType={projectCard.links?.[1]?.text || "NoLink"}
+                                                                    inputValue={projectCard.links?.[1]?.url || ""}
+                                                                    onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 1, url, linkType)}
+                                                                    onRemove={() => handleRemoveAdminLink(projectCard.$id, 1)}
+                                                                />
+                                                                <AdminDatePicker
+                                                                    placeholder="Ending Date"
+                                                                    inputValue={projectCard.endDate}
+                                                                    onChange={(value) => handleChangeInput(projectCard.$id, 'endDate', value)}
+                                                                />
+                                                                <AdminLink
+                                                                    linkType={projectCard.links?.[2]?.text || "NoLink"}
+                                                                    inputValue={projectCard.links?.[2]?.url || ""}
+                                                                    onChange={(url, linkType) => handleChangeAdminLink(projectCard.$id, 2, url, linkType)}
+                                                                    onRemove={() => handleRemoveAdminLink(projectCard.$id, 2)}
+                                                                />
                                                             </div>
-                                                            <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
-                                                                {projectCard.techBadges.map(techBadge => (
-                                                                    <div
-                                                                        key={techBadge.$id}
-                                                                        className='flex items-center rounded-s-[19px] rounded-e-md bg-destructive hover:bg-destructive/90'
-                                                                    >
-                                                                        <TechBadge
-                                                                            imgSrc={techBadge.icon}
-                                                                            text={techBadge.name}
-                                                                        />
-                                                                        <button
-                                                                            className='cursor-pointer rounded-e-md w-full h-full px-3'
-                                                                            onClick={() => handleDeleteTechBadge(projectCard.$id, techBadge.$id)}
+                                                            <AdminCheckBox
+                                                                checked={projectCard.original}
+                                                                onChange={(checked) => handleChangeAdminCheckBox(projectCard.$id, checked)}
+                                                                id={projectCard.$id}
+                                                            />
+                                                            <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
+                                                                <div className='flex justify-between items-center'>
+                                                                    <h3>Tech Badges</h3>
+                                                                    <AdminSearch onTechBadgeSelect={(techBadge) => handleAddTechBadge(projectCard.$id, techBadge)} />
+                                                                </div>
+                                                                <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
+                                                                    {projectCard.techBadges.map(techBadge => (
+                                                                        <div
+                                                                            key={techBadge.$id}
+                                                                            className='flex items-center rounded-s-[19px] rounded-e-md bg-destructive hover:bg-destructive/90'
                                                                         >
-                                                                            <FaTrash size={16} className='text-white' />
-                                                                        </button>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                        <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
-                                                            <div className='flex justify-between items-center'>
-                                                                <h3>Images</h3>
-                                                                <div className='flex gap-4'>
-                                                                    <Button
-                                                                        variant="primary"
-                                                                        onClick={() => handleAddImage(projectCard.$id, true)}
-                                                                    >
-                                                                        <FaArrowUp />
-                                                                        Add Image Top
-                                                                    </Button>
-                                                                    <Button
-                                                                        variant="primary"
-                                                                        onClick={() => handleAddImage(projectCard.$id, false)}
-                                                                    >
-                                                                        <FaArrowDown />
-                                                                        Add Image Bottom
-                                                                    </Button>
+                                                                            <TechBadge
+                                                                                imgSrc={techBadge.icon}
+                                                                                text={techBadge.name}
+                                                                            />
+                                                                            <button
+                                                                                className='cursor-pointer rounded-e-md w-full h-full px-3'
+                                                                                onClick={() => handleDeleteTechBadge(projectCard.$id, techBadge.$id)}
+                                                                            >
+                                                                                <FaTrash size={16} className='text-white' />
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
                                                             </div>
-                                                            <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
-                                                                {projectCard.images.map((image, index) => (
-                                                                    <div key={index} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
-                                                                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
-                                                                            <SafeImage
-                                                                                src={image.src}
-                                                                                alt={image.alt}
-                                                                            />
-                                                                        </div>
-                                                                        <AdminInput
-                                                                            icon="link"
-                                                                            placeholder="Image URL"
-                                                                            inputValue={image.src}
-                                                                            onChange={(value) => handleChangeImageField(projectCard.$id, index, 'src', value)}
-                                                                        />
-                                                                        <AdminInput
-                                                                            icon="text"
-                                                                            placeholder="Image alt text"
-                                                                            inputValue={image.alt}
-                                                                            onChange={(value) => handleChangeImageField(projectCard.$id, index, 'alt', value)}
-                                                                        />
+                                                            <div className='flex flex-col gap-4 w-full max-w-[806px] bg-my-background-200 border border-border rounded-md p-3'>
+                                                                <div className='flex justify-between items-center'>
+                                                                    <h3>Images</h3>
+                                                                    <div className='flex gap-4'>
                                                                         <Button
-                                                                            variant="destructive"
-                                                                            className="ml-auto max-4xl:mx-auto"
-                                                                            onClick={() => handleDeleteImage(projectCard.$id, index)}
+                                                                            variant="primary"
+                                                                            onClick={() => handleAddImage(projectCard.$id, true)}
                                                                         >
-                                                                            <FaTrash />
-                                                                            Delete
+                                                                            <FaArrowUp />
+                                                                            Add Image Top
+                                                                        </Button>
+                                                                        <Button
+                                                                            variant="primary"
+                                                                            onClick={() => handleAddImage(projectCard.$id, false)}
+                                                                        >
+                                                                            <FaArrowDown />
+                                                                            Add Image Bottom
                                                                         </Button>
                                                                     </div>
-                                                                ))}
+                                                                </div>
+                                                                <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
+                                                                    {projectCard.images.map((image, index) => (
+                                                                        <div key={index} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                                                                            <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
+                                                                                <SafeImage
+                                                                                    src={image.src}
+                                                                                    alt={image.alt}
+                                                                                />
+                                                                            </div>
+                                                                            <AdminInput
+                                                                                icon="link"
+                                                                                placeholder="Image URL"
+                                                                                inputValue={image.src}
+                                                                                onChange={(value) => handleChangeImageField(projectCard.$id, index, 'src', value)}
+                                                                            />
+                                                                            <AdminInput
+                                                                                icon="text"
+                                                                                placeholder="Image alt text"
+                                                                                inputValue={image.alt}
+                                                                                onChange={(value) => handleChangeImageField(projectCard.$id, index, 'alt', value)}
+                                                                            />
+                                                                            <Button
+                                                                                variant="destructive"
+                                                                                className="ml-auto max-4xl:mx-auto"
+                                                                                onClick={() => handleDeleteImage(projectCard.$id, index)}
+                                                                            >
+                                                                                <FaTrash />
+                                                                                Delete
+                                                                            </Button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        <Button
+                                                            variant="destructive"
+                                                            className="ml-auto max-4xl:mx-auto"
+                                                            onClick={() => console.log("Delete project card")} // handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)
+                                                        >
+                                                            <FaTrash />
+                                                            Delete
+                                                        </Button>
                                                     </div>
-                                                    <Button
-                                                        variant="destructive"
-                                                        className="ml-auto max-4xl:mx-auto"
-                                                        onClick={() => console.log("Delete project card")} // handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)
-                                                    >
-                                                        <FaTrash />
-                                                        Delete
-                                                    </Button>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                )}
             </section>
         </>
     )
