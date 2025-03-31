@@ -393,3 +393,17 @@ export const addProjectCard = async ({
         return false;
     }
 }
+
+export const deleteProjectCard = async (projectId: string) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            projectId
+        );
+    } catch (error) {
+        handleError(error, 'Failed to delete project card');
+    }
+}

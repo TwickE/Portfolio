@@ -8,12 +8,22 @@ import { Button } from "@/components/ui/button";
 import { FaTrash, FaPlus, FaSave, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
-import { addProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/file.actions";
+import { addProjectCard, deleteProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/file.actions";
 import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
 import TechBadge from "@/components/TechBadge";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 const NUMBER_OF_SKELETONS = 3;
 
@@ -24,6 +34,10 @@ const AdminProjectCards = () => {
     const [isSaving, setIsSaving] = useState(false);
     // State to track if the data is being fetched
     const [isFetchingData, setIsFetchingData] = useState(false);
+    // State to track the if the alert dialog is open
+    const [alertOpen, setAlertOpen] = useState(false);
+    // State to store the delete action
+    const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
 
     // Gets the tech badges from the database
     const fetchProjectCards = useCallback(async () => {
@@ -470,6 +484,38 @@ const AdminProjectCards = () => {
         })); // Add the new project card to the state
     }
 
+    const handleDeleteProjectCard = (projectCardId: string, newProjectCard: boolean) => {
+        // Create the delete function with the current skill data captured in closure
+        const executeDeleteProjectCard = async () => {
+            try {
+                // Remove the skill from local state
+                setProjectCardsData(prev => {
+                    const newState = { ...prev };
+                    delete newState[projectCardId];
+                    return newState;
+                });
+
+                // Only call the API if it's not a new skill
+                if (!newProjectCard) {
+                    await deleteProjectCard(projectCardId);
+                }
+
+                toast.success("Project Card deleted successfully");
+            } catch (error) {
+                console.error("Delete error:", error);
+                toast.error("Failed to delete Project Card");
+            } finally {
+                // Reset and close dialog
+                setDeleteAction(null);
+                setAlertOpen(false);
+            }
+        };
+
+        // Store the delete function and open dialog
+        setDeleteAction(() => executeDeleteProjectCard);
+        setAlertOpen(true);
+    };
+
     return (
         <>
             <section className="h-full">
@@ -640,7 +686,7 @@ const AdminProjectCards = () => {
                                                         <Button
                                                             variant="destructive"
                                                             className="ml-auto max-4xl:mx-auto"
-                                                            onClick={() => console.log("Delete project card")} // handleDeleteSkill(skill.$id, skill.bucketFileId, skill.newSkill)
+                                                            onClick={() => handleDeleteProjectCard(projectCard.$id, projectCard.new)}
                                                         >
                                                             <FaTrash />
                                                             Delete
@@ -657,6 +703,32 @@ const AdminProjectCards = () => {
                     </DragDropContext>
                 )}
             </section>
+            <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+                <AlertDialogContent className="bg-my-accent border-my-secondary">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Project Card</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete this project card? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            onClick={() => {
+                                setDeleteAction(null);
+                                setAlertOpen(false);
+                            }}
+                        >
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => deleteAction && deleteAction()}
+                            className="bg-destructive text-white shadow-sm hover:bg-destructive/90"
+                        >
+                            Delete Skill
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     )
 }
