@@ -329,6 +329,11 @@ const AdminProjectCards = () => {
             return true;
         }
 
+        if (projectCard.links.some(link => link.text === "NoLink")) {
+            toast.error("Please provide a link type for all links");
+            return true;
+        }
+
         if (projectCard.images.some(image => !image.alt)) {
             toast.error("Please provide alt text for all images");
             return true;
@@ -527,7 +532,7 @@ const AdminProjectCards = () => {
                                                                             className='cursor-pointer rounded-e-md w-full h-full px-3'
                                                                             onClick={() => handleDeleteTechBadge(projectCard.$id, techBadge.$id)}
                                                                         >
-                                                                            <FaTrash size={16} />
+                                                                            <FaTrash size={16} className='text-white' />
                                                                         </button>
                                                                     </div>
                                                                 ))}

@@ -159,28 +159,28 @@ export const AdminLink = ({ linkType, inputValue, onChange, onRemove }: AdminLin
                 </PopoverTrigger>
                 <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-2 text-base">
                     <button
-                        className={`${selectedLinkType === "Github" ? "bg-my-primary" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        className={`${selectedLinkType === "Github" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
                         onClick={() => handleLinkTypeChange("Github")}
                     >
                         <FaGithub />
                         Github
                     </button>
                     <button
-                        className={`${selectedLinkType === "Website" ? "bg-my-primary" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        className={`${selectedLinkType === "Website" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
                         onClick={() => handleLinkTypeChange("Website")}
                     >
                         <FaGlobe />
                         Website
                     </button>
                     <button
-                        className={`${selectedLinkType === "Figma" ? "bg-my-primary" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        className={`${selectedLinkType === "Figma" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
                         onClick={() => handleLinkTypeChange("Figma")}
                     >
                         <FaFigma />
                         Figma
                     </button>
                     <button
-                        className={`${selectedLinkType === "Game" ? "bg-my-primary" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        className={`${selectedLinkType === "Game" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
                         onClick={() => handleLinkTypeChange("Game")}
                     >
                         <FaGamepad />

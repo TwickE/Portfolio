@@ -24,7 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-const NUMBER_OF_SKELETONS = 5;
+const NUMBER_OF_SKELETONS = 6;
 
 const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
     // State to store the main skills and track their changes
@@ -296,9 +296,11 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     </div>
                 </div>
                 {isFetchingData ? (
-                    Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
-                        <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
-                    ))
+                    <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                        {Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                            <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
+                        ))}
+                    </div>
                 ) : (
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="list">

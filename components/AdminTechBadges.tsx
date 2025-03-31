@@ -22,7 +22,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-const NUMBER_OF_SKELETONS = 5;
+const NUMBER_OF_SKELETONS = 6;
 
 const AdminTechBadges = () => {
     // State to store the tech badges and track their changes
