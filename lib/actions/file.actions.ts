@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { AdminSkill, DeleteSkillProps, TechBadgeType, ProjectCardType, ProjectCardDatabase } from "@/types/interfaces";
+import { AdminSkill, DeleteSkillProps, TechBadgeType, ProjectCardType, ProjectCardDatabase, ResumeItemProps } from "@/types/interfaces";
 import { constructFileUrl } from "@/lib/utils";
 
 const handleError = (error: unknown, message: string) => {
@@ -405,5 +405,40 @@ export const deleteProjectCard = async (projectId: string) => {
         );
     } catch (error) {
         handleError(error, 'Failed to delete project card');
+    }
+}
+
+export const getResume = async ({ type }: { type: "education" | "work" | "course" }) => {
+    try {
+        const { databases } = await createPublicClient();
+
+        if(type === "education" || type === "course") {
+            const result = await databases.listDocuments(
+                appwriteConfig.databaseId,
+                appwriteConfig.resumeCollectionId,
+                [
+                    Query.equal('icon', ["education", "course"]),
+                    Query.orderAsc('order')
+                ],
+            );
+
+            // Transform the data to match your Skill interface
+            return result.documents as unknown as ResumeItemProps[];
+        } else {
+            const result = await databases.listDocuments(
+                appwriteConfig.databaseId,
+                appwriteConfig.resumeCollectionId,
+                [
+                    Query.equal('icon', ["work"]),
+                    Query.orderAsc('order')
+                ],
+            );
+
+            // Transform the data to match your Skill interface
+            return result.documents as unknown as ResumeItemProps[];
+        }
+    } catch (error) {
+        handleError(error, "Failed to get resume information");
+        return undefined;
     }
 }

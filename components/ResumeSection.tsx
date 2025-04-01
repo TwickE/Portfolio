@@ -1,13 +1,53 @@
-import { useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
+import { getResume } from '@/lib/actions/file.actions';
+import { Skeleton } from "@/components/ui/skeleton"
+
+const NUMBER_OF_SKELETONS = 8;
 
 const ResumeSection = () => {
+    // State to store if the education items are loading
+    const [isLoading, setIsLoading] = useState(true);
+    // State to store the education items
+    const [educationItems, setEducationItems] = useState<ResumeItemProps[]>([]);
+    // State to store the work items
+    const [workItems, setWorkItems] = useState<ResumeItemProps[]>([]);
+
     const firstBarContainer = useRef<HTMLDivElement>(null);
     const firstBar = useRef<HTMLSpanElement>(null);
     const secondBarContainer = useRef<HTMLDivElement>(null);
     const secondBar = useRef<HTMLSpanElement>(null);
+
+    // Fetches the project cards when the component mounts
+    useEffect(() => {
+        const fetchResume = async () => {
+            setIsLoading(true);
+            try {
+                // Fetch both types of skills in parallel
+                const [educationData, workData] = await Promise.all([
+                    getResume({ type: "education" }),
+                    getResume({ type: "work" })
+                ]);
+
+                // Update state with the results
+                if (educationData) {
+                    setEducationItems(educationData);
+                }
+
+                if (workData) {
+                    setWorkItems(workData);
+                }
+            } catch (error) {
+                console.error("Failed to fetch resume data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchResume();
+    }, []);
+
 
     const calculateBarHeights = () => {
         if (firstBarContainer.current && firstBar.current) {
@@ -66,77 +106,87 @@ const ResumeSection = () => {
         };
     }, []); // Empty dependency array means this runs once on mount
 
+    // Calculates the bar heights after data is loaded and DOM is updated
+    useEffect(() => {
+        if (!isLoading) {
+            calculateBarHeights();
+        }
+    }, [isLoading, educationItems, workItems]);
+
     return (
         <section className="bg-my-background-200 flex flex-col items-center w-full py-12">
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-8">My Resume</h2>
                 <div className='w-full flex items-start gap-5 max-2xl:flex-col'>
-
                     <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8'>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Education</h3>
                         <div ref={firstBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
-                            <span ref={firstBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]'></span>
-                            <ResumeItem
-                                icon="school"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
-                            <ResumeItem
-                                icon="course"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
-                            <ResumeItem
-                                icon="work"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
+                            {isLoading ? (
+                                Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                                    <div key={index} className="flex gap-5">
+                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full"/>
+                                        <div className="flex flex-col gap-2">
+                                            <Skeleton className="max-w-25 w-25 h-7" />
+                                            <Skeleton className="max-w-98 w-98 h-7" />
+                                            <Skeleton className="max-w-98 w-98 h-7" />
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <>
+                                    <span ref={firstBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
+                                    {educationItems.map((item, index) => (
+                                        <ResumeItem
+                                            key={index}
+                                            icon={item.icon}
+                                            date={item.date}
+                                            text1={item.text1}
+                                            text2={item.text2}
+                                        />
+                                    ))}
+                                </>
+                            )}
                         </div>
                     </div>
-
                     <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8 max-2xl:mt-12'>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Work Experience</h3>
                         <div ref={secondBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
-                            <span ref={secondBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]'></span>
-                            <ResumeItem
-                                icon="school"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
-                            <ResumeItem
-                                icon="course"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
-                            <ResumeItem
-                                icon="work"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
-                            <ResumeItem
-                                icon="work"
-                                date="2023 - 2025"
-                                text1="Master's Degree in Computer Science"
-                                text2="Faculdade de Ciências da Universidade de Lisboa"
-                            />
+                            {isLoading ? (
+                                Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                                    <div key={index} className="flex gap-5">
+                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full"/>
+                                        <div className="flex flex-col gap-2">
+                                            <Skeleton className="max-w-25 w-25 h-7" />
+                                            <Skeleton className="max-w-98 w-98 h-7" />
+                                            <Skeleton className="max-w-98 w-98 h-7" />
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <>
+                                    <span ref={secondBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
+                                    {workItems.map((item, index) => (
+                                        <ResumeItem
+                                            key={index}
+                                            icon={item.icon}
+                                            date={item.date}
+                                            text1={item.text1}
+                                            text2={item.text2}
+                                        />
+                                    ))}
+                                </>
+                            )}
                         </div>
                     </div>
-
                 </div>
             </div>
-        </section>
+        </section >
     )
 }
 
 export default ResumeSection
 
-const ResumeItem = ({ icon, date, text1, text2 }: ResumeItemProps) => {
+const ResumeItem = ({ icon, date, text1, text2 }: Partial<ResumeItemProps>) => {
     return (
         <div className="flex gap-5">
             <span className="w-15 min-w-15 h-15 min-h-15 rounded-full text-white bg-my-primary dark:bg-my-secondary grid place-items-center relative

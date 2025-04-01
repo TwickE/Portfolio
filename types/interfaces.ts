@@ -149,4 +149,5 @@ export interface ResumeItemProps {
     date: string;
     text1: string;
     text2: string;
+    order: number;
 }

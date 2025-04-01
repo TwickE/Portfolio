@@ -7,6 +7,7 @@ export const appwriteConfig = {
     skillsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_SKILLS_COLLECTION!,
     techBadgesCollectionId: process.env.NEXT_PUBLIC_APPWRITE_TECH_BADGES_COLLECTION!,
     projectCardsCollectionId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_CARDS_COLLECTION!,
+    resumeCollectionId: process.env.NEXT_PUBLIC_APPWRITE_RESUME_COLLECTION!,
     // Storage
     storageSkillIconsId: process.env.NEXT_PUBLIC_APPWRITE_STORAGE_SKILL_ICONS!,
     storageTechBadgesIconsId: process.env.NEXT_PUBLIC_APPWRITE_TECH_BADGES_ICONS!,
