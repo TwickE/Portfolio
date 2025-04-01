@@ -143,3 +143,10 @@ export interface AdminCheckBoxProps {
 export interface AdminSearchProps {
     onTechBadgeSelect: (techBadge: TechBadgeType) => void;
 }
+
+export interface ResumeItemProps {
+    icon: string;
+    date: string;
+    text1: string;
+    text2: string;
+}

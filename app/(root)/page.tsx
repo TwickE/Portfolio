@@ -8,47 +8,17 @@ import useDownloadCV from "@/hooks/useDownloadCV";
 import useOpenLink from "@/hooks/useOpenLink";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
-
-
-import { getTechBadges } from "@/lib/actions/file.actions";
-import { useEffect, useState } from "react";
-import { TechBadgeType } from "@/types/interfaces";
-import TechBadge from "@/components/TechBadge";
+import ResumeSection from "@/components/ResumeSection";
 
 export default function Home() {
-    const [techBadges, setTechBadges] = useState<TechBadgeType[]>([]);
-
-    useEffect(() => {
-        const fetchTechBadges = async () => {
-            try {
-                const data = await getTechBadges();
-
-                if (data) {
-                    setTechBadges(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch tech badges:", error);
-            }
-        };
-        fetchTechBadges();
-    }, []);
 
     return (
         <>
             <HeroSection />
             <SkillsSection />
             <ProjectsSection />
-            <div className="flex flex-wrap gap-3 w-full h-96 bg-red-500">
-                {techBadges.map((badge, index) => (
-                    <TechBadge
-                        key={index}
-                        imgSrc={badge.icon}
-                        text={badge.name}
-                    />
-                ))}
-            </div>
+            <ResumeSection />
         </>
-
     )
 }
 
