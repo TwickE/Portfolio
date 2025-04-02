@@ -8,7 +8,7 @@ import { PiCertificateFill } from "react-icons/pi";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { FaRotate } from "react-icons/fa6";
-import { AdminInput } from "@/components/AdminSmallComponents";
+import { AdminDropDown, AdminInput } from "@/components/AdminSmallComponents";
 import { getResume } from "@/lib/actions/file.actions";
 import { ResumeItemProps } from "@/types/interfaces";
 import { toast } from "sonner";
@@ -85,6 +85,33 @@ const AdminResume = ({ type }: { type: "education" | "work" }) => {
         }, {} as Record<string, ResumeItemProps>));
     }
 
+    const handleDropDownChange = (resumeItemId: string, value: string) => {
+        // Update the resume item with the new icon value
+        setResumeData(prev => ({
+            ...prev,
+            [resumeItemId]: {
+                ...prev[resumeItemId],
+                icon: value,
+                // Set modified flag if this is not a new item
+                ...(prev[resumeItemId].new ? {} : { modified: true })
+            }
+        }));
+    }
+
+    const handleInputChange = (resumeItemId: string, field: string, value: string) => {
+        const resumeItem = resumeData[resumeItemId];
+        if (!resumeItem) return;
+
+        // Track the change
+        setResumeData(prev => ({
+            ...prev,
+            [resumeItemId]: {
+                ...prev[resumeItemId] || resumeItem,
+                [field]: value
+            }
+        }));
+    }
+
     return (
         <>
             <section>
@@ -119,44 +146,28 @@ const AdminResume = ({ type }: { type: "education" | "work" }) => {
                                                 </span>
                                                 <div className="flex items-center gap-4 flex-wrap w-full">
                                                     <p className="text-black dark:text-white">{resumeItem.order}</p>
-                                                    <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
-                                                        {resumeItem.icon === 'school' ? (
-                                                            <FaGraduationCap size={60} className='text-white' />
-                                                        ) : resumeItem.icon === "course" ? (
-                                                            <PiCertificateFill size={60} className='text-white' />
-                                                        ) : resumeItem.icon === "work" ? (
-                                                            <FaBriefcase size={60} className='text-white' />
-                                                        ) : (
-                                                            <Image
-                                                                src="/images/noImage.webp"
-                                                                width={60}
-                                                                height={60}
-                                                                alt="Resume item type"
-                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    <Button variant="primary" /* onClick={() => handleUpdateIcon(skill.$id)} */>
-                                                        <FaCloudUploadAlt />
-                                                        Upload Icon
-                                                    </Button>
+                                                    <AdminDropDown
+                                                        selectedValue={resumeItem.icon || "school"}
+                                                        type={type}
+                                                        onChange={(value) => handleDropDownChange(resumeItem.$id, value)}
+                                                    />
                                                     <AdminInput
-                                                        icon="text" // change icon to calendar
+                                                        icon="date"
                                                         placeholder="Date"
                                                         inputValue={resumeItem.date}
-                                                        onChange={() => console.log("Date changed")} // (value) => handleSkillInputChange(skill.$id, 'name', value)
+                                                        onChange={(value) => handleInputChange(resumeItem.$id, "date", value)}
                                                     />
                                                     <AdminInput
                                                         icon="text"
                                                         placeholder="Text 1"
                                                         inputValue={resumeItem.text1}
-                                                        onChange={() => console.log("Text 1 changed")} // (value) => handleSkillInputChange(skill.$id, 'link', value)
+                                                        onChange={(value) => handleInputChange(resumeItem.$id, "text1", value)}
                                                     />
                                                     <AdminInput
                                                         icon="text"
                                                         placeholder="Text 2"
                                                         inputValue={resumeItem.text2}
-                                                        onChange={() => console.log("Text 2 changed")} // (value) => handleSkillInputChange(skill.$id, 'link', value)
+                                                        onChange={(value) => handleInputChange(resumeItem.$id, "text2", value)}
                                                     />
                                                     <Button
                                                         variant="destructive"

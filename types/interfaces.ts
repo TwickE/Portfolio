@@ -47,7 +47,7 @@ export interface DeleteSkillProps {
 }
 
 export interface AdminInputProps {
-    icon: 'link' | 'text';
+    icon: 'link' | 'text' | 'date';
     placeholder: string;
     inputValue: string;
     onChange?: (value: string) => void;
@@ -151,4 +151,10 @@ export interface ResumeItemProps {
     text1: string;
     text2: string;
     order: number;
+}
+
+export interface AdminDropDownProps {
+    selectedValue: string;
+    type: 'education' | 'work';
+    onChange?: (value: string) => void;
 }

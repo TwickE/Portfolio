@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch, FaBan } from "react-icons/fa";
+import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch, FaBan, FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { AdminCheckBoxProps, AdminDatePickerProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
+import { PiCertificateFill } from "react-icons/pi";
+import { AdminCheckBoxProps, AdminDatePickerProps, AdminDropDownProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
@@ -39,6 +40,7 @@ export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInp
         <div className="flex items-center gap-2 ps-[10px] h-[36px] bg-my-primary rounded-sm">
             {icon === 'link' && <FaLink color="white" size={16} />}
             {icon === 'text' && <FaFont color="white" size={16} />}
+            {icon === 'date' && <FaCalendarAlt color="white" size={16} />}
             <input
                 type="text"
                 value={value}
@@ -330,3 +332,65 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
         </div>
     );
 };
+
+export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownProps) => {
+    const [selected, setSelected] = useState(selectedValue || "");
+
+    // When the selection changes, update the parent component
+    const handleSelectionChange = (newValue: string) => {
+        setSelected(newValue);
+        if (onChange) onChange(newValue);
+    };
+
+    // Update local state when selectedValue prop changes
+    useEffect(() => {
+        if (selectedValue !== selected) {
+            setSelected(selectedValue || "");
+        }
+    }, [selectedValue, selected]);
+
+    return (
+        type === "education" ? (
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button className="cursor-pointer text-white flex items-center gap-2" variant="primary">
+                        {selected === "school" && (
+                            <>
+                                <FaGraduationCap size={16} />
+                                School
+                            </>
+                        )}
+                        {selected === "course" && (
+                            <>
+                                <PiCertificateFill size={16} />
+                                Course
+                            </>
+                        )}
+                        <FaChevronDown color="white" className="!w-2 !h-2" size={8} />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-2 text-base">
+                    <button
+                        className={`${selected === "school" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        onClick={() => handleSelectionChange("school")}
+                    >
+                        <FaGraduationCap />
+                        School
+                    </button>
+                    <button
+                        className={`${selected === "course" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
+                        onClick={() => handleSelectionChange("course")}
+                    >
+                        <PiCertificateFill />
+                        Course
+                    </button>
+                </PopoverContent>
+            </Popover>
+        ) : (
+            <div className="flex items-center gap-2 h-[36px] px-[10px] text-sm bg-my-primary rounded-sm">
+                <FaBriefcase size={16} />
+                Work
+            </div>
+        )
+    )
+}
