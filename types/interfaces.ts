@@ -145,6 +145,7 @@ export interface AdminSearchProps {
 }
 
 export interface ResumeItemProps {
+    $id: string;
     icon: string;
     date: string;
     text1: string;

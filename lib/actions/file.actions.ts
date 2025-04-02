@@ -408,16 +408,16 @@ export const deleteProjectCard = async (projectId: string) => {
     }
 }
 
-export const getResume = async ({ type }: { type: "education" | "work" | "course" }) => {
+export const getResume = async ({ type }: { type: "school" | "work" | "course" }) => {
     try {
         const { databases } = await createPublicClient();
 
-        if(type === "education" || type === "course") {
+        if(type === "school" || type === "course") {
             const result = await databases.listDocuments(
                 appwriteConfig.databaseId,
                 appwriteConfig.resumeCollectionId,
                 [
-                    Query.equal('icon', ["education", "course"]),
+                    Query.equal('icon', ["school", "course"]),
                     Query.orderAsc('order')
                 ],
             );

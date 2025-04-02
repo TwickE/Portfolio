@@ -8,11 +8,11 @@ import {
     MenubarMenu,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-    // Get the current router and pathname
-    const router = useRouter();
+    // Use Next.js router to get the current pathname
     const pathname = usePathname();
     
     // Define path groups to determine which MenubarTrigger should be active
@@ -33,22 +33,34 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(skillPaths)}`}>Skills</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/main-skills')}>Main Skills</MenubarItem>
-                            <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/other-skills')}>Other Skills</MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/main-skills" className="cursor-pointer">Main Skills</Link>
+                            </MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/other-skills" className="cursor-pointer">Other Skills</Link>
+                            </MenubarItem>
                         </MenubarContent>
                     </MenubarMenu>
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(projectPaths)}`}>Projects</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/project-cards')}>Project Cards</MenubarItem>
-                            <MenubarItem className="cursor-pointer" onClick={() => router.push('/admin/tech-badges')}>Tech Badges</MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/project-cards" className="cursor-pointer">Project Cards</Link>
+                            </MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/tech-badges" className="cursor-pointer">Tech Badges</Link>
+                            </MenubarItem>
                         </MenubarContent>
                     </MenubarMenu>
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(resumePaths)}`}>Resume</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem className="cursor-pointer">Education</MenubarItem>
-                            <MenubarItem className="cursor-pointer">Work Experience</MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/education" className="cursor-pointer">Education</Link>
+                            </MenubarItem>
+                            <MenubarItem className="cursor-pointer">
+                                <Link href="/admin/work-experience" className="cursor-pointer">Work Experience</Link>
+                            </MenubarItem>
                         </MenubarContent>
                     </MenubarMenu>
                 </Menubar>

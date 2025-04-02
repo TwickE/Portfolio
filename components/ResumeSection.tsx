@@ -20,14 +20,14 @@ const ResumeSection = () => {
     const secondBarContainer = useRef<HTMLDivElement>(null);
     const secondBar = useRef<HTMLSpanElement>(null);
 
-    // Fetches the project cards when the component mounts
+    // Fetches the resume data when the component mounts
     useEffect(() => {
         const fetchResume = async () => {
             setIsLoading(true);
             try {
-                // Fetch both types of skills in parallel
+                // Fetch both types of data in parallel
                 const [educationData, workData] = await Promise.all([
-                    getResume({ type: "education" }),
+                    getResume({ type: "school" }),
                     getResume({ type: "work" })
                 ]);
 
@@ -135,9 +135,9 @@ const ResumeSection = () => {
                             ) : (
                                 <>
                                     <span ref={firstBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
-                                    {educationItems.map((item, index) => (
+                                    {educationItems.map((item) => (
                                         <ResumeItem
-                                            key={index}
+                                            key={item.$id}
                                             icon={item.icon}
                                             date={item.date}
                                             text1={item.text1}
@@ -165,9 +165,9 @@ const ResumeSection = () => {
                             ) : (
                                 <>
                                     <span ref={secondBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
-                                    {workItems.map((item, index) => (
+                                    {workItems.map((item) => (
                                         <ResumeItem
-                                            key={index}
+                                            key={item.$id}
                                             icon={item.icon}
                                             date={item.date}
                                             text1={item.text1}
