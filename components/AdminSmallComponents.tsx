@@ -353,7 +353,7 @@ export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownPr
         type === "education" ? (
             <Popover>
                 <PopoverTrigger asChild>
-                    <Button className="cursor-pointer text-white flex items-center gap-2" variant="primary">
+                    <Button className="cursor-pointer text-white flex items-center gap-2 min-w-32" variant="primary">
                         {selected === "school" && (
                             <>
                                 <FaGraduationCap size={16} />
@@ -387,7 +387,7 @@ export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownPr
                 </PopoverContent>
             </Popover>
         ) : (
-            <div className="flex items-center gap-2 h-[36px] px-[10px] text-sm bg-my-primary rounded-sm">
+            <div className="flex justify-center items-center gap-2 min-w-32 h-[36px] px-[10px] text-sm bg-my-primary rounded-sm">
                 <FaBriefcase size={16} />
                 Work
             </div>

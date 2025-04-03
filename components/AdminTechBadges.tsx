@@ -265,7 +265,7 @@ const AdminTechBadges = () => {
                         </Button>
                         <Button variant="primary" onClick={handleAddNewTechBadge}>
                             <FaPlus />
-                            Add Tech Badge
+                            Add
                         </Button>
                     </div>
 

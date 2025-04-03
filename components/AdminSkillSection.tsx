@@ -287,7 +287,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                         </Button>
                         <Button variant="primary" onClick={handleAddNewSkill}>
                             <FaPlus />
-                            Add Skill
+                            Add
                         </Button>
                         <Button variant="save" onClick={handleUpdateSkills} disabled={isSaving}>
                             {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}

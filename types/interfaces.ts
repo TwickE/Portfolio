@@ -151,6 +151,7 @@ export interface ResumeItemProps {
     text1: string;
     text2: string;
     order: number;
+    new: boolean;
 }
 
 export interface AdminDropDownProps {

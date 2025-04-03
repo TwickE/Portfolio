@@ -528,7 +528,7 @@ const AdminProjectCards = () => {
                         </Button>
                         <Button variant="primary" onClick={handleAddNewProjectCard}>
                             <FaPlus />
-                            Add Project
+                            Add
                         </Button>
                         <Button variant="save" onClick={handleUpdateProjectCards} disabled={isSaving}>
                             {isSaving ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
