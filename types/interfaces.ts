@@ -159,3 +159,10 @@ export interface AdminDropDownProps {
     type: 'education' | 'work';
     onChange?: (value: string) => void;
 }
+
+export interface ContactBadgeProps {
+    link: string;
+    icon: ReactElement;
+    title: string;
+    text: string;
+}

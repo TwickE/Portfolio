@@ -9,6 +9,7 @@ import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ResumeSection from "@/components/ResumeSection";
 import Link from "next/link";
+import ContactSection from "@/components/ContactSection";
 
 export default function Home() {
 
@@ -18,6 +19,7 @@ export default function Home() {
             <SkillsSection />
             <ProjectsSection />
             <ResumeSection />
+            <ContactSection />
         </>
     )
 }
