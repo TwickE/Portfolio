@@ -5,10 +5,10 @@ import Image from "next/image"
 import { FiDownload } from "react-icons/fi";
 import { FaLinkedin, FaGithub, FaCodepen } from "react-icons/fa";
 import useDownloadCV from "@/hooks/useDownloadCV";
-import useOpenLink from "@/hooks/useOpenLink";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ResumeSection from "@/components/ResumeSection";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -23,9 +23,6 @@ export default function Home() {
 }
 
 const HeroSection = () => {
-    // Call the hook once to get the openLink function
-    const openLink = useOpenLink();
-
     return (
         <main className="responsive-container min-h-[calc(100vh-196px)] flex my-12 hero-glow1  max-2xl:flex-col max-2xl:items-center">
             <div className="flex flex-col justify-center gap-2 w-1/2 max-2xl:w-[700px] max-2xl:items-center max-xl:w-full max-lg:px-3">
@@ -49,24 +46,28 @@ const HeroSection = () => {
                         containerClasses="py-5 px-10"
                     />
                     <div className="flex gap-5 items-center">
-                        <OutlineButton
-                            rightImg={<FaLinkedin size={18} />}
-                            clickFunction={() => openLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
-                            containerClasses="p-2"
-                            ariaLabel="Open LinkedIn Profile"
-                        />
-                        <OutlineButton
-                            rightImg={<FaGithub size={18} />}
-                            clickFunction={() => openLink("https://github.com/TwickE")}
-                            containerClasses="p-2"
-                            ariaLabel="Open Github Profile"
-                        />
-                        <OutlineButton
-                            rightImg={<FaCodepen size={18} />}
-                            clickFunction={() => openLink("https://codepen.io/TwickE")}
-                            containerClasses="p-2"
-                            ariaLabel="Open Codepen Profile"
-                        />
+                        <Link href="https://www.linkedin.com/in/frederico-silva-727a8b21a/" target="_blank" rel="noopener,noreferrer">
+                            <OutlineButton
+                                rightImg={<FaLinkedin size={18} />}
+                                clickFunction={() => console.log("oi")}
+                                containerClasses="p-2"
+                                ariaLabel="Open LinkedIn Profile"
+                            />
+                        </Link>
+                        <Link href="https://github.com/TwickE" target="_blank" rel="noopener,noreferrer">
+                            <OutlineButton
+                                rightImg={<FaGithub size={18} />}
+                                containerClasses="p-2"
+                                ariaLabel="Open Github Profile"
+                            />
+                        </Link>
+                        <Link href="https://codepen.io/TwickE" target="_blank" rel="noopener,noreferrer">
+                            <OutlineButton
+                                rightImg={<FaCodepen size={18} />}
+                                containerClasses="p-2"
+                                ariaLabel="Open Codepen Profile"
+                            />
+                        </Link>
                     </div>
                 </div>
             </div>

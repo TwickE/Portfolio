@@ -1,12 +1,11 @@
 "use client";
 
 import FilledButton from "@/components/FilledButton"
-import { useRouter } from "next/navigation"
 import OutlineButton from "@/components/OutlineButton"
 import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle } from 'react-icons/fa'
-import useOpenLink from "@/hooks/useOpenLink"
 import TechBadge from "./TechBadge"
 import Image from "next/image"
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getProjectCards } from "@/lib/actions/file.actions";
 import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge } from "@/types/interfaces";
@@ -26,12 +25,6 @@ const ProjectsSection = () => {
     const [isLoading, setIsLoading] = useState(true);
     // State to store the project cards
     const [projectCards, setProjectCards] = useState<ProjectCardType[]>([]);
-
-    // Hook to navigate to the projects page
-    const router = useRouter();
-    const navigateToProjects = () => {
-        router.push('/projects');
-    };
 
     // Fetches the project cards when the component mounts
     useEffect(() => {
@@ -59,7 +52,6 @@ const ProjectsSection = () => {
 
                     // Set the state with the processed data
                     setProjectCards(processedData);
-                    console.log("Processed project cards:", processedData);
                 }
             } catch (error) {
                 console.error("Failed to fetch tech badges:", error);
@@ -96,11 +88,12 @@ const ProjectsSection = () => {
                         ))
                     )}
                 </div>
-                <FilledButton
-                    text="View All Projects"
-                    containerClasses='px-8 py-4 mt-8'
-                    clickFunction={navigateToProjects}
-                />
+                <Link href="/projects">
+                    <FilledButton
+                        text="View All Projects"
+                        containerClasses='px-8 py-4 mt-8'
+                    />
+                </Link>
             </div>
         </section>
     )
@@ -114,9 +107,6 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
         src: images[0].src,
         alt: images[0].alt
     });
-
-    // Call the hook once to get the openLink function
-    const openLink = useOpenLink();
 
     // Function to select an image from the list and display it in the main image container
     const selectImage = (src: string, alt: string) => {
@@ -143,22 +133,22 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                 <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis">{description}</p>
                 <div className="flex justify-center flex-wrap gap-2 w-full mb-7">
                     {links.map((link: ProjectCardLink, index: number) => (
-                        <OutlineButton
-                            key={index}
-                            text={link.text}
-                            leftImg={
-                                link.text === "Github"
-                                    ? <FaGithub size={18} />
-                                    : link.text === "Website"
-                                        ? <FaGlobe size={18} />
-                                        : link.text === "Figma"
-                                            ? <FaFigma size={18} />
-                                            : <FaGamepad size={18} />
-                            }
-                            rightImg={<FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />}
-                            containerClasses="py-2 px-7 group"
-                            clickFunction={() => openLink(link.url)}
-                        />
+                        <Link key={index} href={link.url} target="_blank" rel="noopener,noreferrer">
+                            <OutlineButton
+                                text={link.text}
+                                leftImg={
+                                    link.text === "Github"
+                                        ? <FaGithub size={18} />
+                                        : link.text === "Website"
+                                            ? <FaGlobe size={18} />
+                                            : link.text === "Figma"
+                                                ? <FaFigma size={18} />
+                                                : <FaGamepad size={18} />
+                                }
+                                rightImg={<FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />}
+                                containerClasses="py-2 px-7 group"
+                            />
+                        </Link>
                     ))}
                 </div>
                 <div className="flex justify-center flex-wrap gap-2 w-full mb-4">

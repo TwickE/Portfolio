@@ -5,14 +5,14 @@ export interface OutlineButtonProps {
     ariaLabel?: string;
     leftImg?: ReactElement;
     rightImg?: ReactElement;
-    clickFunction: () => void;
+    clickFunction?: () => void;
     containerClasses?: string;
 }
 
 export interface FilledButtonProps {
     text?: string;
     icon?: ReactElement;
-    clickFunction: () => void;
+    clickFunction?: () => void;
     containerClasses: string;
     ariaLabel?: string;
 }

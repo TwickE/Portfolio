@@ -341,7 +341,7 @@ const AdminTechBadges = () => {
                             onClick={() => deleteAction && deleteAction()}
                             className="bg-destructive text-white shadow-sm hover:bg-destructive/90"
                         >
-                            Delete Tech Badge
+                            Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

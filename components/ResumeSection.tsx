@@ -4,6 +4,9 @@ import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
 import { getResume } from '@/lib/actions/file.actions';
 import { Skeleton } from "@/components/ui/skeleton"
+import OutlineButton from './OutlineButton';
+import { FiDownload } from "react-icons/fi";
+import useDownloadCV from "@/hooks/useDownloadCV";
 
 const NUMBER_OF_SKELETONS = 8;
 
@@ -124,7 +127,7 @@ const ResumeSection = () => {
                             {isLoading ? (
                                 Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                                     <div key={index} className="flex gap-5">
-                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full"/>
+                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full" />
                                         <div className="flex flex-col gap-2">
                                             <Skeleton className="max-w-25 w-25 h-7" />
                                             <Skeleton className="max-w-98 w-98 h-7" />
@@ -154,7 +157,7 @@ const ResumeSection = () => {
                             {isLoading ? (
                                 Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                                     <div key={index} className="flex gap-5">
-                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full"/>
+                                        <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full" />
                                         <div className="flex flex-col gap-2">
                                             <Skeleton className="max-w-25 w-25 h-7" />
                                             <Skeleton className="max-w-98 w-98 h-7" />
@@ -179,6 +182,12 @@ const ResumeSection = () => {
                         </div>
                     </div>
                 </div>
+                <OutlineButton
+                    text="Download CV"
+                    rightImg={<FiDownload size={18} />}
+                    clickFunction={useDownloadCV()}
+                    containerClasses="py-5 px-10 mx-auto mt-8"
+                />
             </div>
         </section >
     )

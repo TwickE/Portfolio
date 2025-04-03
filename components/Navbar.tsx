@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import Image from 'next/image';
 import FilledButton from './FilledButton';
-import useOpenLink from '@/hooks/useOpenLink';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
@@ -50,8 +49,6 @@ const Navbar = () => {
         };
     }, [scrolled]);
 
-    const openLink = useOpenLink();
-
     return (
         <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between h-25 responsive-container'>
@@ -77,11 +74,12 @@ const Navbar = () => {
                         activeTheme={activeTheme}
                         setActiveTheme={setActiveTheme}
                     />
-                    <FilledButton
-                        text="Hire Me!"
-                        containerClasses='px-8 py-4'
-                        clickFunction={() => openLink("https://www.linkedin.com/in/frederico-silva-727a8b21a/")}
-                    />
+                    <Link href="https://www.linkedin.com/in/frederico-silva-727a8b21a/" target="_blank" rel="noopener,noreferrer">
+                        <FilledButton
+                            text="Hire Me!"
+                            containerClasses='px-8 py-4'
+                        />
+                    </Link>
                     <MobileMenu
                         activeTheme={activeTheme}
                         setActiveTheme={setActiveTheme}

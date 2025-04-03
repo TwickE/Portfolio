@@ -381,7 +381,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                             onClick={() => deleteAction && deleteAction()}
                             className="bg-destructive text-white shadow-sm hover:bg-destructive/90"
                         >
-                            Delete Skill
+                            Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
