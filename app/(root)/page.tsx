@@ -17,7 +17,7 @@ export default function Home() {
         <>
             <HeroSection />
             <SkillsSection backgroundColor="bg-my-background-200" />
-            <ProjectsSection backgroundColor="bg-my-background-100" />
+            <ProjectsSection backgroundColor="bg-my-background-100" limitQuery={true} />
             <ResumeSection backgroundColor="bg-my-background-200" />
             <ContactSection backgroundColor="bg-my-background-100" />
         </>

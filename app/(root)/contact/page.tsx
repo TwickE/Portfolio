@@ -1,3 +1,5 @@
+import BreadCrumbs from "@/components/BreadCrumbs";
+import ContactSection from "@/components/ContactSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,9 +9,10 @@ export const metadata: Metadata = {
 
 const Contact = () => {
     return (
-        <h1 className="text-3xl text-red-500 font-bold underline">
-            Contact Page
-        </h1>
+        <>
+            <BreadCrumbs title="Contact"/>
+            <ContactSection backgroundColor="bg-my-background-200" />
+        </>
     )
 }
 

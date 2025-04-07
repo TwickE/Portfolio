@@ -1,3 +1,5 @@
+import BreadCrumbs from "@/components/BreadCrumbs";
+import ProjectsSection from "@/components/ProjectsSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,9 +9,10 @@ export const metadata: Metadata = {
 
 const Projects = () => {
     return (
-        <h1 className="text-3xl text-red-500 font-bold underline">
-            Projects Page
-        </h1>
+        <>
+            <BreadCrumbs title="Projects"/>
+            <ProjectsSection backgroundColor="bg-my-background-200" limitQuery={false} />
+        </>
     )
 }
 

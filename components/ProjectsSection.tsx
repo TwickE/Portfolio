@@ -20,7 +20,7 @@ import { format } from "date-fns"
 
 const NUMBER_OF_SKELETONS = 4;
 
-const ProjectsSection = ({backgroundColor}: {backgroundColor: string}) => {
+const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: string, limitQuery: boolean }) => {
     // State to store if the project cards are loading
     const [isLoading, setIsLoading] = useState(true);
     // State to store the project cards
@@ -31,7 +31,7 @@ const ProjectsSection = ({backgroundColor}: {backgroundColor: string}) => {
         const fetchProjectCards = async () => {
             setIsLoading(true);
             try {
-                const data = await getProjectCards(false);
+                const data = await getProjectCards(!limitQuery);
 
                 if (data) {
                     // Process the data to parse stringified fields
@@ -88,12 +88,15 @@ const ProjectsSection = ({backgroundColor}: {backgroundColor: string}) => {
                         ))
                     )}
                 </div>
-                <Link href="/projects">
-                    <FilledButton
-                        text="View All Projects"
-                        containerClasses='px-8 py-4 mt-8'
-                    />
-                </Link>
+                {limitQuery && (
+                    <Link href="/projects">
+                        <FilledButton
+                            text="View All Projects"
+                            containerClasses='px-8 py-4 mt-8'
+                        />
+                    </Link>
+                )}
+
             </div>
         </section>
     )

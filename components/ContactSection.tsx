@@ -1,3 +1,5 @@
+"use client";
+
 import { ContactBadgeProps } from '@/types/interfaces'
 import Link from 'next/link'
 import { FaEnvelope, FaLinkedin, FaGithub, FaCodepen } from 'react-icons/fa'
