@@ -48,6 +48,7 @@
     --my-secondary-glass: rgba(10, 18, 100, 0.1);
     --my-glass: rgba(255, 255, 255, 0.5);
     --my-photo-background: #F0F0F0;
+    --my-ripple: black;
 }
 
 .dark {
@@ -91,6 +92,7 @@
     --my-secondary-glass: rgba(10, 18, 100, 0.25);
     --my-glass: rgba(7, 9, 21, 0.5);
     --my-photo-background: #0F0F0F;
+    --my-ripple: white;
 }
 
 @theme inline {
@@ -133,7 +135,6 @@
 
     --animate-caret-blink: caret-blink 1.25s ease-out infinite;
     @keyframes caret-blink {
-
         0%,
         70%,
         100% {
@@ -143,6 +144,25 @@
         20%,
         50% {
             opacity: 0;
+        }
+    }
+
+    --animate-ripple-text: ripple-text 2s ease infinite;
+    @keyframes ripple-text {
+        0% {
+            -webkit-transform: translate3D(0, 0, 0) scale(1) rotateY(0);
+            transform: translate3D(0, 0, 0) scale(1) rotateY(0);
+        }
+    
+        15% {
+            -webkit-transform: translate3D(2px, -2px, 2px) scale(1.2);
+            transform: translate3D(2px, -2px, 2px) scale(1.2);
+            color: var(--color-my-ripple);
+        }
+    
+        30% {
+            -webkit-transform: translate3D(0, 0, 0) scale(1);
+            transform: translate3D(0, 0, 0) scale(1);
         }
     }
 
@@ -167,6 +187,8 @@
     --color-my-secondary-glass: var(--my-secondary-glass);
     --color-my-glass: var(--my-glass);
     --color-my-photo-background: var(--my-photo-background);
+    --color-my-ripple: var(--my-ripple)
+
 }
 
 @layer base {

@@ -1,4 +1,5 @@
 import BreadCrumbs from "@/components/BreadCrumbs";
+import LetsTalkSection from "@/components/LetsTalkSection";
 import ResumeSection from "@/components/ResumeSection";
 import SkillsSection from "@/components/SkillsSection";
 import type { Metadata } from "next";
@@ -14,6 +15,7 @@ const About = () => {
             <BreadCrumbs title="About"/>
             <SkillsSection backgroundColor="bg-my-background-200" />
             <ResumeSection backgroundColor="bg-my-background-100" />
+            <LetsTalkSection />
         </>
     )
 }
