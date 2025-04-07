@@ -1,11 +1,16 @@
 import { FilledButtonProps } from "@/types/interfaces"
 
 
-const FilledButton = ({text, icon, clickFunction, containerClasses, ariaLabel}: FilledButtonProps) => {
+const FilledButton = ({text, icon, clickFunction, containerClasses, ariaLabel, disabled}: FilledButtonProps) => {
   return (
-    <button className={`${containerClasses} filled-button`} onClick={clickFunction} aria-label={ariaLabel}>
-        {text}
+    <button 
+      className={`${containerClasses} ${disabled ? 'pointer-events-none opacity-50' : ''} filled-button`} 
+      onClick={clickFunction} 
+      aria-label={ariaLabel}
+      disabled={disabled}
+    >
         {icon}
+        {text}
     </button>
   )
 }

@@ -1,57 +1,125 @@
 import { ContactBadgeProps } from '@/types/interfaces'
 import Link from 'next/link'
 import { FaEnvelope, FaLinkedin, FaGithub, FaCodepen } from 'react-icons/fa'
+import FilledButton from './FilledButton'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const ContactSection = () => {
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: ""
+    });
+    const [isSending, setIsSending] = useState(false);
+
+    const verifyFields = () => {
+        if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.message) {
+            toast.error("Please fill in all fields.")
+            return true;
+        }
+
+        if(!formData.email.includes("@") || !formData.email.includes(".")) {
+            toast.error("Please enter a valid email address.")
+            return true;
+        }
+    }
+
+    const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSending(true);
+        try {
+            const isValid = verifyFields()
+            if (isValid) return;
+
+            console.log("cheguei");
+
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    access_key: process.env.NEXT_PUBLIC_WEB3FORMS_API_KEY,
+                    "Subject": "New Message from Portfolio Contact Form",
+                    "First Name": formData.firstName,
+                    "Last Name": formData.lastName,
+                    "Email": formData.email,
+                    "Phone Number": formData.phone,
+                    "Message": formData.message,
+                }),
+            });
+            const result = await response.json();
+            if (result.success) {
+                toast.success("Message sent successfully!")
+            } else {
+                toast.error("Failed to send message. Please try again later.")
+            }
+        } catch {
+            toast.error("Failed to send message. Please try again later.")
+        } finally {
+            setIsSending(false);
+        }
+    }
+
     return (
         <section className="flex flex-col items-center w-full py-12">
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-8">My Contacts</h2>
-                <div className='w-full flex items-center gap-5 max-3xl:flex-col'>
+                <div className='w-full flex items-center gap-5 max-3xl:flex-col max-3xl:gap-12'>
                     <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-3xl:gap-8 max-3xl:w-full max-3xl:order-last'>
-                        <form className='bg-my-accent w-full rounded-2xl p-10'>
+                        <form onSubmit={handleSendMessage} className='bg-my-accent w-full rounded-2xl p-10 max-lg:p-5'>
                             <h2 className='text-4xl font-bold w-fit text-gradient mb-4'>Let&apos;s Talk!</h2>
                             <p className='text-base mb-12'>I design and code beautifully simple things and i love what i do. Just simple like that!</p>
-                            <div className='grid grid-cols-2 gap-4 mb-2'>
+                            <div className='grid grid-cols-2 gap-x-4 mb-4'>
                                 <input
                                     type="text"
                                     placeholder='First Name'
-                                    /* value={}
-                                    onChange={} */
-                                    className='py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    value={formData.firstName}
+                                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Last Name'
-                                    /* value={}
-                                    onChange={} */
-                                    className='py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    value={formData.lastName}
+                                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Email Address'
-                                    /* value={}
-                                    onChange={} */
-                                    className='py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Phone Number'
-                                    /* value={}
-                                    onChange={} */
-                                    className='py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
                                 />
                                 <textarea
                                     placeholder='Message'
-                                    /* value={}
-                                    onChange={} */
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                     className='col-span-2 min-h-50 px-5 py-3 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
                                 />
                             </div>
-
+                            <FilledButton
+                                text={isSending ? "Sending..." : "Send Message"}
+                                icon={isSending ? <AiOutlineLoading3Quarters className='animate-spin' /> : <></> }
+                                containerClasses='flex items-center gap-2 px-8 py-4'
+                                disabled={isSending ? true : false}
+                            />
                         </form>
                     </div>
-                    <div className='flex flex-1/2 flex-col items-center justify-center max-auto max-3xl:gap-8 max-3xl:order-first'>
+                    <div className='flex flex-1/2 flex-col justify-center items-center mx-auto max-3xl:order-first'>
                         <div className='flex flex-col gap-10'>
                             <ContactBadge
                                 link="mailto: fredericosilva2002@hotmail.com"
@@ -89,13 +157,13 @@ export default ContactSection
 
 const ContactBadge = ({ link, icon, title, text }: ContactBadgeProps) => {
     return (
-        <Link href={link} target="_blank" rel="noopener,noreferrer" className='flex items-center gap-6 group'>
-            <span className='w-15 h-15 grid place-items-center rounded-full bg-linear-to-r from-my-primary to-my-secondary group-hover:scale-125 group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-transform duration-300'>
+        <Link href={link} target="_blank" rel="noopener,noreferrer" className='flex items-center gap-6 group max-lg:gap-3'>
+            <span className='flex-shrink-0 w-15 h-15 grid place-items-center rounded-full bg-linear-to-r from-my-primary to-my-secondary group-hover:scale-125 group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-transform duration-300'>
                 {icon}
             </span>
-            <div className='flex flex-col gap-1 text-base font-normal group-hover:text-my-primary transition-colors duration-300'>
-                <h6>{title}</h6>
-                <h4 className='text-xl font-bold'>{text}</h4>
+            <div className='flex flex-col gap-1 group-hover:text-my-primary transition-colors duration-300'>
+                <h6 className='text-base max-lg:text-sm font-normal'>{title}</h6>
+                <h4 className='text-xl max-lg:text-base font-bold break-all'>{text}</h4>
             </div>
         </Link>
     )

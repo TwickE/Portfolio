@@ -15,6 +15,7 @@ export interface FilledButtonProps {
     clickFunction?: () => void;
     containerClasses: string;
     ariaLabel?: string;
+    disabled?: boolean;
 }
 
 export type Theme = 'light' | 'dark' | 'system';
