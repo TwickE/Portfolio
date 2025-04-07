@@ -15,7 +15,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns"
 
 const NUMBER_OF_SKELETONS = 4;
@@ -60,14 +66,22 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
             }
         };
         fetchProjectCards();
-    }, []);
+    }, [limitQuery]);
 
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-4">My Projects</h2>
-                <p className="w-[600px] max-xl:w-full text-base text-center">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
-                <div className="flex justify-between flex-wrap mt-12 gap-5">
+                <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
+                {!limitQuery && (
+                    <Popover>
+                        <PopoverTrigger asChild className="ml-auto">
+                            <Button variant='primary'>Filters</Button>
+                        </PopoverTrigger>
+                        <PopoverContent>Place content for the popover here.</PopoverContent>
+                    </Popover>
+                )}
+                <div className={`${!limitQuery ? 'mt-2' : ''} flex justify-between flex-wrap gap-5`}>
                     {isLoading ? (
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full" />
