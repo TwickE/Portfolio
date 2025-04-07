@@ -75,40 +75,40 @@ const ContactSection = () => {
                         <form onSubmit={handleSendMessage} className='bg-my-accent w-full rounded-2xl p-10 max-lg:p-5'>
                             <h2 className='text-4xl font-bold w-fit text-gradient mb-4'>Let&apos;s Talk!</h2>
                             <p className='text-base mb-12'>I design and code beautifully simple things and i love what i do. Just simple like that!</p>
-                            <div className='grid grid-cols-2 gap-x-4 mb-4'>
+                            <div className='grid grid-cols-2 gap-x-4'>
                                 <input
                                     type="text"
                                     placeholder='First Name'
                                     value={formData.firstName}
                                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    className='max-lg:col-span-2 form-input'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Last Name'
                                     value={formData.lastName}
                                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    className='max-lg:col-span-2 form-input'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Email Address'
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    className='max-lg:col-span-2 form-input'
                                 />
                                 <input
                                     type="text"
                                     placeholder='Phone Number'
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    className='max-lg:col-span-2 mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    className='max-lg:col-span-2 form-input'
                                 />
                                 <textarea
                                     placeholder='Message'
                                     value={formData.message}
                                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className='col-span-2 min-h-50 px-5 py-3 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300'
+                                    className='col-span-2 min-h-50 form-input'
                                 />
                             </div>
                             <FilledButton

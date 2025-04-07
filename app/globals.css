@@ -226,4 +226,8 @@
         @apply !text-white !bg-my-primary;
     }
 
+    .form-input {
+        @apply mb-4 py-3 px-5 bg-my-background-200 border rounded-md text-base outline-none focus:border-my-primary transition-all duration-300;
+    }
+
 }
