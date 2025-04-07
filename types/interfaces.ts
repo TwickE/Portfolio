@@ -167,3 +167,7 @@ export interface ContactBadgeProps {
     title: string;
     text: string;
 }
+
+export interface BreadCrumbsProps {
+    title: string;
+}

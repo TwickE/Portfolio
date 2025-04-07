@@ -9,8 +9,8 @@ const Footer = () => {
             <Link href='/'>
                 <Image
                     src="/icons/logoDark.svg"
-                    width={60}
-                    height={60}
+                    width={80}
+                    height={80}
                     alt="Logo"
                 />
             </Link>

@@ -21,9 +21,10 @@ import useTheme from '@/hooks/useTheme';
 const Navbar = () => {
     // Get theme data from the hook
     const { activeTheme, setActiveTheme } = useTheme();
-
     // State to track whether the page has been scrolled
     const [scrolled, setScrolled] = useState(false);
+    // Get the current pathname
+    const pathname = usePathname();
 
     // Scroll event listener
     useEffect(() => {
@@ -50,7 +51,7 @@ const Navbar = () => {
     }, [scrolled]);
 
     return (
-        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
+        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} ${pathname !== '/' ? 'text-white' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between h-25 responsive-container'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
@@ -58,14 +59,14 @@ const Navbar = () => {
                         width={60}
                         height={60}
                         alt="Logo Light"
-                        className="block dark:hidden"
+                        className={`${pathname !== '/' ? 'hidden' : 'block dark:hidden'} `}
                     />
                     <Image
                         src="/icons/logoDark.svg"
                         width={60}
                         height={60}
                         alt="Logo dark"
-                        className="hidden dark:block"
+                        className={`${pathname !== '/' ? '' : 'hidden dark:block'} `}
                     />
                     <p className='max-3xl:hidden'>Fred&apos;s Portfolio</p>
                 </Link>
@@ -136,7 +137,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                 {/* Dropdown menu that shows on hover or click */}
                 <ul className={`absolute top-[62px] flex flex-col gap-1 left-0 bg-my-background-100 rounded-md p-1 shadow-[0_0_20px_rgba(40,58,255,0.5)] transition-[transform,opacity,scale] duration-600 origin-top ${isThemeDropdownOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100'}`}>
                     <li
-                        className={`${activeTheme === 'light' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'light' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('light');
                             setIsThemeDropdownOpen(false);
@@ -146,7 +147,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Light</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'dark' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'dark' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('dark');
                             setIsThemeDropdownOpen(false);
@@ -156,7 +157,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Dark</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'system' ? 'bg-my-primary text-white' : 'hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'system' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('system');
                             setIsThemeDropdownOpen(false);
