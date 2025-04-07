@@ -16,10 +16,10 @@ export default function Home() {
     return (
         <>
             <HeroSection />
-            <SkillsSection />
-            <ProjectsSection />
-            <ResumeSection />
-            <ContactSection />
+            <SkillsSection backgroundColor="bg-my-background-200" />
+            <ProjectsSection backgroundColor="bg-my-background-100" />
+            <ResumeSection backgroundColor="bg-my-background-200" />
+            <ContactSection backgroundColor="bg-my-background-100" />
         </>
     )
 }

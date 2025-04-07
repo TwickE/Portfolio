@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const NUMBER_OF_SKELETONS = 8;
 
-const SkillsSection = () => {
+const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
     // State to store the mouse position
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     // State to store if the mouse is within the section
@@ -82,7 +82,7 @@ const SkillsSection = () => {
 
 
     return (
-        <section className="bg-my-background-200 w-full py-12 overflow-hidden">
+        <section className={`${backgroundColor} w-full py-12 overflow-hidden`}>
             <div
                 ref={sectionRef}
                 onMouseMove={handleMouseMove}

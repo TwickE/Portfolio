@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-const ContactSection = () => {
+const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -67,7 +67,7 @@ const ContactSection = () => {
     }
 
     return (
-        <section className="flex flex-col items-center w-full py-12">
+        <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-8">My Contacts</h2>
                 <div className='w-full flex items-center gap-5 max-3xl:flex-col max-3xl:gap-12'>

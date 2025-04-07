@@ -51,7 +51,7 @@ const Navbar = () => {
     }, [scrolled]);
 
     return (
-        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} ${pathname !== '/' ? 'text-white' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
+        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} ${!scrolled && pathname !== '/' ? 'text-white' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between h-25 responsive-container'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
@@ -59,14 +59,14 @@ const Navbar = () => {
                         width={60}
                         height={60}
                         alt="Logo Light"
-                        className={`${pathname !== '/' ? 'hidden' : 'block dark:hidden'} `}
+                        className={`${!scrolled && pathname !== '/' ? 'hidden' : 'block dark:hidden'} `}
                     />
                     <Image
                         src="/icons/logoDark.svg"
                         width={60}
                         height={60}
                         alt="Logo dark"
-                        className={`${pathname !== '/' ? '' : 'hidden dark:block'} `}
+                        className={`${!scrolled && pathname !== '/' ? '' : 'hidden dark:block'} `}
                     />
                     <p className='max-3xl:hidden'>Fred&apos;s Portfolio</p>
                 </Link>

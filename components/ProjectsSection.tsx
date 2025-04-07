@@ -20,7 +20,7 @@ import { format } from "date-fns"
 
 const NUMBER_OF_SKELETONS = 4;
 
-const ProjectsSection = () => {
+const ProjectsSection = ({backgroundColor}: {backgroundColor: string}) => {
     // State to store if the project cards are loading
     const [isLoading, setIsLoading] = useState(true);
     // State to store the project cards
@@ -63,7 +63,7 @@ const ProjectsSection = () => {
     }, []);
 
     return (
-        <section className="flex flex-col items-center w-full py-12">
+        <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>

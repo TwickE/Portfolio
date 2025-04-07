@@ -1,4 +1,6 @@
 import BreadCrumbs from "@/components/BreadCrumbs";
+import ResumeSection from "@/components/ResumeSection";
+import SkillsSection from "@/components/SkillsSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,12 +10,11 @@ export const metadata: Metadata = {
 
 const About = () => {
     return (
-        <main>
+        <>
             <BreadCrumbs title="About"/>
-            <h1 className="text-3xl text-red-500 font-bold underline">
-                About Page
-            </h1>
-        </main>
+            <SkillsSection backgroundColor="bg-my-background-200" />
+            <ResumeSection backgroundColor="bg-my-background-100" />
+        </>
     )
 }
 

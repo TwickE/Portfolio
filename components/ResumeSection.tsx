@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useEffect } from 'react'
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
@@ -10,7 +12,7 @@ import useDownloadCV from "@/hooks/useDownloadCV";
 
 const NUMBER_OF_SKELETONS = 8;
 
-const ResumeSection = () => {
+const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
     // State to store if the education items are loading
     const [isLoading, setIsLoading] = useState(true);
     // State to store the education items
@@ -117,7 +119,7 @@ const ResumeSection = () => {
     }, [isLoading, educationItems, workItems]);
 
     return (
-        <section className="bg-my-background-200 flex flex-col items-center w-full py-12">
+        <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
                 <h2 className="section-title mb-8">My Resume</h2>
                 <div className='w-full flex items-start gap-5 max-2xl:flex-col'>
