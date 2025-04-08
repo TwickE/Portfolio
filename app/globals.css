@@ -49,6 +49,7 @@
     --my-glass: rgba(255, 255, 255, 0.5);
     --my-photo-background: #F0F0F0;
     --my-ripple: black;
+    --my-matrix-background-color: rgba(255, 255, 255, 0.1);
 }
 
 .dark {
@@ -93,6 +94,7 @@
     --my-glass: rgba(7, 9, 21, 0.5);
     --my-photo-background: #0F0F0F;
     --my-ripple: white;
+    --my-matrix-background-color: rgba(7, 9, 21, 0.1);
 }
 
 @theme inline {
@@ -188,6 +190,7 @@
     --color-my-glass: var(--my-glass);
     --color-my-photo-background: var(--my-photo-background);
     --color-my-ripple: var(--my-ripple)
+    --color-my-matrix-background-color: var(--my-matrix-background-color);
 
 }
 
