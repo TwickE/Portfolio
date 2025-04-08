@@ -1,10 +1,11 @@
 "use client";
 
-import FilledButton from "@/components/FilledButton"
-import OutlineButton from "@/components/OutlineButton"
-import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle } from 'react-icons/fa'
-import TechBadge from "./TechBadge"
-import Image from "next/image"
+import FilledButton from "@/components/FilledButton";
+import OutlineButton from "@/components/OutlineButton";
+import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle, FaChevronDown } from 'react-icons/fa';
+import { FaSliders } from "react-icons/fa6";
+import TechBadge from "./TechBadge";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getProjectCards } from "@/lib/actions/file.actions";
@@ -14,15 +15,19 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns"
+import { format } from "date-fns";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+
 
 const NUMBER_OF_SKELETONS = 4;
 
@@ -74,12 +79,139 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
                 {!limitQuery && (
-                    <Popover>
-                        <PopoverTrigger asChild className="ml-auto">
-                            <Button variant='primary'>Filters</Button>
-                        </PopoverTrigger>
-                        <PopoverContent>Place content for the popover here.</PopoverContent>
-                    </Popover>
+                    <div className="w-full flex justify-end gap-4">
+                        <div className="flex items-center gap-2 text-base">
+                            <p className="max-sm:hidden">Order by:</p>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="primary">
+                                        Relevance
+                                        <FaChevronDown color="white" className="!w-2 !h-2" size={8} />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent align="end" className="flex flex-col gap-2 w-auto p-2 text-base">
+                                    <RadioGroup defaultValue="option-one">
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="option-one" id="option-one" />
+                                            <Label htmlFor="option-one">Relevance</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="option-two" id="option-two" />
+                                            <Label htmlFor="option-two">Starting Date</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="option-three" id="option-three" />
+                                            <Label htmlFor="option-three">Ending Date</Label>
+                                        </div>
+                                    </RadioGroup>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="primary">
+                                    <FaSliders />
+                                    Filters
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align="end" className="w-60">
+                                <div className="grid gap-6">
+                                    <div className="space-y-3">
+                                        <h4 className="font-medium leading-none">Links</h4>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="github" />
+                                                <label
+                                                    htmlFor="github"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Github
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="figma" />
+                                                <label
+                                                    htmlFor="figma"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Figma
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="website" />
+                                                <label
+                                                    htmlFor="website"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Website
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="game" />
+                                                <label
+                                                    htmlFor="game"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Game
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h4 className="font-medium leading-none">Technologies</h4>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="css" />
+                                                <label
+                                                    htmlFor="css"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    CSS
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="reactjs" />
+                                                <label
+                                                    htmlFor="reactjs"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    React JS
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="reactnative" />
+                                                <label
+                                                    htmlFor="reactnative"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    React Native
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="nextjs" />
+                                                <label
+                                                    htmlFor="nextjs"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    Next.js
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox id="sql" />
+                                                <label
+                                                    htmlFor="sql"
+                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    SQL
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Button variant='outline'>Clear Filters</Button>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
                 )}
                 <div className={`${!limitQuery ? 'mt-2' : ''} flex justify-between flex-wrap gap-5`}>
                     {isLoading ? (
