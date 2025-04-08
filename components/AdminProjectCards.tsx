@@ -748,7 +748,7 @@ const SafeImage = ({ src, alt }: { src: string, alt: string }) => {
     const [, setImgSrc] = useState(src);
     const [error, setError] = useState(false);
 
-    const fallbackSrc = "/images/noImage.webp";
+    const fallbackSrc = "/noImage.webp";
 
     // Use either the provided source or the fallback
     const effectiveSrc = src && isValidURL(src) ? src : fallbackSrc;

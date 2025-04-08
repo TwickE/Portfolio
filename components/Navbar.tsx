@@ -1,6 +1,6 @@
 "use client";
 
-import Link from 'next/link'
+import Link from 'next/link';
 import Image from 'next/image';
 import FilledButton from './FilledButton';
 import { usePathname } from 'next/navigation';
@@ -13,14 +13,16 @@ import {
     DrawerDescription,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import { VisuallyHidden } from "radix-ui";
 import { ThemeToggleProps } from '@/types/interfaces';
-import useTheme from '@/hooks/useTheme';
+import { useTheme } from "next-themes";
 
 const Navbar = () => {
-    // Get theme data from the hook
-    const { activeTheme, setActiveTheme } = useTheme();
+    // State to track the active theme - initialize with system as default
+    const { theme, setTheme } = useTheme();
+
+
     // State to track whether the page has been scrolled
     const [scrolled, setScrolled] = useState(false);
     // Get current pathname
@@ -53,18 +55,18 @@ const Navbar = () => {
     }, [scrolled]);
 
     return (
-        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} ${!scrolled && specialColorsPaths.includes(pathname)  ? 'text-white' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
+        <header className={`${scrolled ? 'bg-my-glass shadow-[0_0_30px_3px_rgba(40,58,255,0.25)] backdrop-blur-sm sticky top-0 z-50' : ''} ${!scrolled && specialColorsPaths.includes(pathname) ? 'text-white' : ''} text-xl w-full h-full font-bold sticky top-0 z-50 transition-colors duration-300`}>
             <div className='flex items-center justify-between h-25 responsive-container'>
                 <Link href='/' className='flex items-center gap-5 no-underline max-4xl:gap-2'>
                     <Image
-                        src="/icons/logoLight.svg"
+                        src="/logoLight.svg"
                         width={60}
                         height={60}
                         alt="Logo Light"
                         className={`${!scrolled && specialColorsPaths.includes(pathname) ? 'hidden' : 'block dark:hidden'} `}
                     />
                     <Image
-                        src="/icons/logoDark.svg"
+                        src="/logoDark.svg"
                         width={60}
                         height={60}
                         alt="Logo dark"
@@ -74,8 +76,8 @@ const Navbar = () => {
                 </Link>
                 <div className='flex items-center gap-12 max-4xl:gap-6'>
                     <DesktopMenu
-                        activeTheme={activeTheme}
-                        setActiveTheme={setActiveTheme}
+                        activeTheme={theme!}
+                        setActiveTheme={setTheme}
                     />
                     <Link href="https://www.linkedin.com/in/frederico-silva-727a8b21a/" target="_blank" rel="noopener,noreferrer">
                         <FilledButton
@@ -84,8 +86,8 @@ const Navbar = () => {
                         />
                     </Link>
                     <MobileMenu
-                        activeTheme={activeTheme}
-                        setActiveTheme={setActiveTheme}
+                        activeTheme={theme!}
+                        setActiveTheme={setTheme}
                     />
                 </div>
             </div>
@@ -94,14 +96,19 @@ const Navbar = () => {
 }
 
 const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
+    // Add mounting state to prevent hydration mismatch
+    const [mounted, setMounted] = useState(false);
     // State to track if the theme dropdown is open
     const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
-
     // Close dropdown when clicking outside
     const dropdownRef = useRef<HTMLDivElement>(null);
-
     // Get current pathname
     const pathname = usePathname();
+
+    // Add mounting effect
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Function to determine which class to apply
     const getLinkClassName = (path: string) => {
@@ -121,6 +128,24 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    // If not mounted yet, return placeholder or hidden menu to avoid hydration mismatch
+    if (!mounted) {
+        return (
+            <nav className='flex gap-12 text-base max-4xl:gap-6 max-xl:hidden'>
+                <Link href="/" className={getLinkClassName('/')}>Home</Link>
+                <Link href="/about" className={getLinkClassName('/about')}>About</Link>
+                <Link href="/projects" className={getLinkClassName('/projects')}>Projects</Link>
+                <Link href="/contact" className={getLinkClassName('/contact')}>Contact</Link>
+                <div className="relative group">
+                    <div className='flex items-center gap-2 cursor-pointer'>
+                        <p>Theme</p>
+                        <FaChevronDown size={16} />
+                    </div>
+                </div>
+            </nav>
+        );
+    }
 
     return (
         <nav className='flex gap-12 text-base max-4xl:gap-6 max-xl:hidden'>

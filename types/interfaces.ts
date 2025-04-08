@@ -18,10 +18,9 @@ export interface FilledButtonProps {
     disabled?: boolean;
 }
 
-export type Theme = 'light' | 'dark' | 'system';
 export interface ThemeToggleProps {
-    activeTheme: Theme;
-    setActiveTheme: Dispatch<SetStateAction<Theme>>;
+    activeTheme: string;
+    setActiveTheme: Dispatch<SetStateAction<string>>;
 }
 
 export interface SkillCardProps {

@@ -280,7 +280,7 @@ const AdminTechBadges = () => {
                             <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
                                 <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
                                     <Image
-                                        src={techBadge.icon || "/images/noImage.webp"}
+                                        src={techBadge.icon || "/noImage.webp"}
                                         width={60}
                                         height={60}
                                         alt="Tech Badge Icon"

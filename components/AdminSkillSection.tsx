@@ -317,7 +317,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                         <p className="text-black dark:text-white">{skill.order}</p>
                                                         <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
                                                             <Image
-                                                                src={skill.icon || "/images/noImage.webp"}
+                                                                src={skill.icon || "/noImage.webp"}
                                                                 width={60}
                                                                 height={60}
                                                                 alt="Skill Icon"

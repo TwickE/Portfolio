@@ -8,7 +8,7 @@ const Footer = () => {
         <footer className='w-full flex flex-col items-center gap-9 py-12 text-white bg-my-primary dark:bg-my-secondary'>
             <Link href='/'>
                 <Image
-                    src="/icons/logoDark.svg"
+                    src="/logoDark.svg"
                     width={80}
                     height={80}
                     alt="Logo"
