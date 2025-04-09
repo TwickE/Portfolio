@@ -2,45 +2,43 @@
 
 import { Button } from "@/components/ui/button";
 import { FaCloud, FaEye } from "react-icons/fa";
-import { getCVFile } from "@/lib/actions/file.actions";
+import { getCVFile, updateCVFile } from "@/lib/actions/file.actions";
 import { useCallback } from "react";
 import { useDropzone } from 'react-dropzone';
-import { useState } from 'react';
+import { toast } from "sonner";
 
 const AdminCVFile = () => {
-    const [file, setFile] = useState<File[]>([]);
-
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
-        setFile(acceptedFiles);
-
-        const uploadPromises = acceptedFiles.map(async (file) => {
-            setFile((prevFiles) => {
-                return prevFiles.filter((f) => f.name !== file.name);
-            });
-            /* return uploadFile({ file, ownerId, accountId, path }).then((uploadedFile) => {
-                if (uploadedFile) {
-                    setFiles((prevFiles) => {
-                        return prevFiles.filter((f) => f.name !== file.name);
-                    });
-                }
-            }); */
-        });
-        await Promise.all(uploadPromises);
-    }, []);
-    const { getRootProps, getInputProps } = useDropzone({ onDrop })
-
     const fetchCVFile = useCallback(async () => {
         try {
             const file = await getCVFile();
             if (file) {
-                // Open the file in a new window/tab
                 window.open(file.fileURL, '_blank');
             }
-        } catch (error) {
-            console.error("Failed to fetch file:", error);
-            //toast.error("Failed to fetch skills");
+        } catch {
+            toast.error("Failed to get CV file");
         }
     }, []);
+
+    const onDrop = useCallback(async (acceptedFile: File[]) => {
+        if (acceptedFile.length > 0) {
+            try {
+                await updateCVFile(acceptedFile[0]);
+                toast.success("CV updated successfully");
+            } catch {
+                toast.error("Failed to update CV file");
+            }
+           
+        }
+    }, []);
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        maxFiles: 1,
+        multiple: false,
+        onDropRejected: () => {
+            toast.error("Only one file can be uploaded");
+        }
+    });
 
     return (
         <section className="h-full">
@@ -57,9 +55,9 @@ const AdminCVFile = () => {
                     <input {...getInputProps()} />
                     <Button variant="primary">
                         <FaCloud />
-                        Upload CV
+                        Upload CV          
                     </Button>
-                    <p className="text-base text-center max-w-80 mt-4">Drag and drop the CV file here, or click the button to upload a file</p>
+                    <p className="text-base text-center max-w-80 mt-4 px-4">Drag and drop the CV file here, or click the button to upload a file</p>
                 </div>
             </div>
         </section>

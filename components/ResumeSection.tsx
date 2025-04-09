@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
@@ -8,7 +8,8 @@ import { getResume } from '@/lib/actions/file.actions';
 import { Skeleton } from "@/components/ui/skeleton"
 import OutlineButton from './OutlineButton';
 import { FiDownload } from "react-icons/fi";
-import useDownloadCV from "@/hooks/useDownloadCV";
+import { getCVFile } from "@/lib/actions/file.actions";
+import { toast } from "sonner";
 
 const NUMBER_OF_SKELETONS = 8;
 
@@ -118,6 +119,17 @@ const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
         }
     }, [isLoading, educationItems, workItems]);
 
+    const fetchCVFile = useCallback(async () => {
+            try {
+                const file = await getCVFile();
+                if (file) {
+                    window.open(file.fileURL, '_blank');
+                }
+            } catch {
+                toast.error("Failed to get CV file");
+            }
+        }, []);
+
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
@@ -187,7 +199,7 @@ const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
                 <OutlineButton
                     text="Download CV"
                     rightImg={<FiDownload size={18} />}
-                    clickFunction={useDownloadCV()}
+                    clickFunction={fetchCVFile}
                     containerClasses="py-5 px-10 mx-auto mt-8"
                 />
             </div>

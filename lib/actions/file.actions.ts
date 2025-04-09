@@ -538,28 +538,41 @@ export const getCVFile = async () => {
     }
 }
 
-/* export const updateCVFile = async ($id: string, file: File) => {
+export const updateCVFile = async (file: File) => {
     try {
         const { databases, storage } = await createAdminClient();
 
+        // Gets the current CV file
+        const oldFile = await getCVFile();
+        if(!oldFile) return;
+
+        // Deletes the old CV file from the storage
+        await storage.deleteFile(
+            appwriteConfig.storageCVFileId,
+            oldFile.bucketFileId
+        );
+
+        // Creates a new file in the storage
         const bucketFile = await storage.createFile(
             appwriteConfig.storageCVFileId,
             ID.unique(),
             file
         );
 
+        // Creates a variable with the new file data
         const newCVFile = {
-            fileId: bucketFile.$id,
-            file: constructFileUrl(appwriteConfig.storageCVFileId, bucketFile.$id)
+            bucketFileId: bucketFile.$id,
+            fileURL: constructFileUrl(appwriteConfig.storageCVFileId, bucketFile.$id)
         }
 
+        // Updates the CV file in the database with the new file data
         await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.cvFileCollectionId,
-            $id,
+            oldFile.$id,
             newCVFile
         );
     } catch (error) {
         handleError(error, 'Failed to update CV file');
     }
-} */
+}

@@ -4,12 +4,14 @@ import OutlineButton from "@/components/OutlineButton"
 import Image from "next/image"
 import { FiDownload } from "react-icons/fi";
 import { FaLinkedin, FaGithub, FaCodepen } from "react-icons/fa";
-import useDownloadCV from "@/hooks/useDownloadCV";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ResumeSection from "@/components/ResumeSection";
 import Link from "next/link";
 import ContactSection from "@/components/ContactSection";
+import { useCallback } from "react";
+import { getCVFile } from "@/lib/actions/file.actions";
+import { toast } from "sonner";
 
 export default function Home() {
 
@@ -25,6 +27,17 @@ export default function Home() {
 }
 
 const HeroSection = () => {
+    const fetchCVFile = useCallback(async () => {
+        try {
+            const file = await getCVFile();
+            if (file) {
+                window.open(file.fileURL, '_blank');
+            }
+        } catch {
+            toast.error("Failed to get CV file");
+        }
+    }, []);
+
     return (
         <main className="responsive-container min-h-[calc(100vh-196px)] flex my-12 hero-glow1  max-2xl:flex-col max-2xl:items-center">
             <div className="flex flex-col justify-center gap-2 w-1/2 max-2xl:w-[700px] max-2xl:items-center max-xl:w-full max-lg:px-3">
@@ -44,7 +57,7 @@ const HeroSection = () => {
                     <OutlineButton
                         text="Download CV"
                         rightImg={<FiDownload size={18} />}
-                        clickFunction={useDownloadCV()}
+                        clickFunction={fetchCVFile}
                         containerClasses="py-5 px-10"
                     />
                     <div className="flex gap-5 items-center">
