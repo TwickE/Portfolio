@@ -520,3 +520,46 @@ export const deleteResumeItem = async (resumeItemId: string) => {
         handleError(error, 'Failed to delete resume item');
     }
 }
+
+export const getCVFile = async () => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.cvFileCollectionId
+        )
+
+        if(result) {
+            return result.documents[0];
+        }
+    } catch (error) {
+        handleError(error, 'Failed to get CV file');
+    }
+}
+
+/* export const updateCVFile = async ($id: string, file: File) => {
+    try {
+        const { databases, storage } = await createAdminClient();
+
+        const bucketFile = await storage.createFile(
+            appwriteConfig.storageCVFileId,
+            ID.unique(),
+            file
+        );
+
+        const newCVFile = {
+            fileId: bucketFile.$id,
+            file: constructFileUrl(appwriteConfig.storageCVFileId, bucketFile.$id)
+        }
+
+        await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.cvFileCollectionId,
+            $id,
+            newCVFile
+        );
+    } catch (error) {
+        handleError(error, 'Failed to update CV file');
+    }
+} */

@@ -14,12 +14,13 @@ import { usePathname } from "next/navigation";
 const Layout = ({ children }: { children: React.ReactNode }) => {
     // Use Next.js router to get the current pathname
     const pathname = usePathname();
-    
+
     // Define path groups to determine which MenubarTrigger should be active
     const skillPaths = ['/admin/main-skills', '/admin/other-skills'];
     const projectPaths = ['/admin/project-cards', '/admin/tech-badges'];
     const resumePaths = ['/admin/education', '/admin/work-experience'];
-    
+    const cvFile = ['/admin/cv-file'];
+
     // Helper function to determine if a MenubarTrigger should be active
     const isActive = (paths: string[]) => {
         return paths.includes(pathname) ? "active-menu-trigger" : "";
@@ -62,6 +63,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                                 <Link href="/admin/work-experience" className="w-full cursor-pointer">Work Experience</Link>
                             </MenubarItem>
                         </MenubarContent>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                        <Link href="/admin/cv-file" className="w-full cursor-pointer">
+                            <MenubarTrigger className={`cursor-pointer ${isActive(cvFile)}`}>CV File</MenubarTrigger>
+                        </Link>
                     </MenubarMenu>
                 </Menubar>
                 <div className="w-full h-[calc(100dvh-32px-36px-16px-72px-16px)] bg-my-background-200 border border-border rounded-md mt-2 p-6">

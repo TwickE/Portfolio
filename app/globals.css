@@ -189,14 +189,14 @@
     --color-my-secondary-glass: var(--my-secondary-glass);
     --color-my-glass: var(--my-glass);
     --color-my-photo-background: var(--my-photo-background);
-    --color-my-ripple: var(--my-ripple)
+    --color-my-ripple: var(--my-ripple);
     --color-my-matrix-background-color: var(--my-matrix-background-color);
 
 }
 
 @layer base {
     * {
-        @apply border-border outline-ring/50 box-border transition-[background] duration-600;
+        @apply border-border outline-ring/50 box-border;
         scrollbar-width: thin;
         scrollbar-color: var(--color-my-primary) var(--color-my-secondary);
     }
@@ -259,4 +259,7 @@
         @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
     }
 
+    .animated-hover-link {
+        @apply relative after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-black dark:after:bg-white after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65_0.05_0.36_1)] hover:after:origin-bottom-left hover:after:scale-x-100 cursor-pointer;
+    }
 }

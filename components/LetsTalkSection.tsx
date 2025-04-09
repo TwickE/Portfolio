@@ -21,7 +21,7 @@ const LetsTalkSection = () => {
                 </h2>
                 <Link
                     href='mailto:fredericosilva2002@hotmail.com'
-                    className='ml-auto flex items-center gap-2 group breadcrumbs-hover-link max-md:text-base max-sm:text-sm'
+                    className='ml-auto flex items-center gap-2 group animated-hover-link max-md:text-base max-sm:text-sm'
                 >
                     fredericosilva2002@hotmail.com
                     <FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />

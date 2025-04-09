@@ -76,7 +76,7 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
                     <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-3xl:gap-8 max-3xl:w-full max-3xl:order-last'>
                         <form onSubmit={handleSendMessage} className='bg-my-accent w-full rounded-2xl p-10 max-lg:p-5'>
                             <h2 className='text-4xl font-bold w-fit text-gradient mb-4'>Let&apos;s Talk!</h2>
-                            <p className='text-base mb-12'>I design and code beautifully simple things and i love what i do. Just simple like that!</p>
+                            <p className='text-base mb-12'>I design and code beautifully simple things and I love what I do. Just simple like that!</p>
                             <div className='grid grid-cols-2 gap-x-4'>
                                 <input
                                     type="text"
