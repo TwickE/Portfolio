@@ -50,6 +50,8 @@
     --my-photo-background: #F0F0F0;
     --my-ripple: black;
     --my-matrix-background-color: rgba(255, 255, 255, 0.1);
+    --my-go-up1: #0A1264;
+    --my-go-up2: #283aff;
 }
 
 .dark {
@@ -95,6 +97,8 @@
     --my-photo-background: #0F0F0F;
     --my-ripple: white;
     --my-matrix-background-color: rgba(7, 9, 21, 0.1);
+    --my-go-up1: #283aff;
+    --my-go-up2: #0A1264;
 }
 
 @theme inline {
@@ -191,6 +195,8 @@
     --color-my-photo-background: var(--my-photo-background);
     --color-my-ripple: var(--my-ripple);
     --color-my-matrix-background-color: var(--my-matrix-background-color);
+    --color-my-go-up1: var(--my-go-up1);
+    --color-my-go-up2: var(--my-go-up2);
 
 }
 
