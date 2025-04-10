@@ -16,7 +16,8 @@ export const getResume = async ({ type }: { type: "school" | "work" | "course" }
                 appwriteConfig.resumeCollectionId,
                 [
                     Query.equal('icon', ["school", "course"]),
-                    Query.orderAsc('order')
+                    Query.orderAsc('order'),
+                    Query.limit(1000)
                 ],
             );
 
@@ -28,7 +29,8 @@ export const getResume = async ({ type }: { type: "school" | "work" | "course" }
                 appwriteConfig.resumeCollectionId,
                 [
                     Query.equal('icon', ["work"]),
-                    Query.orderAsc('order')
+                    Query.orderAsc('order'),
+                    Query.limit(1000)
                 ],
             );
 

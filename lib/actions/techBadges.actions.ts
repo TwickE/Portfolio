@@ -14,11 +14,56 @@ export const getTechBadges = async () => {
             appwriteConfig.databaseId,
             appwriteConfig.techBadgesCollectionId,
             [
-                Query.orderDesc('$updatedAt')
+                Query.orderDesc('$updatedAt'),
+                Query.limit(1000)
             ],
         );
 
         // Transform the data to match your Skill interface
+        return result.documents as unknown as TechBadgeType[];
+    } catch (error) {
+        handleError(error, "Failed to get Tech Badges");
+        return undefined;
+    }
+}
+
+export const getTechBadgesOrderedByName = async () => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.techBadgesCollectionId,
+            [
+                Query.orderAsc('name'),
+                Query.limit(1000)
+            ],
+        );
+
+        // Transform the data to match your Skill interface
+        return result.documents as unknown as TechBadgeType[];
+    } catch (error) {
+        handleError(error, "Failed to get Tech Badges");
+        return undefined;
+    }
+}
+
+export const getTechBadgesByName = async (query: string) => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.techBadgesCollectionId,
+            [
+                Query.contains('name', query),
+                Query.limit(1000)
+            ],
+        );
+
+        if (result.documents.length <= 0) return [];
+
+        // Transform the data to match the TechBadgeType interface
         return result.documents as unknown as TechBadgeType[];
     } catch (error) {
         handleError(error, "Failed to get Tech Badges");
@@ -118,27 +163,5 @@ export const deleteTechBadge = async ({ $id, bucketFileId }: TechBadgeType) => {
         }
     } catch (error) {
         handleError(error, 'Failed to delete Tech Badge');
-    }
-}
-
-export const getTechBadgesByName = async (query: string) => {
-    try {
-        const { databases } = await createPublicClient();
-
-        const result = await databases.listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.techBadgesCollectionId,
-            [
-                Query.contains('name', query)
-            ],
-        );
-
-        if (result.documents.length <= 0) return [];
-
-        // Transform the data to match the TechBadgeType interface
-        return result.documents as unknown as TechBadgeType[];
-    } catch (error) {
-        handleError(error, "Failed to get Tech Badges");
-        return undefined;
     }
 }

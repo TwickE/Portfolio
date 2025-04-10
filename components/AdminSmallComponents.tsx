@@ -239,7 +239,7 @@ export const AdminCheckBox = ({ checked, onChange, id }: AdminCheckBoxProps) => 
                     htmlFor={id}
                     className="text-sm cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                    Original
+                    Not Original
                 </label>
             </div>
         </div>

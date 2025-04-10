@@ -15,7 +15,8 @@ export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Prom
             appwriteConfig.skillsCollectionId,
             [
                 Query.equal('mainSkill', [isMainSkill]),
-                Query.orderAsc('order')
+                Query.orderAsc('order'),
+                Query.limit(1000)
             ],
         );
 

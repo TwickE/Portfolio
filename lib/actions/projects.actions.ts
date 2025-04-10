@@ -25,7 +25,8 @@ export const getProjectCards = async (all: boolean) => {
                 appwriteConfig.databaseId,
                 appwriteConfig.projectCardsCollectionId,
                 [
-                    Query.orderAsc('order')
+                    Query.orderAsc('order'),
+                    Query.limit(1000)
                 ],
             );
         }

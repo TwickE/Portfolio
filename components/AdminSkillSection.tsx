@@ -315,7 +315,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                     </span>
                                                     <div className="flex items-center gap-4 flex-wrap w-full">
                                                         <p className="text-black dark:text-white">{skill.order}</p>
-                                                        <div className="grid place-content-center rounded-xl bg-background w-[76px] h-[76px]">
+                                                        <div className="grid place-content-center rounded-xl bg-[url(/transparentPattern.webp)] w-[76px] h-[76px]">
                                                             <Image
                                                                 src={skill.icon || "/noImage.webp"}
                                                                 width={60}

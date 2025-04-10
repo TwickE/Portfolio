@@ -4,7 +4,7 @@ import FilledButton from "@/components/FilledButton";
 import OutlineButton from "@/components/OutlineButton";
 import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle, FaChevronDown } from 'react-icons/fa';
 import { FaSliders } from "react-icons/fa6";
-import TechBadge from "./TechBadge";
+import TechBadge from "@/components/TechBadge";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -27,7 +27,7 @@ import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-
+import { getTechBadgesOrderedByName } from "@/lib/actions/techBadges.actions";
 
 const NUMBER_OF_SKELETONS = 4;
 
@@ -73,6 +73,15 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         fetchProjectCards();
     }, [limitQuery]);
 
+    const handleGetTechBadgesOrderedByName = async () => {
+        try {
+            const data = await getTechBadgesOrderedByName();
+            console.log(data);
+        } catch (error) {
+            console.error("Failed to fetch tech badges:", error);
+        }
+    }
+
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
@@ -81,6 +90,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 {!limitQuery && (
                     <div className="w-full flex justify-end gap-4">
                         <div className="flex items-center gap-2 text-base">
+                            <Button onClick={handleGetTechBadgesOrderedByName}>Tech Badges by Name</Button>
                             <p className="max-sm:hidden">Order by:</p>
                             <Popover>
                                 <PopoverTrigger asChild>
