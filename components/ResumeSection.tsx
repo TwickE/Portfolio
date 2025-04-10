@@ -4,11 +4,11 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
-import { getResume } from '@/lib/actions/file.actions';
+import { getResume } from '@/lib/actions/resume.actions';
 import { Skeleton } from "@/components/ui/skeleton"
 import OutlineButton from './OutlineButton';
 import { FiDownload } from "react-icons/fi";
-import { getCVFile } from "@/lib/actions/file.actions";
+import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 
 const NUMBER_OF_SKELETONS = 8;

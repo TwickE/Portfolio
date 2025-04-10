@@ -8,7 +8,7 @@ import TechBadge from "./TechBadge";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getProjectCards } from "@/lib/actions/file.actions";
+import { getProjectCards } from "@/lib/actions/projects.actions";
 import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge } from "@/types/interfaces";
 import {
     Tooltip,

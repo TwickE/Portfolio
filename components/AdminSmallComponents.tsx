@@ -18,7 +18,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getTechBadgesByName } from "@/lib/actions/file.actions";
+import { getTechBadgesByName } from "@/lib/actions/techBadges.actions";
 import Image from "next/image";
 
 export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInputProps) => {

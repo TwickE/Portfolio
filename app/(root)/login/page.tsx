@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useState } from 'react';
-import { logInAdmin } from "@/lib/actions/admin.actions";
+import { logInAdmin, verifySecret, sendEmailOTP } from "@/lib/actions/login.actions";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,7 +21,6 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { verifySecret, sendEmailOTP } from "@/lib/actions/admin.actions";
 import { useRouter } from "next/navigation";
 
 const Login = () => {

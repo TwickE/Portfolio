@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FaTrash, FaPlus, FaSave, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
-import { addProjectCard, deleteProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/file.actions";
+import { addProjectCard, deleteProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/projects.actions";
 import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
 import TechBadge from "@/components/TechBadge";

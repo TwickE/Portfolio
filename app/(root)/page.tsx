@@ -10,7 +10,7 @@ import ResumeSection from "@/components/ResumeSection";
 import Link from "next/link";
 import ContactSection from "@/components/ContactSection";
 import { useCallback } from "react";
-import { getCVFile } from "@/lib/actions/file.actions";
+import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 
 export default function Home() {

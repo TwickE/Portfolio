@@ -2,15 +2,10 @@
 
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
-import { parseStringify } from "@/lib/utils";
+import { parseStringify, handleError } from "@/lib/utils";
 import { ID, Query } from "node-appwrite";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const handleError = (error: unknown, message: string) => {
-    console.log(error, message);
-    throw error;
-}
 
 const getAdminByEmail = async (email: string) => {
     const { databases } = await createAdminClient();

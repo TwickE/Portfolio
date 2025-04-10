@@ -7,7 +7,7 @@ import { FaTrash, FaPlus, FaSave} from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { FaRotate } from "react-icons/fa6";
 import { AdminDropDown, AdminInput } from "@/components/AdminSmallComponents";
-import { addResumeItem, deleteResumeItem, getResume, updateResumeItems } from "@/lib/actions/file.actions";
+import { addResumeItem, deleteResumeItem, getResume, updateResumeItems } from "@/lib/actions/resume.actions";
 import { ResumeItemProps } from "@/types/interfaces";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";

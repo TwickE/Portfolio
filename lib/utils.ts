@@ -12,4 +12,9 @@ export const parseStringify = (value: unknown) => {
 
 export const constructFileUrl = (imageBucket: string,bucketFileId: string) => {
     return `${appwriteConfig.endpointUrl}/storage/buckets/${imageBucket}/files/${bucketFileId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
-};
+}
+
+export const handleError = (error: unknown, message: string) => {
+    console.log(error, message);
+    throw error;
+}

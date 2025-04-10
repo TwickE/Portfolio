@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { useState, useEffect, useCallback } from "react";
-import { getTechBadges, updateTechBadge, addTechBadge, deleteTechBadge } from "@/lib/actions/file.actions";
+import { getTechBadges, updateTechBadge, addTechBadge, deleteTechBadge } from "@/lib/actions/techBadges.actions";
 import { TechBadgeType } from "@/types/interfaces";
 import Image from "next/image";
 import { AdminInput } from "@/components/AdminSmallComponents";

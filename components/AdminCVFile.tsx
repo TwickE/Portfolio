@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { FaCloud, FaEye } from "react-icons/fa";
-import { getCVFile, updateCVFile } from "@/lib/actions/file.actions";
+import { getCVFile, updateCVFile } from "@/lib/actions/cvFile.actions";
 import { useCallback } from "react";
 import { useDropzone } from 'react-dropzone';
 import { toast } from "sonner";

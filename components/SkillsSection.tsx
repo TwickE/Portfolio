@@ -4,7 +4,7 @@ import { AdminSkill, SkillCardProps } from "@/types/interfaces"
 import Image from "next/image"
 import useHoverSupport from "@/hooks/useHoverSupport"
 import { useRef, useState, useEffect } from "react"
-import { getSkills } from "@/lib/actions/file.actions"
+import { getSkills } from "@/lib/actions/skills.actions"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const NUMBER_OF_SKELETONS = 8;

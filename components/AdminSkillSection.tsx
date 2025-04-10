@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminInput } from "@/components/AdminSmallComponents";
-import { getSkills, updateSkill, deleteSkill, addSkill } from "@/lib/actions/file.actions";
+import { getSkills, updateSkill, deleteSkill, addSkill } from "@/lib/actions/skills.actions";
 import { AdminSkill } from "@/types/interfaces";
 import { toast } from "sonner";
 import usePickImage from "@/hooks/usePickImage";
