@@ -652,7 +652,7 @@ const AdminProjectCards = () => {
                                                                 <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
                                                                     {projectCard.images.map((image, index) => (
                                                                         <div key={index} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
-                                                                            <div className="grid place-content-center rounded-xl bg-[url(/transparentPattern.webp)] w-[76px] h-[76px]">
+                                                                            <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                                                                 <SafeImage
                                                                                     src={image.src}
                                                                                     alt={image.alt}
