@@ -11,7 +11,7 @@ import { FiDownload } from "react-icons/fi";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 
-const NUMBER_OF_SKELETONS = 8;
+const NUMBER_OF_SKELETONS = 5;
 
 const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
     // State to store if the education items are loading

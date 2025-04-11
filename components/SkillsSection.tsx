@@ -7,7 +7,7 @@ import { useRef, useState, useEffect } from "react"
 import { getSkills } from "@/lib/actions/skills.actions"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const NUMBER_OF_SKELETONS = 8;
+const NUMBER_OF_SKELETONS = 24;
 
 const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
     // State to store the mouse position
