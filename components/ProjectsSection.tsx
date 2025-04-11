@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getProjectCards } from "@/lib/actions/projects.actions";
-import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge } from "@/types/interfaces";
+import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge, TechBadgeType } from "@/types/interfaces";
 import {
     Tooltip,
     TooltipContent,
@@ -29,24 +29,52 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { getTechBadgesOrderedByName } from "@/lib/actions/techBadges.actions";
 
-const NUMBER_OF_SKELETONS = 4;
+const NUMBER_OF_SKELETON_PROJECTS = 4;
+const NUMBER_OF_SKELETON_TECH_BADGES = 5;
 
 const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: string, limitQuery: boolean }) => {
     // State to store if the project cards are loading
     const [isLoading, setIsLoading] = useState(true);
     // State to store the project cards
     const [projectCards, setProjectCards] = useState<ProjectCardType[]>([]);
+    // State to store the tech badges
+    const [techBadges, setTechBadges] = useState<Record<string, TechBadgeType>>({});
+
+    // State to store the filtered projects
+    const [filteredProjects, setFilteredProjects] = useState<ProjectCardType[]>([]);
+
+    // State to store the number of results
+    const [numberOfResults, setNumberOfResults] = useState(0);
+
+    // State variables for sorting order and filters
+    const [sortingOrderFilter, setSortingOrderFilter] = useState<string>("relevance");
+    const [linkFilters, setLinkFilters] = useState<string[]>([]);
+    const [techBadgeFilters, setTechBadgeFilters] = useState<string[]>([]);
 
     // Fetches the project cards when the component mounts
     useEffect(() => {
         const fetchProjectCards = async () => {
             setIsLoading(true);
             try {
-                const data = await getProjectCards(!limitQuery);
+                // Fetch both techBadgesData and projectsData in parallel
+                const [techBadgesData, projectsData] = await Promise.all([
+                    getTechBadgesOrderedByName(),
+                    getProjectCards({ all: !limitQuery })
+                ]);
 
-                if (data) {
+                if (techBadgesData) {
+                    // Set the tech badges state
+                    setTechBadges(
+                        techBadgesData.reduce((acc, techBadge) => {
+                            acc[techBadge.$id] = techBadge;
+                            return acc;
+                        }, {} as Record<string, TechBadgeType>)
+                    );
+                }
+
+                if (projectsData) {
                     // Process the data to parse stringified fields
-                    const processedData = data.map(card => {
+                    const processedData = projectsData.map(card => {
                         // Create a new object to avoid mutating the original
                         return {
                             ...card,
@@ -61,11 +89,14 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                         };
                     });
 
-                    // Set the state with the processed data
                     setProjectCards(processedData);
+
+                    // Initialize filtered projects with all projects
+                    setFilteredProjects(processedData);
+                    setNumberOfResults(processedData.length);
                 }
             } catch (error) {
-                console.error("Failed to fetch tech badges:", error);
+                console.error("Failed to fetch data:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -73,14 +104,82 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         fetchProjectCards();
     }, [limitQuery]);
 
-    const handleGetTechBadgesOrderedByName = async () => {
-        try {
-            const data = await getTechBadgesOrderedByName();
-            console.log(data);
-        } catch (error) {
-            console.error("Failed to fetch tech badges:", error);
+    // Apply filters whenever filter values change or project cards change
+    useEffect(() => {
+        if (projectCards.length === 0) return;
+
+        // Create a copy of the project cards to filter
+        let filtered = [...projectCards];
+
+        // 1. Apply link filters
+        if (linkFilters.length > 0) {
+            filtered = filtered.filter(project =>
+                project.links.some((link: ProjectCardLink) =>
+                    linkFilters.includes(link.text.toLowerCase())
+                )
+            );
         }
-    }
+
+        // 2. Apply tech badge filters
+        if (techBadgeFilters.length > 0) {
+            filtered = filtered.filter(project =>
+                project.techBadges.some((badge: ProjectCardTechBadge) =>
+                    techBadgeFilters.includes(badge.$id)
+                )
+            );
+        }
+
+        // 3. Apply sorting
+        if (sortingOrderFilter) {
+            filtered.sort((a, b) => {
+                switch (sortingOrderFilter) {
+                    case 'newest':
+                        // For newest, larger dates come first (descending)
+                        return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+                    case 'oldest':
+                        // For oldest, smaller dates come first (ascending)
+                        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+                    case 'relevance':
+                    default:
+                        // For relevance, lower order values come first (ascending)
+                        return (a.order || 999) - (b.order || 999);
+                }
+            });
+        }
+
+        // Update the filtered projects state
+        setFilteredProjects(filtered);
+        setNumberOfResults(filtered.length);
+    }, [projectCards, sortingOrderFilter, linkFilters, techBadgeFilters]);
+
+    // Function to handle sorting order change
+    const handleSortingOrderChange = (value: string) => {
+        setSortingOrderFilter(value);
+    };
+
+    // Function to handle link filter changes
+    const handleLinkFilterChange = (linkType: string, isChecked: boolean) => {
+        setLinkFilters(prev =>
+            isChecked
+                ? [...prev, linkType]
+                : prev.filter(link => link !== linkType)
+        );
+    };
+
+    // Function to handle tech badge filter changes
+    const handleTechBadgeFilterChange = (badgeId: string, isChecked: boolean) => {
+        setTechBadgeFilters(prev =>
+            isChecked
+                ? [...prev, badgeId]
+                : prev.filter(id => id !== badgeId)
+        );
+    };
+
+    // Function to clear all filters
+    const clearAllFilters = () => {
+        setLinkFilters([]);
+        setTechBadgeFilters([]);
+    };
 
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
@@ -88,30 +187,37 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
                 {!limitQuery && (
-                    <div className="w-full flex justify-end gap-4">
+                    <div className="w-full flex items-center justify-end gap-4">
+                        {isLoading ? (
+                            <div className="flex items-center gap-1 text-base mr-auto">
+                                <p>Number of results:</p>
+                                <Skeleton className="h-5 w-6 rounded-sm" />
+                            </div>
+                        ) : (
+                            <p className="text-base mr-auto">Number of results: <b className="text-my-primary">{numberOfResults}</b></p>
+                        )}
                         <div className="flex items-center gap-2 text-base">
-                            <Button onClick={handleGetTechBadgesOrderedByName}>Tech Badges by Name</Button>
                             <p className="max-sm:hidden">Order by:</p>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="primary">
-                                        Relevance
-                                        <FaChevronDown color="white" className="!w-2 !h-2" size={8} />
+                                        {sortingOrderFilter.charAt(0).toUpperCase() + sortingOrderFilter.slice(1)}
+                                        <FaChevronDown color="white" className="!w-2 !h-2 ml-2" size={8} />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent align="end" className="flex flex-col gap-2 w-auto p-2 text-base">
-                                    <RadioGroup defaultValue="option-one">
+                                    <RadioGroup value={sortingOrderFilter} onValueChange={handleSortingOrderChange}>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="option-one" id="option-one" />
-                                            <Label htmlFor="option-one">Relevance</Label>
+                                            <RadioGroupItem value="relevance" id="relevance" />
+                                            <Label htmlFor="relevance">Relevance</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="option-two" id="option-two" />
-                                            <Label htmlFor="option-two">Starting Date</Label>
+                                            <RadioGroupItem value="newest" id="newest" />
+                                            <Label htmlFor="newest">Newest</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="option-three" id="option-three" />
-                                            <Label htmlFor="option-three">Ending Date</Label>
+                                            <RadioGroupItem value="oldest" id="oldest" />
+                                            <Label htmlFor="oldest">Oldest</Label>
                                         </div>
                                     </RadioGroup>
                                 </PopoverContent>
@@ -129,95 +235,72 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                                     <div className="space-y-3">
                                         <h4 className="font-medium leading-none">Links</h4>
                                         <div className="space-y-2">
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="github" />
-                                                <label
-                                                    htmlFor="github"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    Github
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="figma" />
-                                                <label
-                                                    htmlFor="figma"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    Figma
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="website" />
-                                                <label
-                                                    htmlFor="website"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    Website
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="game" />
-                                                <label
-                                                    htmlFor="game"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    Game
-                                                </label>
-                                            </div>
+                                            {["Github", "Figma", "Website", "Game"].map((linkType) => (
+                                                <div key={linkType} className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id={linkType.toLowerCase()}
+                                                        checked={linkFilters.includes(linkType.toLowerCase())}
+                                                        onCheckedChange={(checked) =>
+                                                            handleLinkFilterChange(linkType.toLowerCase(), checked === true)
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor={linkType.toLowerCase()}
+                                                        className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                    >
+                                                        {linkType}
+                                                    </label>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                     <div className="space-y-3">
                                         <h4 className="font-medium leading-none">Technologies</h4>
-                                        <div className="space-y-2">
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="css" />
-                                                <label
-                                                    htmlFor="css"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    CSS
-                                                </label>
+                                        {isLoading ? (
+                                            <div className="space-y-2">
+                                                {Array(NUMBER_OF_SKELETON_TECH_BADGES).fill(0).map((_, index) => (
+                                                    <div key={index} className="flex items-center space-x-2">
+                                                        <Skeleton className="w-4 h-4 rounded-sm" />
+                                                        <Skeleton className="w-25 h-4 rounded-sm" />
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="reactjs" />
-                                                <label
-                                                    htmlFor="reactjs"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    React JS
-                                                </label>
+                                        ) : (
+                                            <div className="space-y-2 max-h-50 overflow-auto">
+                                                {Object.values(techBadges).map((techBadge) => (
+                                                    <div key={techBadge.$id} className="flex items-center space-x-2">
+                                                        <Checkbox
+                                                            id={techBadge.$id}
+                                                            checked={techBadgeFilters.includes(techBadge.$id)}
+                                                            onCheckedChange={(checked) =>
+                                                                handleTechBadgeFilterChange(techBadge.$id, checked === true)
+                                                            }
+                                                        />
+                                                        <label
+                                                            htmlFor={techBadge.$id}
+                                                            className="cursor-pointer text-sm font-medium leading-none flex items-center gap-1"
+                                                        >
+                                                            <Image
+                                                                src={techBadge.icon}
+                                                                alt={`${techBadge.name} icon`}
+                                                                width={20}
+                                                                height={20}
+                                                                className="object-contain object-center p-0.5"
+                                                            />
+                                                            {techBadge.name}
+                                                        </label>
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="reactnative" />
-                                                <label
-                                                    htmlFor="reactnative"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    React Native
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="nextjs" />
-                                                <label
-                                                    htmlFor="nextjs"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    Next.js
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox id="sql" />
-                                                <label
-                                                    htmlFor="sql"
-                                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                    SQL
-                                                </label>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
-                                    <Button variant='outline'>Clear Filters</Button>
+                                    <Button
+                                        variant='outline'
+                                        onClick={clearAllFilters}
+                                        disabled={linkFilters.length === 0 && techBadgeFilters.length === 0}
+                                    >
+                                        Clear Filters
+                                    </Button>
                                 </div>
                             </PopoverContent>
                         </Popover>
@@ -225,11 +308,11 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 )}
                 <div className={`${!limitQuery ? 'mt-2' : ''} flex justify-between flex-wrap gap-5`}>
                     {isLoading ? (
-                        Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
+                        Array(NUMBER_OF_SKELETON_PROJECTS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full" />
                         ))
                     ) : (
-                        projectCards.map((card, index) => (
+                        filteredProjects.map((card, index) => (
                             <ProjectCard
                                 key={index}
                                 title={card.title}
@@ -266,6 +349,15 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
         src: images[0].src,
         alt: images[0].alt
     });
+
+    // Reset the main image when the images prop changes
+    useEffect(() => {
+        // This ensures the state is synchronized with the new props
+        setMainImageData({
+            src: images[0].src,
+            alt: images[0].alt
+        });
+    }, [images]); // Dependency on images prop
 
     // Function to select an image from the list and display it in the main image container
     const selectImage = (src: string, alt: string) => {

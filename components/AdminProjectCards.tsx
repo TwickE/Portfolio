@@ -43,7 +43,7 @@ const AdminProjectCards = () => {
     const fetchProjectCards = useCallback(async () => {
         setIsFetchingData(true);
         try {
-            const projectCards = await getProjectCards(true);
+            const projectCards = await getProjectCards({ all: true });
 
             if (projectCards) {
                 const processedData = projectCards.map(card => {

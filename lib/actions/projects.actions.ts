@@ -6,30 +6,21 @@ import { Query, ID } from "node-appwrite";
 import { ProjectCardType, ProjectCardDatabase } from "@/types/interfaces";
 import { handleError } from "@/lib/utils";
 
-export const getProjectCards = async (all: boolean) => {
+export const getProjectCards = async ({ all }: { all: boolean }) => {
     try {
         const { databases } = await createPublicClient();
 
-        let result;
-        if (!all) {
-            result = await databases.listDocuments(
-                appwriteConfig.databaseId,
-                appwriteConfig.projectCardsCollectionId,
-                [
-                    Query.orderAsc('order'),
-                    Query.limit(4)
-                ],
-            );
-        } else {
-            result = await databases.listDocuments(
-                appwriteConfig.databaseId,
-                appwriteConfig.projectCardsCollectionId,
-                [
-                    Query.orderAsc('order'),
-                    Query.limit(1000)
-                ],
-            );
-        }
+        // Build query array with filters
+        const queries = [];
+
+        // Limit the number of results
+        queries.push(Query.limit(all ? 1000 : 4));
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            queries
+        );
 
         // Transform the data to match the ProjectCardType interface
         return result.documents as unknown as ProjectCardType[];
