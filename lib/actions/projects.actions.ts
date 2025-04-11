@@ -6,14 +6,31 @@ import { Query, ID } from "node-appwrite";
 import { ProjectCardType, ProjectCardDatabase } from "@/types/interfaces";
 import { handleError } from "@/lib/utils";
 
-export const getProjectCards = async ({ all }: { all: boolean }) => {
+export const getProjectCards = async ({ all, sortingOrder }: { all: boolean, sortingOrder?: string }) => {
     try {
         const { databases } = await createPublicClient();
 
-        // Build query array with filters
         const queries = [];
 
-        // Limit the number of results
+        // Only keep sorting logic
+        if (sortingOrder) {
+            switch (sortingOrder) {
+                case 'newest': 
+                    queries.push(Query.orderDesc('startDate'));
+                    break;
+                case 'oldest':
+                    queries.push(Query.orderAsc('startDate'));
+                    break;
+                case 'relevance':
+                default:
+                    queries.push(Query.orderAsc('order'));
+                    break;
+            }
+        } else {
+            queries.push(Query.orderAsc('order'));
+        }
+
+        // Keep limit query
         queries.push(Query.limit(all ? 1000 : 4));
 
         const result = await databases.listDocuments(

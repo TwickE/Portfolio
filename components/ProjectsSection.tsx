@@ -2,7 +2,7 @@
 
 import FilledButton from "@/components/FilledButton";
 import OutlineButton from "@/components/OutlineButton";
-import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle, FaChevronDown } from 'react-icons/fa';
+import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle, FaChevronDown, FaExclamationTriangle } from 'react-icons/fa';
 import { FaSliders } from "react-icons/fa6";
 import TechBadge from "@/components/TechBadge";
 import Image from "next/image";
@@ -59,7 +59,10 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 // Fetch both techBadgesData and projectsData in parallel
                 const [techBadgesData, projectsData] = await Promise.all([
                     getTechBadgesOrderedByName(),
-                    getProjectCards({ all: !limitQuery })
+                    getProjectCards({
+                        all: !limitQuery,
+                        sortingOrder: sortingOrderFilter,
+                    })
                 ]);
 
                 if (techBadgesData) {
@@ -102,7 +105,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
             }
         };
         fetchProjectCards();
-    }, [limitQuery]);
+    }, [limitQuery, sortingOrderFilter]);
 
     // Apply filters whenever filter values change or project cards change
     useEffect(() => {
@@ -111,7 +114,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         // Create a copy of the project cards to filter
         let filtered = [...projectCards];
 
-        // 1. Apply link filters
+        // Apply link filters
         if (linkFilters.length > 0) {
             filtered = filtered.filter(project =>
                 project.links.some((link: ProjectCardLink) =>
@@ -120,7 +123,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
             );
         }
 
-        // 2. Apply tech badge filters
+        // Apply tech badge filters
         if (techBadgeFilters.length > 0) {
             filtered = filtered.filter(project =>
                 project.techBadges.some((badge: ProjectCardTechBadge) =>
@@ -129,28 +132,10 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
             );
         }
 
-        // 3. Apply sorting
-        if (sortingOrderFilter) {
-            filtered.sort((a, b) => {
-                switch (sortingOrderFilter) {
-                    case 'newest':
-                        // For newest, larger dates come first (descending)
-                        return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
-                    case 'oldest':
-                        // For oldest, smaller dates come first (ascending)
-                        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
-                    case 'relevance':
-                    default:
-                        // For relevance, lower order values come first (ascending)
-                        return (a.order || 999) - (b.order || 999);
-                }
-            });
-        }
-
         // Update the filtered projects state
         setFilteredProjects(filtered);
         setNumberOfResults(filtered.length);
-    }, [projectCards, sortingOrderFilter, linkFilters, techBadgeFilters]);
+    }, [projectCards, linkFilters, techBadgeFilters]);
 
     // Function to handle sorting order change
     const handleSortingOrderChange = (value: string) => {
@@ -187,144 +172,164 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 <h2 className="section-title mb-4">My Projects</h2>
                 <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
                 {!limitQuery && (
-                    <div className="w-full flex items-center justify-end gap-4">
+                    <div className="w-full flex items-center justify-between gap-4 max-lg:flex-col">
                         {isLoading ? (
-                            <div className="flex items-center gap-1 text-base mr-auto">
+                            <div className="flex items-center gap-1 text-base">
                                 <p>Number of results:</p>
                                 <Skeleton className="h-5 w-6 rounded-sm" />
                             </div>
                         ) : (
-                            <p className="text-base mr-auto">Number of results: <b className="text-my-primary">{numberOfResults}</b></p>
+                            <p className="text-base">Number of results: <b className="text-my-primary">{numberOfResults}</b></p>
                         )}
-                        <div className="flex items-center gap-2 text-base">
-                            <p className="max-sm:hidden">Order by:</p>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-base">
+                                <p className="max-sm:hidden">Order by:</p>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="primary">
+                                            {sortingOrderFilter.charAt(0).toUpperCase() + sortingOrderFilter.slice(1)}
+                                            <FaChevronDown color="white" className="!w-2 !h-2 ml-2" size={8} />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent align="end" className="flex flex-col gap-2 w-auto p-2 text-base">
+                                        <RadioGroup value={sortingOrderFilter} onValueChange={handleSortingOrderChange}>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="relevance" id="relevance" />
+                                                <Label htmlFor="relevance">Relevance</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="newest" id="newest" />
+                                                <Label htmlFor="newest">Newest</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value="oldest" id="oldest" />
+                                                <Label htmlFor="oldest">Oldest</Label>
+                                            </div>
+                                        </RadioGroup>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="primary">
-                                        {sortingOrderFilter.charAt(0).toUpperCase() + sortingOrderFilter.slice(1)}
-                                        <FaChevronDown color="white" className="!w-2 !h-2 ml-2" size={8} />
+                                        <FaSliders />
+                                        Filters
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent align="end" className="flex flex-col gap-2 w-auto p-2 text-base">
-                                    <RadioGroup value={sortingOrderFilter} onValueChange={handleSortingOrderChange}>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="relevance" id="relevance" />
-                                            <Label htmlFor="relevance">Relevance</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="newest" id="newest" />
-                                            <Label htmlFor="newest">Newest</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="oldest" id="oldest" />
-                                            <Label htmlFor="oldest">Oldest</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="primary">
-                                    <FaSliders />
-                                    Filters
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent align="end" className="w-60">
-                                <div className="grid gap-6">
-                                    <div className="space-y-3">
-                                        <h4 className="font-medium leading-none">Links</h4>
-                                        <div className="space-y-2">
-                                            {["Github", "Figma", "Website", "Game"].map((linkType) => (
-                                                <div key={linkType} className="flex items-center space-x-2">
-                                                    <Checkbox
-                                                        id={linkType.toLowerCase()}
-                                                        checked={linkFilters.includes(linkType.toLowerCase())}
-                                                        onCheckedChange={(checked) =>
-                                                            handleLinkFilterChange(linkType.toLowerCase(), checked === true)
-                                                        }
-                                                    />
-                                                    <label
-                                                        htmlFor={linkType.toLowerCase()}
-                                                        className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        {linkType}
-                                                    </label>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <h4 className="font-medium leading-none">Technologies</h4>
-                                        {isLoading ? (
+                                <PopoverContent align="end" className="w-60">
+                                    <div className="grid gap-6">
+                                        <div className="space-y-3">
+                                            <h4 className="font-medium leading-none">Links</h4>
                                             <div className="space-y-2">
-                                                {Array(NUMBER_OF_SKELETON_TECH_BADGES).fill(0).map((_, index) => (
-                                                    <div key={index} className="flex items-center space-x-2">
-                                                        <Skeleton className="w-4 h-4 rounded-sm" />
-                                                        <Skeleton className="w-25 h-4 rounded-sm" />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-2 max-h-50 overflow-auto">
-                                                {Object.values(techBadges).map((techBadge) => (
-                                                    <div key={techBadge.$id} className="flex items-center space-x-2">
+                                                {["Github", "Figma", "Website", "Game"].map((linkType) => (
+                                                    <div key={linkType} className="flex items-center space-x-2">
                                                         <Checkbox
-                                                            id={techBadge.$id}
-                                                            checked={techBadgeFilters.includes(techBadge.$id)}
+                                                            id={linkType.toLowerCase()}
+                                                            checked={linkFilters.includes(linkType.toLowerCase())}
                                                             onCheckedChange={(checked) =>
-                                                                handleTechBadgeFilterChange(techBadge.$id, checked === true)
+                                                                handleLinkFilterChange(linkType.toLowerCase(), checked === true)
                                                             }
                                                         />
                                                         <label
-                                                            htmlFor={techBadge.$id}
-                                                            className="cursor-pointer text-sm font-medium leading-none flex items-center gap-1"
+                                                            htmlFor={linkType.toLowerCase()}
+                                                            className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                                         >
-                                                            <Image
-                                                                src={techBadge.icon}
-                                                                alt={`${techBadge.name} icon`}
-                                                                width={20}
-                                                                height={20}
-                                                                className="object-contain object-center p-0.5"
-                                                            />
-                                                            {techBadge.name}
+                                                            {linkType}
                                                         </label>
                                                     </div>
                                                 ))}
                                             </div>
-                                        )}
+                                        </div>
+                                        <div className="space-y-3">
+                                            <h4 className="font-medium leading-none">Technologies</h4>
+                                            {isLoading ? (
+                                                <div className="space-y-2">
+                                                    {Array(NUMBER_OF_SKELETON_TECH_BADGES).fill(0).map((_, index) => (
+                                                        <div key={index} className="flex items-center space-x-2">
+                                                            <Skeleton className="w-4 h-4 rounded-sm" />
+                                                            <Skeleton className="w-25 h-4 rounded-sm" />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2 max-h-50 overflow-auto">
+                                                    {Object.values(techBadges).map((techBadge) => (
+                                                        <div key={techBadge.$id} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={techBadge.$id}
+                                                                checked={techBadgeFilters.includes(techBadge.$id)}
+                                                                onCheckedChange={(checked) =>
+                                                                    handleTechBadgeFilterChange(techBadge.$id, checked === true)
+                                                                }
+                                                            />
+                                                            <label
+                                                                htmlFor={techBadge.$id}
+                                                                className="cursor-pointer text-sm font-medium leading-none flex items-center gap-1"
+                                                            >
+                                                                <Image
+                                                                    src={techBadge.icon}
+                                                                    alt={`${techBadge.name} icon`}
+                                                                    width={20}
+                                                                    height={20}
+                                                                    className="object-contain object-center p-0.5"
+                                                                />
+                                                                {techBadge.name}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <Button
+                                            variant='outline'
+                                            onClick={clearAllFilters}
+                                            disabled={linkFilters.length === 0 && techBadgeFilters.length === 0}
+                                        >
+                                            Clear Filters
+                                        </Button>
                                     </div>
-                                    <Button
-                                        variant='outline'
-                                        onClick={clearAllFilters}
-                                        disabled={linkFilters.length === 0 && techBadgeFilters.length === 0}
-                                    >
-                                        Clear Filters
-                                    </Button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                     </div>
                 )}
-                <div className={`${!limitQuery ? 'mt-2' : ''} flex justify-between flex-wrap gap-5`}>
+                <div className={`${!limitQuery ? 'mt-2' : ''} w-full flex justify-between flex-wrap gap-5`}>
                     {isLoading ? (
                         Array(NUMBER_OF_SKELETON_PROJECTS).fill(0).map((_, index) => (
-                            <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full" />
+                            <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5" />
                         ))
                     ) : (
-                        filteredProjects.map((card, index) => (
-                            <ProjectCard
-                                key={index}
-                                title={card.title}
-                                startDate={card.startDate}
-                                endDate={card.endDate}
-                                description={card.description}
-                                links={card.links}
-                                techBadges={card.techBadges}
-                                images={card.images}
-                                original={card.original}
-                            />
-                        ))
+                        filteredProjects.length > 0 ? (
+                            filteredProjects.map((card, index) => (
+                                <ProjectCard
+                                    key={index}
+                                    title={card.title}
+                                    startDate={card.startDate}
+                                    endDate={card.endDate}
+                                    description={card.description}
+                                    links={card.links}
+                                    techBadges={card.techBadges}
+                                    images={card.images}
+                                    original={card.original}
+                                />
+                            ))
+                        ) : (
+                            <div className="bg-my-accent my-20 p-8 rounded-2xl border border-my-secondary flex flex-col items-center max-w-md">
+                                <FaExclamationTriangle size={40} className="text-my-primary mb-4" />
+                                <h3 className="text-2xl font-bold mb-2">No projects found</h3>
+                                <p className="text-center text-base mb-6">
+                                    No projects match your current filter selections.
+                                    Try adjusting your filters to see more results.
+                                </p>
+                                <Button
+                                    variant="primary"
+                                    onClick={clearAllFilters}
+                                    className="px-6"
+                                >
+                                    Clear All Filters
+                                </Button>
+                            </div>
+                        )
                     )}
                 </div>
                 {limitQuery && (
@@ -365,81 +370,79 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
     }
 
     return (
-        <>
-            <div className="relative flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5 max-lg:w-full">
-                {original &&
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger className="text-my-primary absolute right-4 top-4">
-                                <FaInfoCircle size={18} />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>All or part of this project was done with the help of a tutorial</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                }
-                <h3 className="text-3xl font-bold mb-8">{title}</h3>
-                <span className="text-sm mb-2">{format(startDate, "MMM yyyy")} - {format(endDate, "MMM yyyy")}</span>
-                <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis">{description}</p>
-                <div className="flex justify-center flex-wrap gap-2 w-full mb-7">
-                    {links.map((link: ProjectCardLink, index: number) => (
-                        <Link key={index} href={link.url} target="_blank" rel="noopener,noreferrer">
-                            <OutlineButton
-                                text={link.text}
-                                leftImg={
-                                    link.text === "Github"
-                                        ? <FaGithub size={18} />
-                                        : link.text === "Website"
-                                            ? <FaGlobe size={18} />
-                                            : link.text === "Figma"
-                                                ? <FaFigma size={18} />
-                                                : <FaGamepad size={18} />
-                                }
-                                rightImg={<FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />}
-                                containerClasses="py-2 px-7 group"
-                            />
-                        </Link>
-                    ))}
-                </div>
-                <div className="flex justify-center flex-wrap gap-2 w-full mb-4">
-                    {techBadges.map((badge: ProjectCardTechBadge, index: number) => (
-                        <TechBadge
+        <div className="relative flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5">
+            {original &&
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger className="text-my-primary absolute right-4 top-4">
+                            <FaInfoCircle size={18} />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>All or part of this project was done with the help of a tutorial</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            }
+            <h3 className="text-3xl font-bold mb-8">{title}</h3>
+            <span className="text-sm mb-2">{format(startDate, "MMM yyyy")} - {format(endDate, "MMM yyyy")}</span>
+            <p className="mb-7 text-base text-center min-h-[2lh] line-clamp-2 overflow-ellipsis max-lg:min-h[3lh] max-lg:line-clamp-3">{description}</p>
+            <div className="flex justify-center flex-wrap gap-2 w-full mb-7">
+                {links.map((link: ProjectCardLink, index: number) => (
+                    <Link key={index} href={link.url} target="_blank" rel="noopener,noreferrer">
+                        <OutlineButton
+                            text={link.text}
+                            leftImg={
+                                link.text === "Github"
+                                    ? <FaGithub size={18} />
+                                    : link.text === "Website"
+                                        ? <FaGlobe size={18} />
+                                        : link.text === "Figma"
+                                            ? <FaFigma size={18} />
+                                            : <FaGamepad size={18} />
+                            }
+                            rightImg={<FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />}
+                            containerClasses="py-2 px-7 group"
+                        />
+                    </Link>
+                ))}
+            </div>
+            <div className="flex justify-center flex-wrap gap-2 w-full mb-4">
+                {techBadges.map((badge: ProjectCardTechBadge, index: number) => (
+                    <TechBadge
+                        key={index}
+                        imgSrc={badge.icon}
+                        text={badge.name}
+                    />
+                ))}
+            </div>
+            <div className="flex gap-4 w-full mt-auto max-lg:flex-col max-lg:items-center max-lg:gap-2">
+                <div className="w-30 h-[300px] flex flex-col gap-4 overflow-y-auto px-2 max-5xl:w-25 max-4xl:h-60 max-3xl:w-30 max-3xl:h-[300px] max-lg:flex-row max-lg:w-full max-lg:h-25 max-lg:order-2">
+                    {images.map((image: ProjectCardImage, index: number) => (
+                        <Image
                             key={index}
-                            imgSrc={badge.icon}
-                            text={badge.name}
+                            src={image.src}
+                            alt={image.alt}
+                            width={104}
+                            height={58.5}
+                            style={{ width: 'auto', height: 'auto' }}
+                            className={`${image.src === mainImageData.src
+                                ? 'border-my-primary shadow-[0_0_10px] shadow-my-primary'
+                                : 'border-slate-700 dark:border-slate-400'}
+                            object-contain object-center border cursor-pointer`
+                            }
+                            onClick={() => selectImage(image.src, image.alt)}
                         />
                     ))}
                 </div>
-                <div className="flex gap-4 w-full mt-auto max-lg:flex-col max-lg:items-center max-lg:gap-2">
-                    <div className="w-30 h-[300px] flex flex-col gap-4 overflow-y-auto px-2 max-5xl:w-25 max-4xl:h-60 max-3xl:w-30 max-3xl:h-[300px] max-lg:flex-row max-lg:w-full max-lg:h-25 max-lg:order-2">
-                        {images.map((image: ProjectCardImage, index: number) => (
-                            <Image
-                                key={index}
-                                src={image.src}
-                                alt={image.alt}
-                                width={104}
-                                height={58.5}
-                                style={{ width: 'auto', height: 'auto' }}
-                                className={`${image.src === mainImageData.src
-                                    ? 'border-my-primary shadow-[0_0_10px] shadow-my-primary'
-                                    : 'border-slate-700 dark:border-slate-400'}
-                            object-contain object-center border cursor-pointer`
-                                }
-                                onClick={() => selectImage(image.src, image.alt)}
-                            />
-                        ))}
-                    </div>
-                    <Image
-                        src={mainImageData.src}
-                        alt={mainImageData.alt}
-                        width={300}
-                        height={80}
-                        style={{ width: 'auto', height: 'auto' }}
-                        className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1"
-                    />
-                </div>
+                <Image
+                    src={mainImageData.src}
+                    alt={mainImageData.alt}
+                    width={300}
+                    height={80}
+                    style={{ width: 'auto', height: 'auto' }}
+                    className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1"
+                />
             </div>
-        </>
+        </div>
     )
 }
