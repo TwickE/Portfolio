@@ -172,6 +172,17 @@
         }
     }
 
+    --animate-gradient-text: gradient-text 3s linear infinite;
+    @keyframes gradient-text {
+        0% {
+            background-position: 200% 50%;
+        }
+    
+        100% {
+            background-position: 100% 50%;
+        }
+    }
+
     /* My custom variables */
     --breakpoint-*: initial;
     --breakpoint-5xl: 1400px;
@@ -218,11 +229,11 @@
     }
 
     .text-gradient {
-        @apply bg-linear-to-r from-my-primary to-my-secondary dark:to-white bg-clip-text text-transparent;
+        @apply bg-[linear-gradient(to_right,var(--my-primary),var(--my-secondary),var(--my-primary),var(--my-secondary),var(--my-primary))] dark:bg-[linear-gradient(to_right,var(--my-primary),white,var(--my-primary),white,var(--my-primary))] bg-[length:200%] bg-clip-text text-transparent animate-gradient-text;
     }
 
     .section-title {
-        @apply font-bold text-4xl bg-linear-to-r from-my-primary to-my-secondary dark:to-white bg-clip-text text-transparent;
+        @apply font-bold text-4xl bg-[linear-gradient(to_right,var(--my-primary),var(--my-secondary),var(--my-primary),var(--my-secondary),var(--my-primary))] dark:bg-[linear-gradient(to_right,var(--my-primary),white,var(--my-primary),white,var(--my-primary))] bg-[length:200%] bg-clip-text text-transparent animate-gradient-text;
     }
 
     .outline-button {

@@ -3,7 +3,7 @@
 import FilledButton from "@/components/FilledButton";
 import OutlineButton from "@/components/OutlineButton";
 import { FaGithub, FaArrowUp, FaGlobe, FaFigma, FaGamepad, FaInfoCircle, FaChevronDown, FaExclamationTriangle } from 'react-icons/fa';
-import { FaSliders } from "react-icons/fa6";
+import { FaSliders, FaCircleXmark } from "react-icons/fa6";
 import TechBadge from "@/components/TechBadge";
 import Image from "next/image";
 import Link from "next/link";
@@ -166,6 +166,23 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         setTechBadgeFilters([]);
     };
 
+    // Add new states for the image viewer
+    const [imageViewerVisible, setImageViewerVisible] = useState(false);
+    const [activeImageSrc, setActiveImageSrc] = useState("");
+    const [activeImageAlt, setActiveImageAlt] = useState("");
+
+    // Function to open the image viewer with a specific image
+    const openImageViewer = (src: string, alt: string) => {
+        setActiveImageSrc(src);
+        setActiveImageAlt(alt);
+        setImageViewerVisible(true);
+    };
+
+    // Function to close the image viewer
+    const closeImageViewer = () => {
+        setImageViewerVisible(false);
+    };
+
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
@@ -311,6 +328,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                                     techBadges={card.techBadges}
                                     images={card.images}
                                     original={card.original}
+                                    onImageClick={openImageViewer}
                                 />
                             ))
                         ) : (
@@ -342,13 +360,19 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 )}
 
             </div>
+            <ImageViewer
+                src={activeImageSrc}
+                alt={activeImageAlt}
+                visible={imageViewerVisible}
+                onClose={closeImageViewer}
+            />
         </section>
     )
 }
 
 export default ProjectsSection
 
-const ProjectCard = ({ title, startDate, endDate, description, links, techBadges, images, original }: ProjectCardProps) => {
+const ProjectCard = ({ title, startDate, endDate, description, links, techBadges, images, original, onImageClick }: ProjectCardProps & { onImageClick: (src: string, alt: string) => void }) => {
     // State to manage the main image data
     const [mainImageData, setMainImageData] = useState({
         src: images[0].src,
@@ -440,9 +464,31 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                     width={300}
                     height={80}
                     style={{ width: 'auto', height: 'auto' }}
-                    className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1"
+                    className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1 cursor-pointer"
+                    onClick={() => onImageClick(mainImageData.src, mainImageData.alt)}
                 />
             </div>
         </div>
+    )
+}
+
+export const ImageViewer = ({ src, alt, visible, onClose }: { src: string, alt: string, visible: boolean, onClose: () => void }) => {
+    return (
+        <>
+            {visible && (
+                <div onClick={onClose} className="fixed z-50 top-0 left-0 w-full h-full backdrop-blur-xs grid place-items-center">
+                    <Button className="fixed right-5 top-5 cursor-pointer p-2 h-8"><FaCircleXmark /></Button>
+                    <div className="relative w-[90dvw] h-[90dvh] max-w-[90dvw] max-h-[90dvh]">
+                        <Image
+                            src={src}
+                            alt={alt}
+                            fill
+                            className="object-contain object-center"
+                            quality={100}
+                        />
+                    </div>
+                </div>
+            )}
+        </>
     )
 }
