@@ -10,10 +10,11 @@ import OutlineButton from './OutlineButton';
 import { FiDownload } from "react-icons/fi";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
+import useScrollAnimation from '@/hooks/useScrollAnimation';
 
 const NUMBER_OF_SKELETONS = 5;
 
-const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
+const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
     // State to store if the education items are loading
     const [isLoading, setIsLoading] = useState(true);
     // State to store the education items
@@ -120,22 +121,29 @@ const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
     }, [isLoading, educationItems, workItems]);
 
     const fetchCVFile = useCallback(async () => {
-            try {
-                const file = await getCVFile();
-                if (file) {
-                    window.open(file.fileURL, '_blank');
-                }
-            } catch {
-                toast.error("Failed to get CV file");
+        try {
+            const file = await getCVFile();
+            if (file) {
+                window.open(file.fileURL, '_blank');
             }
-        }, []);
+        } catch {
+            toast.error("Failed to get CV file");
+        }
+    }, []);
+
+    const titleRef = useRef(null);
+    const titleVisible = useScrollAnimation(titleRef, 20);
+    const educationRef = useRef(null);
+    const educationVisible = useScrollAnimation(educationRef, 100);
+    const workRef = useRef(null);
+    const workVisible = useScrollAnimation(workRef, 100);
 
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
-                <h2 className="section-title mb-8">My Resume</h2>
+                <h2 ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} section-title mb-8`}>My Resume</h2>
                 <div className='w-full flex items-start gap-5 max-2xl:flex-col'>
-                    <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8'>
+                    <div ref={educationRef} className={`${educationVisible ? 'animate-fade-in-left' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8`}>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Education</h3>
                         <div ref={firstBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
                             {isLoading ? (
@@ -165,7 +173,7 @@ const ResumeSection = ({backgroundColor}: {backgroundColor: string}) => {
                             )}
                         </div>
                     </div>
-                    <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8 max-2xl:mt-12'>
+                    <div ref={workRef} className={`${workVisible ? 'animate-fade-in-right' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8 max-2xl:mt-12`}>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Work Experience</h3>
                         <div ref={secondBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
                             {isLoading ? (

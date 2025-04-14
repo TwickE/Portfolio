@@ -4,9 +4,10 @@ import { ContactBadgeProps } from '@/types/interfaces'
 import Link from 'next/link'
 import { FaEnvelope, FaLinkedin, FaGithub, FaCodepen } from 'react-icons/fa'
 import FilledButton from './FilledButton'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { toast } from 'sonner'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useScrollAnimation from '@/hooks/useScrollAnimation';
 
 const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
     const [formData, setFormData] = useState({
@@ -68,12 +69,19 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
         }
     }
 
+    const titleRef = useRef(null);
+    const titleVisible = useScrollAnimation(titleRef, 20);
+    const formRef = useRef(null);
+    const formVisible = useScrollAnimation(formRef, 100);
+    const linksRef = useRef(null);
+    const linksVisible = useScrollAnimation(linksRef, 100);
+
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
-                <h2 className="section-title mb-8">My Contacts</h2>
+                <h2 ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} section-title mb-8`}>My Contacts</h2>
                 <div className='w-full flex items-center gap-5 max-3xl:flex-col max-3xl:gap-12'>
-                    <div className='flex flex-1/2 flex-col items-center justify-center gap-10 max-3xl:gap-8 max-3xl:w-full max-3xl:order-last'>
+                    <div ref={formRef} className={`${formVisible ? 'animate-fade-in-left' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-3xl:gap-8 max-3xl:w-full max-3xl:order-last`}>
                         <form onSubmit={handleSendMessage} className='bg-my-accent w-full rounded-2xl p-10 max-lg:p-5'>
                             <h2 className='text-4xl font-bold w-fit text-gradient mb-4'>Let&apos;s Talk!</h2>
                             <p className='text-base mb-12'>I design and code beautifully simple things and I love what I do. Just simple like that!</p>
@@ -121,7 +129,7 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
                             />
                         </form>
                     </div>
-                    <div className='flex flex-1/2 flex-col justify-center items-center mx-auto max-3xl:order-first'>
+                    <div ref={linksRef} className={`${linksVisible ? 'animate-fade-in-right' : 'opacity-0'} flex flex-1/2 flex-col justify-center items-center mx-auto max-3xl:order-first`}>
                         <div className='flex flex-col gap-10'>
                             <ContactBadge
                                 link="mailto: fredericosilva2002@hotmail.com"

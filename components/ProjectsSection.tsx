@@ -7,7 +7,7 @@ import { FaSliders, FaCircleXmark } from "react-icons/fa6";
 import TechBadge from "@/components/TechBadge";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getProjectCards } from "@/lib/actions/projects.actions";
 import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge, TechBadgeType } from "@/types/interfaces";
 import {
@@ -28,6 +28,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { getTechBadgesOrderedByName } from "@/lib/actions/techBadges.actions";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const NUMBER_OF_SKELETON_PROJECTS = 4;
 const NUMBER_OF_SKELETON_TECH_BADGES = 5;
@@ -183,11 +184,16 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         setImageViewerVisible(false);
     };
 
+    const titleRef = useRef(null);
+    const titleVisible = useScrollAnimation(titleRef, 20);
+
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
-                <h2 className="section-title mb-4">My Projects</h2>
-                <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
+                <div ref={titleRef} className={`${titleVisible ? '!animate-fade-in-up' : 'opacity-0'} text-center`}>
+                    <h2 className="section-title mb-4">My Projects</h2>
+                    <p className="w-[600px] max-xl:w-full text-base text-center mb-12">I bring creative ideas to life through detailed, user-focused solutions. Each project showcases my ability to blend innovation with functionality, delivering results that exceed expectations and drive success.</p>
+                </div>
                 {!limitQuery && (
                     <div className="w-full flex items-center justify-between gap-4 max-lg:flex-col">
                         {isLoading ? (
@@ -329,6 +335,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                                     images={card.images}
                                     original={card.original}
                                     onImageClick={openImageViewer}
+                                    index={index}
                                 />
                             ))
                         ) : (
@@ -372,7 +379,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
 
 export default ProjectsSection
 
-const ProjectCard = ({ title, startDate, endDate, description, links, techBadges, images, original, onImageClick }: ProjectCardProps & { onImageClick: (src: string, alt: string) => void }) => {
+const ProjectCard = ({ title, startDate, endDate, description, links, techBadges, images, original, index, onImageClick }: ProjectCardProps & { onImageClick: (src: string, alt: string) => void }) => {
     // State to manage the main image data
     const [mainImageData, setMainImageData] = useState({
         src: images[0].src,
@@ -393,8 +400,12 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
         setMainImageData({ src, alt });
     }
 
+    const cardRef = useRef(null);
+    const cardVisible = useScrollAnimation(cardRef, 200);
+    const cardAnimation = index % 2 === 0 ? '!animate-fade-in-left' : '!animate-fade-in-right';
+
     return (
-        <div className="relative flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5">
+        <div ref={cardRef} className={`${cardVisible ? cardAnimation : 'opacity-0'} relative flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5`}>
             {original &&
                 <TooltipProvider>
                     <Tooltip>

@@ -103,6 +103,7 @@ export interface ProjectCardProps {
     techBadges: ProjectCardTechBadge[];
     images: ProjectCardImage[];
     original: boolean;
+    index: number;
 }
 
 export interface ProjectCardLink {

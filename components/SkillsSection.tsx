@@ -1,15 +1,16 @@
 "use client";
 
-import { AdminSkill, SkillCardProps } from "@/types/interfaces"
-import Image from "next/image"
-import useHoverSupport from "@/hooks/useHoverSupport"
-import { useRef, useState, useEffect } from "react"
-import { getSkills } from "@/lib/actions/skills.actions"
-import { Skeleton } from "@/components/ui/skeleton"
+import { AdminSkill, SkillCardProps } from "@/types/interfaces";
+import Image from "next/image";
+import useHoverSupport from "@/hooks/useHoverSupport";
+import { useRef, useState, useEffect } from "react";
+import { getSkills } from "@/lib/actions/skills.actions";
+import { Skeleton } from "@/components/ui/skeleton";
+import useScrollAnimation from "@/hooks/useScrollAnimation";
 
 const NUMBER_OF_SKELETONS = 24;
 
-const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
+const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
     // State to store the mouse position
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     // State to store if the mouse is within the section
@@ -79,7 +80,10 @@ const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
         fetchSkills();
     }, []);
 
-
+    const mainSkillsRef = useRef(null);
+    const mainSkillsVisible = useScrollAnimation(mainSkillsRef, 20);
+    const otherSkillsRef = useRef(null);
+    const otherSkillsVisible = useScrollAnimation(otherSkillsRef, 20);
 
     return (
         <section className={`${backgroundColor} w-full py-12 overflow-hidden`}>
@@ -100,7 +104,9 @@ const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
                         }}
                     />
                 )}
-                <h2 className="section-title">My Main Skills</h2>
+                <div ref={mainSkillsRef} className={`${mainSkillsVisible ? '!animate-fade-in-up' : 'opacity-0'}`}>
+                    <h2 className="section-title">My Main Skills</h2>
+                </div>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
                     {isLoadingMainSkills ? (
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
@@ -117,7 +123,9 @@ const SkillsSection = ({backgroundColor}: {backgroundColor: string}) => {
                         ))
                     )}
                 </div>
-                <h2 className="section-title mt-12">My Other Skills</h2>
+                <div ref={otherSkillsRef} className={`${otherSkillsVisible ? '!animate-fade-in-up' : 'opacity-0'}`}>
+                    <h2 className="section-title mt-12">My Other Skills</h2>
+                </div>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
                     {isLoadingOtherSkills ? (
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
@@ -171,12 +179,15 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
         setTransformStyle("");
     }
 
+    const cardVisible = useScrollAnimation(itemRef, 20);
+
     return (
         <div
             ref={itemRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{ transform: transformStyle }}
+            className={`${cardVisible ? '!animate-flip-in-y' : 'opacity-0'}`}
         >
             <a
                 href={link}
