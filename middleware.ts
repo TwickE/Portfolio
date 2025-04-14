@@ -12,11 +12,6 @@ export async function middleware(request: NextRequest) {
             const url = new URL('/login', request.url);
             return NextResponse.redirect(url);
         }
-
-        if (path === '/admin') {
-            const url = new URL('/admin/main-skills', request.url);
-            return NextResponse.redirect(url);
-        }
     } else if (path.startsWith('/login')) {
         if (hasSession) {
             const url = new URL('/admin', request.url);

@@ -10,16 +10,18 @@ import {
 } from "@/components/ui/menubar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaHome } from "react-icons/fa";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     // Use Next.js router to get the current pathname
     const pathname = usePathname();
 
     // Define path groups to determine which MenubarTrigger should be active
+    const homePath = ['/admin'];
     const skillPaths = ['/admin/main-skills', '/admin/other-skills'];
     const projectPaths = ['/admin/project-cards', '/admin/tech-badges'];
     const resumePaths = ['/admin/education', '/admin/work-experience'];
-    const cvFile = ['/admin/cv-file'];
+    const cvFilePath = ['/admin/cv-file'];
 
     // Helper function to determine if a MenubarTrigger should be active
     const isActive = (paths: string[]) => {
@@ -31,6 +33,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <AdminNavbar />
             <div className='flex flex-col mt-4 responsive-container'>
                 <Menubar className="w-fit">
+                    <MenubarMenu>
+                        <Link href="/admin" className="cursor-pointer">
+                            <MenubarTrigger className={`cursor-pointer ${isActive(homePath)}`}><FaHome /></MenubarTrigger>
+                        </Link>
+                    </MenubarMenu>
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(skillPaths)}`}>Skills</MenubarTrigger>
                         <MenubarContent>
@@ -66,7 +73,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     </MenubarMenu>
                     <MenubarMenu>
                         <Link href="/admin/cv-file" className="w-full cursor-pointer">
-                            <MenubarTrigger className={`cursor-pointer ${isActive(cvFile)}`}>CV File</MenubarTrigger>
+                            <MenubarTrigger className={`cursor-pointer ${isActive(cvFilePath)}`}>CV File</MenubarTrigger>
                         </Link>
                     </MenubarMenu>
                 </Menubar>

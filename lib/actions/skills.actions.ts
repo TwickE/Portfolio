@@ -127,3 +127,25 @@ export const addSkill = async ({ name, link, order, iconFile, mainSkill }: Admin
         return false;
     }
 }
+
+export const getSkillsInfo = async ({ isMainSkill }: { isMainSkill: boolean }) => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.skillsCollectionId,
+            [
+                Query.equal('mainSkill', [isMainSkill]),
+                Query.orderDesc('$updatedAt'),
+                Query.limit(1000)
+            ],
+        );
+        const data = [result.total, result.documents[0].$updatedAt];
+        console.log(data);
+        return data;
+    } catch (error) {
+        handleError(error, `Failed to get ${isMainSkill ? 'main' : 'other'} skills`);
+        return undefined;
+    }
+}
