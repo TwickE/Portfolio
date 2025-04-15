@@ -214,3 +214,20 @@ export interface AdminHomeData {
     storageCVFileId: string;
     storageCVLink: string;
 }
+
+export interface DatabaseItemProps {
+    adminLink?: string;
+    name?: string;
+    dbTotal?: number;
+    dbLastUpdated?: Date;
+    collectionId?: string;
+    collectionLink?: string;
+}
+
+export interface StorageItemProps {
+    name?: string;
+    storageTotal?: number;
+    storageLastUpdated?: Date;
+    storageId?: string;
+    storageLink?: string;
+}
