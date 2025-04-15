@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useScrollAnimation from '@/hooks/useScrollAnimation';
 
-const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
+const ContactSection = ({ backgroundColor }: { backgroundColor: string }) => {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -25,7 +25,7 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
             return true;
         }
 
-        if(!formData.email.includes("@") || !formData.email.includes(".")) {
+        if (!formData.email.includes("@") || !formData.email.includes(".")) {
             toast.error("Please enter a valid email address.")
             return true;
         }
@@ -79,7 +79,9 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
-                <h2 ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} section-title mb-8`}>My Contacts</h2>
+                <div ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} mb-8`}>
+                    <h2 ref={titleRef} className="section-title">My Contacts</h2>
+                </div>
                 <div className='w-full flex items-center gap-5 max-3xl:flex-col max-3xl:gap-12'>
                     <div ref={formRef} className={`${formVisible ? 'animate-fade-in-left' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-3xl:gap-8 max-3xl:w-full max-3xl:order-last`}>
                         <form onSubmit={handleSendMessage} className='bg-my-accent w-full rounded-2xl p-10 max-lg:p-5'>
@@ -123,7 +125,7 @@ const ContactSection = ({backgroundColor}: {backgroundColor: string}) => {
                             </div>
                             <FilledButton
                                 text={isSending ? "Sending..." : "Send Message"}
-                                icon={isSending ? <AiOutlineLoading3Quarters className='animate-spin' /> : <></> }
+                                icon={isSending ? <AiOutlineLoading3Quarters className='animate-spin' /> : <></>}
                                 containerClasses='flex items-center gap-2 px-8 py-4'
                                 disabled={isSending ? true : false}
                             />

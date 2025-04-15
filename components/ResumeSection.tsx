@@ -141,7 +141,9 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
     return (
         <section className={`${backgroundColor} flex flex-col items-center w-full py-12`}>
             <div className="flex flex-col items-center responsive-container">
-                <h2 ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} section-title mb-8`}>My Resume</h2>
+                <div ref={titleRef} className={`${titleVisible ? 'animate-fade-in-up' : 'opacity-0'} mb-8`}>
+                    <h2 className="section-title">My Resume</h2>
+                </div>
                 <div className='w-full flex items-start gap-5 max-2xl:flex-col'>
                     <div ref={educationRef} className={`${educationVisible ? 'animate-fade-in-left' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8`}>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Education</h3>
