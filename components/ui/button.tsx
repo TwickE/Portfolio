@@ -13,6 +13,8 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         primary:
           "bg-my-primary text-white shadow-sm hover:bg-my-primary/90",
+        appwrite:
+          "bg-my-appwrite text-white shadow-sm hover:bg-my-appwrite/90",
         save:
           "bg-lime-700 text-white shadow-sm hover:bg-lime-700/90",
         destructive:

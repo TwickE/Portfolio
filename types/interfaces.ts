@@ -171,3 +171,46 @@ export interface ContactBadgeProps {
 export interface BreadCrumbsProps {
     title: string;
 }
+
+export interface AdminHomeData {
+    dbTotalMainSkills: number;
+    dbLastUpdatedMainSkills: Date;
+    dbTotalOtherSkills: number;
+    dbLastUpdatedOtherSkills: Date;
+    skillsCollectionId: string;
+    skillsCollectionLink: string;
+    storageTotalSkills: number;
+    storageLastUpdatedSkills: Date;
+    storageSkillIconsId: string;
+    storageSkillsLink: string;
+
+    dbTotalProjects: number;
+    dbLastUpdatedProjects: Date;
+    projectCardsCollectionId: string;
+    projectsCollectionLink: string;
+
+    dbTotalTechBadges: number;
+    dbLastUpdatedTechBadges: Date;
+    techBadgesCollectionId: string;
+    techBadgesCollectionLink: string;
+    storageTotalTechBadges: number;
+    storageLastUpdatedTechBadges: Date;
+    storageTechBadgesIconsId: string;
+    storageTechBadgesLink: string;
+
+    dbTotalEducation: number;
+    dbLastUpdatedEducation: Date;
+    dbTotalWork: number;
+    dbLastUpdatedWork: Date;
+    resumeCollectionId: string;
+    resumeCollectionLink: string;
+
+    dbTotalCV: number;
+    dbLastUpdatedCV: Date;
+    cvFileCollectionId: string;
+    cvFileCollectionLink: string;
+    storageTotalCV: number;
+    storageLastUpdatedCV: Date;
+    storageCVFileId: string;
+    storageCVLink: string;
+}

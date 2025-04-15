@@ -52,6 +52,7 @@
     --my-matrix-background-color: rgba(255, 255, 255, 0.1);
     --my-go-up1: #0A1264;
     --my-go-up2: #283aff;
+    --my-appwrite: #fd366e;
 }
 
 .dark {
@@ -288,7 +289,7 @@
     --color-my-matrix-background-color: var(--my-matrix-background-color);
     --color-my-go-up1: var(--my-go-up1);
     --color-my-go-up2: var(--my-go-up2);
-
+    --color-my-appwrite: var(--my-appwrite);
 }
 
 @layer base {
