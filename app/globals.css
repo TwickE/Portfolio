@@ -309,7 +309,7 @@
     }
 
     body {
-        @apply bg-my-background-100 text-foreground font-sora text-xl;
+        @apply bg-my-background-100 text-foreground font-sora text-xl overflow-x-hidden;
     }
 }
 

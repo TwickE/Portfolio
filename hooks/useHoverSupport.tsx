@@ -4,18 +4,39 @@ const useHoverSupport = () => {
     const [isHoverSupported, setIsHoverSupported] = useState(false);
 
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(hover: hover)');
-        setIsHoverSupported(mediaQuery.matches);
+        // Check for hover support
+        const hoverMediaQuery = window.matchMedia('(hover: hover)');
 
-        const handleChange = (e: MediaQueryListEvent) => setIsHoverSupported(e.matches);
-        mediaQuery.addEventListener('change', handleChange);
+        // Check for touch capability
+        const touchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        // Check for small pointer (mouse/trackpad vs finger)
+        const finePointerQuery = window.matchMedia('(pointer: fine)');
+
+        // Only consider hover supported when:
+        // 1. The device reports hover support
+        // 2. AND EITHER it's not a touch device OR it has a fine pointer like a mouse
+        const realHoverSupport = hoverMediaQuery.matches && (!touchDevice || finePointerQuery.matches);
+
+        setIsHoverSupported(realHoverSupport);
+
+        // Listen for changes in hover capability
+        const handleChange = () => {
+            const updatedHoverSupport = hoverMediaQuery.matches &&
+                (!touchDevice || finePointerQuery.matches);
+            setIsHoverSupported(updatedHoverSupport);
+        };
+
+        hoverMediaQuery.addEventListener('change', handleChange);
+        finePointerQuery.addEventListener('change', handleChange);
 
         return () => {
-            mediaQuery.removeEventListener('change', handleChange);
+            hoverMediaQuery.removeEventListener('change', handleChange);
+            finePointerQuery.removeEventListener('change', handleChange);
         };
     }, []);
 
     return isHoverSupported;
 };
 
-export default useHoverSupport
+export default useHoverSupport;
