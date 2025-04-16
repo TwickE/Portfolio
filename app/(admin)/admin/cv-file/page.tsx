@@ -1,4 +1,4 @@
-import AdminCVFile from "@/components/AdminCVFile"
+import AdminCVFile from "@/components/AdminCVFile";
 
 const CVFile = () => {
     return (

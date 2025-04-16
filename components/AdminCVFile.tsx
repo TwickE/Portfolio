@@ -27,7 +27,6 @@ const AdminCVFile = () => {
             } catch {
                 toast.error("Failed to update CV file");
             }
-           
         }
     }, []);
 
@@ -55,7 +54,7 @@ const AdminCVFile = () => {
                     <input {...getInputProps()} />
                     <Button variant="primary">
                         <FaCloud />
-                        Upload CV          
+                        Upload CV
                     </Button>
                     <p className="text-base text-center max-w-80 mt-4 px-4">Drag and drop the CV file here, or click the button to upload a file</p>
                 </div>

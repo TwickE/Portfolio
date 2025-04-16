@@ -1,9 +1,9 @@
 "use client";
 
-import FilledButton from "@/components/FilledButton"
-import Footer from "@/components/Footer"
-import Navbar from "@/components/Navbar"
-import Link from "next/link"
+import FilledButton from "@/components/FilledButton";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import Link from "next/link";
 import { useEffect, useRef, useMemo } from "react";
 
 const FRAME_RATE = 25;

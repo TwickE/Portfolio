@@ -1,5 +1,3 @@
-"use client";
-
 import AdminSkillSection from "@/components/AdminSkillSection"
 
 const OtherSkills = () => {

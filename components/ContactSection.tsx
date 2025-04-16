@@ -1,11 +1,11 @@
 "use client";
 
-import { ContactBadgeProps } from '@/types/interfaces'
-import Link from 'next/link'
-import { FaEnvelope, FaLinkedin, FaGithub, FaCodepen } from 'react-icons/fa'
-import FilledButton from './FilledButton'
-import { useState, useRef } from 'react'
-import { toast } from 'sonner'
+import { ContactBadgeProps } from '@/types/interfaces';
+import Link from 'next/link';
+import { FaEnvelope, FaLinkedin, FaGithub, FaCodepen } from 'react-icons/fa';
+import FilledButton from './FilledButton';
+import { useState, useRef } from 'react';
+import { toast } from 'sonner';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import useScrollAnimation from '@/hooks/useScrollAnimation';
 
@@ -24,7 +24,6 @@ const ContactSection = ({ backgroundColor }: { backgroundColor: string }) => {
             toast.error("Please fill in all fields.")
             return true;
         }
-
         if (!formData.email.includes("@") || !formData.email.includes(".")) {
             toast.error("Please enter a valid email address.")
             return true;

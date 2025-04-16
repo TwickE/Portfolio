@@ -14,16 +14,7 @@ import { toast } from "sonner";
 import TechBadge from "@/components/TechBadge";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const NUMBER_OF_SKELETONS = 3;
 
@@ -322,63 +313,52 @@ const AdminProjectCards = () => {
 
     const validateFields = (projectCardId: string) => {
         const projectCard = projectCardsData[projectCardId];
-        if (!projectCard) return true;
 
+        if (!projectCard) return true;
         if (!projectCard.title) {
             toast.error("Please provide a title");
             return true;
         }
-
         if (!projectCard.description) {
             toast.error("Please provide a description");
             return true;
         }
-
         if (!projectCard.startDate) {
             toast.error("Please provide a starting date");
             return true;
         }
-
         if (!projectCard.endDate) {
             toast.error("Please provide an ending date");
             return true;
         }
-
         if (projectCard.links.length === 0) {
             toast.error("Please provide at least one link");
             return true;
         }
-
         if (projectCard.links.some(link => !link.url)) {
             toast.error("Please provide a URL for all links");
             return true;
         }
-
         if (projectCard.links.some(link => !isValidURL(link.url))) {
             toast.error("Please provide valid URLs for all links");
             return true;
         }
-
         if (projectCard.links.some(link => link.text === "NoLink")) {
             toast.error("Please provide a link type for all links");
             return true;
         }
-
         if (projectCard.images.length === 0) {
             toast.error("Please provide at least one image");
             return true;
         }
-
         if (projectCard.images.some(image => !image.alt)) {
             toast.error("Please provide alt text for all images");
             return true;
         }
-
         if (projectCard.images.some(image => !image.src)) {
             toast.error("Please provide a URL for all images");
             return true;
         }
-
         if (projectCard.images.some(image => !isValidURL(image.src))) {
             toast.error("Please provide a valid URL for all images");
             return true;

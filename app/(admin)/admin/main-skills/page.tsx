@@ -1,6 +1,4 @@
-"use client";
-
-import AdminSkillSection from "@/components/AdminSkillSection"
+import AdminSkillSection from "@/components/AdminSkillSection";
 
 const MainSkills = () => {
     return (

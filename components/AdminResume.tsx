@@ -3,7 +3,7 @@
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useState, useEffect, useCallback } from 'react';
 import { GripVertical } from 'lucide-react';
-import { FaTrash, FaPlus, FaSave} from "react-icons/fa";
+import { FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { FaRotate } from "react-icons/fa6";
 import { AdminDropDown, AdminInput } from "@/components/AdminSmallComponents";
@@ -11,16 +11,7 @@ import { addResumeItem, deleteResumeItem, getResume, updateResumeItems } from "@
 import { ResumeItemProps } from "@/types/interfaces";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const NUMBER_OF_SKELETONS = 8;
@@ -126,13 +117,12 @@ const AdminResume = ({ type }: { type: "education" | "work" }) => {
 
     const validateFields = (resumeItemId: string) => {
         const resumeItem = resumeData[resumeItemId];
-        if (!resumeItem) return true;
 
+        if (!resumeItem) return true;
         if (!resumeItem.date) {
             toast.error("Please provide a date");
             return true;
         }
-
         if (!resumeItem.text1 || !resumeItem.text2) {
             toast.error("Please fill all text fields");
             return true;

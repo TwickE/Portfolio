@@ -52,7 +52,7 @@ export const verifySecret = async ({ accountId, password }: { accountId: string;
 export const logInAdmin = async ({ email }: { email: string }) => {
     try {
         const existingAdmin = await getAdminByEmail(email);
-        
+
         if (existingAdmin) {
             await sendEmailOTP({ email });
             return parseStringify({ accountId: existingAdmin.accountId });
@@ -82,7 +82,7 @@ export const logOutAdmin = async () => {
 export const checkAdminAuth = async () => {
     try {
         const client = await createSessionClient();
-        
+
         if (!client.hasSession) {
             return false
         } else {

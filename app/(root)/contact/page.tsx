@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const Contact = () => {
     return (
         <>
-            <BreadCrumbs title="Contact"/>
+            <BreadCrumbs title="Contact" />
             <ContactSection backgroundColor="bg-my-background-200" />
         </>
     )

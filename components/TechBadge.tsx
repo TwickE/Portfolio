@@ -1,5 +1,5 @@
-import Image from "next/image"
-import { TechBadgeProps } from "@/types/interfaces"
+import Image from "next/image";
+import { TechBadgeProps } from "@/types/interfaces";
 
 const TechBadge = ({ imgSrc, text }: TechBadgeProps) => {
     return (

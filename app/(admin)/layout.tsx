@@ -1,13 +1,7 @@
 'use client';
 
 import AdminNavbar from "@/components/AdminNavbar";
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarTrigger,
-} from "@/components/ui/menubar";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger, } from "@/components/ui/menubar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaHome } from "react-icons/fa";

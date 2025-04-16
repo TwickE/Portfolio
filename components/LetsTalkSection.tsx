@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { FaArrowUp } from 'react-icons/fa'
+import Link from 'next/link';
+import { FaArrowUp } from 'react-icons/fa';
 
 const LetsTalkSection = () => {
     return (
@@ -27,7 +27,6 @@ const LetsTalkSection = () => {
                     <FaArrowUp size={18} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />
                 </Link>
             </div>
-
         </section>
     )
 }

@@ -43,12 +43,12 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
     // Handle mouse entering the section
     const handleMouseEnter = () => {
         setIsMouseInSection(true);
-    };
+    }
 
     // Handle mouse leaving the section
     const handleMouseLeave = () => {
         setIsMouseInSection(false);
-    };
+    }
 
     // Fetches the main skills when the component mounts
     useEffect(() => {

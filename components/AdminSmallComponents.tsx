@@ -1,23 +1,16 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { FaFont, FaLink, FaCalendarAlt, FaGithub, FaGlobe, FaFigma, FaGamepad, FaChevronDown, FaInfoCircle, FaSearch, FaBan, FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { PiCertificateFill } from "react-icons/pi";
 import { AdminCheckBoxProps, AdminDatePickerProps, AdminDropDownProps, AdminInputProps, AdminLinkProps, TechBadgeType } from "@/types/interfaces";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns"
-import { Calendar } from "@/components/ui/calendar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Checkbox } from "@/components/ui/checkbox"
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 import { getTechBadgesByName } from "@/lib/actions/techBadges.actions";
 import Image from "next/image";
 
@@ -50,7 +43,7 @@ export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInp
             />
         </div>
     );
-};
+}
 
 export const AdminTextArea = ({ placeholder, inputValue, onChange }: AdminInputProps) => {
     const [value, setValue] = useState(inputValue);
@@ -331,7 +324,7 @@ export const AdminSearch = ({ onTechBadgeSelect }: { onTechBadgeSelect: (techBad
             )}
         </div>
     );
-};
+}
 
 export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownProps) => {
     const [selected, setSelected] = useState(selectedValue || "");

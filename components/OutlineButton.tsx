@@ -1,4 +1,4 @@
-import { OutlineButtonProps } from "@/types/interfaces"
+import { OutlineButtonProps } from "@/types/interfaces";
 
 const OutlineButton = ({ text, leftImg, rightImg, clickFunction, containerClasses, ariaLabel }: OutlineButtonProps) => {
     return (

@@ -1,7 +1,7 @@
 "use client";
 
-import OutlineButton from "@/components/OutlineButton"
-import Image from "next/image"
+import OutlineButton from "@/components/OutlineButton";
+import Image from "next/image";
 import { FiDownload } from "react-icons/fi";
 import { FaLinkedin, FaGithub, FaCodepen } from "react-icons/fa";
 import SkillsSection from "@/components/SkillsSection";
@@ -14,7 +14,6 @@ import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 
 export default function Home() {
-
     return (
         <>
             <HeroSection />

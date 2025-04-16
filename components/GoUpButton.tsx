@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 import { FaArrowUp } from "react-icons/fa";
 
 function GoUpButton() {
-    const [fillAmount, setFillAmount] = useState(0)
+    const [fillAmount, setFillAmount] = useState(0);
     const maxFillAmount = 307.919;
 
     const updateFillAmount = useCallback(() => {
@@ -33,7 +33,7 @@ function GoUpButton() {
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }
 
     return (
         <button

@@ -1,5 +1,5 @@
 import { BreadCrumbsProps } from "@/types/interfaces";
-import Link from "next/link"
+import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
 
 const BreadCrumbs = ({ title }: BreadCrumbsProps) => {

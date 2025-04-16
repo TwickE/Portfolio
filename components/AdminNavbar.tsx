@@ -1,7 +1,7 @@
 "use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from 'next/image';
+import Link from 'next/link';
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { FaGlobe } from "react-icons/fa";
 import { logOutAdmin } from "@/lib/actions/login.actions";

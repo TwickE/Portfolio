@@ -43,7 +43,7 @@ export const getResume = async ({ type }: { type: "school" | "work" | "course" }
     }
 }
 
-export const updateResumeItems = async ({ $id, icon, date, text1, text2, order}: Partial<ResumeItemProps>) => {
+export const updateResumeItems = async ({ $id, icon, date, text1, text2, order }: Partial<ResumeItemProps>) => {
     try {
         const { databases } = await createAdminClient();
 
@@ -75,7 +75,7 @@ export const updateResumeItems = async ({ $id, icon, date, text1, text2, order}:
     }
 }
 
-export const addResumeItem = async ({ icon, date, text1, text2, order}: Partial<ResumeItemProps>) => {
+export const addResumeItem = async ({ icon, date, text1, text2, order }: Partial<ResumeItemProps>) => {
     try {
         const { databases } = await createAdminClient();
 

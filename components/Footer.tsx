@@ -31,7 +31,6 @@ const Footer = () => {
                 <p>Made with Next.js</p>
                 <p>{`© ${currentYear} All rights reserved by Frederico Silva`}</p>
             </div>
-
         </footer>
     )
 }

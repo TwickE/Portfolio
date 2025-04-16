@@ -1,4 +1,4 @@
-import AdminHome from "@/components/AdminHome"
+import AdminHome from "@/components/AdminHome";
 
 const Home = () => {
     return (

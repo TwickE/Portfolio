@@ -8,68 +8,27 @@ import { getDashboardStats } from "@/lib/actions/dashboard.actions";
 import { AdminHomeData, ChartDataItem, DatabaseItemProps, StorageItemProps } from "@/types/interfaces";
 import { format } from "date-fns";
 import { FaDatabase, FaFolder, FaCopy } from "react-icons/fa";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import { Label, Pie, PieChart } from "recharts"
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart";
+import { Label, Pie, PieChart } from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, } from "@/components/ui/chart";
 
 const collectionsChartConfig = {
-    documents: {
-        label: "Documents",
-    },
-    mainSkills: {
-        label: "Main Skills",
-        color: "hsl(var(--chart-1))",
-    },
-    otherSkills: {
-        label: "Other Skills",
-        color: "hsl(var(--chart-2))",
-    },
-    techBadges: {
-        label: "Tech Badges",
-        color: "hsl(var(--chart-3))",
-    },
-    education: {
-        label: "Education",
-        color: "hsl(var(--chart-4))",
-    },
-    work: {
-        label: "Work",
-        color: "hsl(var(--chart-5))",
-    },
-    cv: {
-        label: "CV",
-        color: "hsl(var(--chart-6))",
-    },
-} satisfies ChartConfig
+    documents: { label: "Documents", },
+    mainSkills: { label: "Main Skills", color: "hsl(var(--chart-1))" },
+    otherSkills: { label: "Other Skills", color: "hsl(var(--chart-2))" },
+    techBadges: { label: "Tech Badges", color: "hsl(var(--chart-3))" },
+    education: { label: "Education", color: "hsl(var(--chart-4))" },
+    work: { label: "Work", color: "hsl(var(--chart-5))" },
+    cv: { label: "CV", color: "hsl(var(--chart-6))" }
+} satisfies ChartConfig;
 
 const storageChartConfig = {
-    storage: {
-        label: "Storage",
-    },
-    skills: {
-        label: "Skills",
-        color: "hsl(var(--chart-1))",
-    },
-    techBadges: {
-        label: "Tech Badges",
-        color: "hsl(var(--chart-2))",
-    },
-    cv: {
-        label: "CV",
-        color: "hsl(var(--chart-3))",
-    },
-} satisfies ChartConfig
+    storage: { label: "Storage" },
+    skills: { label: "Skills", color: "hsl(var(--chart-1))" },
+    techBadges: { label: "Tech Badges", color: "hsl(var(--chart-2))" },
+    cv: { label: "CV", color: "hsl(var(--chart-3))" }
+} satisfies ChartConfig;
 
 const AdminHome = () => {
     const [data, setData] = useState<AdminHomeData>();
@@ -121,15 +80,9 @@ const AdminHome = () => {
                         <FaDatabase className="text-my-appwrite" size={24} />
                         Collections
                     </h2>
-                    <ChartContainer
-                        config={collectionsChartConfig}
-                        className="mx-auto aspect-square flex-1"
-                    >
+                    <ChartContainer config={collectionsChartConfig} className="mx-auto aspect-square flex-1">
                         <PieChart>
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                             <Pie
                                 data={collectionsChartData}
                                 dataKey="number"
@@ -175,15 +128,9 @@ const AdminHome = () => {
                         <FaFolder className="text-my-appwrite" size={24} />
                         Storage
                     </h2>
-                    <ChartContainer
-                        config={storageChartConfig}
-                        className="mx-auto aspect-square flex-1"
-                    >
+                    <ChartContainer config={storageChartConfig} className="mx-auto aspect-square flex-1">
                         <PieChart>
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
+                            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                             <Pie
                                 data={storageChartData}
                                 dataKey="number"

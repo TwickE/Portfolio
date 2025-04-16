@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
@@ -9,16 +11,7 @@ import { AdminInput } from "@/components/AdminSmallComponents";
 import usePickImage from "@/hooks/usePickImage";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -74,7 +67,7 @@ const AdminTechBadges = () => {
 
     const handleRefresh = () => {
         fetchTechBadges();
-    };
+    }
 
     const handleTechBadgeInputChange = (techBadgeId: string, value: string) => {
         const techBadge = techBadgesData[techBadgeId];
@@ -251,7 +244,7 @@ const AdminTechBadges = () => {
         // Store the delete function and open dialog
         setDeleteAction(() => executeDeleteTechBadge);
         setAlertOpen(true);
-    };
+    }
 
     return (
         <>
@@ -268,7 +261,6 @@ const AdminTechBadges = () => {
                             Add
                         </Button>
                     </div>
-
                 </div>
                 <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
                     {isFetchingData ? (

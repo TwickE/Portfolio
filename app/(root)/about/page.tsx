@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const About = () => {
     return (
         <>
-            <BreadCrumbs title="About"/>
+            <BreadCrumbs title="About" />
             <SkillsSection backgroundColor="bg-my-background-200" />
             <ResumeSection backgroundColor="bg-my-background-100" />
             <LetsTalkSection />

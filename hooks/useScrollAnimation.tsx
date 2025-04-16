@@ -9,7 +9,7 @@ const useScrollAnimation = (ref: RefObject<HTMLElement | null>, pixelOffset = 10
 
         const elementTop = ref.current.getBoundingClientRect().top;
         const elementHeight = ref.current.getBoundingClientRect().height;
-        
+
         if (elementTop < window.innerHeight - pixelOffset && elementTop > -elementHeight) {
             setIsVisible(true);
             setHasAnimated(true);
@@ -20,7 +20,7 @@ const useScrollAnimation = (ref: RefObject<HTMLElement | null>, pixelOffset = 10
 
     useEffect(() => {
         checkVisibility();
-        
+
         if (!hasAnimated) {
             window.addEventListener('scroll', checkVisibility);
             window.addEventListener('resize', checkVisibility);

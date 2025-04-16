@@ -15,7 +15,7 @@ export const getProjectCards = async ({ all, sortingOrder }: { all: boolean, sor
         // Only keep sorting logic
         if (sortingOrder) {
             switch (sortingOrder) {
-                case 'newest': 
+                case 'newest':
                     queries.push(Query.orderDesc('startDate'));
                     break;
                 case 'oldest':

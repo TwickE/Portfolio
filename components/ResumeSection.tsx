@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
 import { getResume } from '@/lib/actions/resume.actions';
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import OutlineButton from './OutlineButton';
 import { FiDownload } from "react-icons/fi";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
@@ -225,9 +225,7 @@ const ResumeItem = ({ icon, date, text1, text2 }: Partial<ResumeItemProps>) => {
             <span className="w-15 min-w-15 h-15 min-h-15 rounded-full text-white bg-my-primary dark:bg-my-secondary grid place-items-center relative
             before:absolute before:w-3 before:h-3 before:rounded-full before:bg-gray-400 before:-left-13 max-2xl:before:-left-6">
                 {
-                    icon === "school" ? <FaGraduationCap size={30} />
-                        : icon === "work" ? <FaBriefcase size={30} />
-                            : <PiCertificateFill size={30} />
+                    icon === "school" ? <FaGraduationCap size={30} /> : icon === "work" ? <FaBriefcase size={30} /> : <PiCertificateFill size={30} />
                 }
             </span>
             <div className="flex flex-col gap-2 font-bold">

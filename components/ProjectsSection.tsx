@@ -10,23 +10,14 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { getProjectCards } from "@/lib/actions/projects.actions";
 import { ProjectCardProps, ProjectCardType, ProjectCardImage, ProjectCardLink, ProjectCardTechBadge, TechBadgeType } from "@/types/interfaces";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getTechBadgesOrderedByName } from "@/lib/actions/techBadges.actions";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
 
@@ -40,13 +31,10 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
     const [projectCards, setProjectCards] = useState<ProjectCardType[]>([]);
     // State to store the tech badges
     const [techBadges, setTechBadges] = useState<Record<string, TechBadgeType>>({});
-
     // State to store the filtered projects
     const [filteredProjects, setFilteredProjects] = useState<ProjectCardType[]>([]);
-
     // State to store the number of results
     const [numberOfResults, setNumberOfResults] = useState(0);
-
     // State variables for sorting order and filters
     const [sortingOrderFilter, setSortingOrderFilter] = useState<string>("relevance");
     const [linkFilters, setLinkFilters] = useState<string[]>([]);
@@ -141,7 +129,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
     // Function to handle sorting order change
     const handleSortingOrderChange = (value: string) => {
         setSortingOrderFilter(value);
-    };
+    }
 
     // Function to handle link filter changes
     const handleLinkFilterChange = (linkType: string, isChecked: boolean) => {
@@ -150,7 +138,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 ? [...prev, linkType]
                 : prev.filter(link => link !== linkType)
         );
-    };
+    }
 
     // Function to handle tech badge filter changes
     const handleTechBadgeFilterChange = (badgeId: string, isChecked: boolean) => {
@@ -159,13 +147,13 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 ? [...prev, badgeId]
                 : prev.filter(id => id !== badgeId)
         );
-    };
+    }
 
     // Function to clear all filters
     const clearAllFilters = () => {
         setLinkFilters([]);
         setTechBadgeFilters([]);
-    };
+    }
 
     // Add new states for the image viewer
     const [imageViewerVisible, setImageViewerVisible] = useState(false);
@@ -177,12 +165,12 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         setActiveImageSrc(src);
         setActiveImageAlt(alt);
         setImageViewerVisible(true);
-    };
+    }
 
     // Function to close the image viewer
     const closeImageViewer = () => {
         setImageViewerVisible(false);
-    };
+    }
 
     const titleRef = useRef(null);
     const titleVisible = useScrollAnimation(titleRef, 20);
@@ -365,7 +353,6 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                         />
                     </Link>
                 )}
-
             </div>
             <ImageViewer
                 src={activeImageSrc}
@@ -385,7 +372,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
         src: images[0].src,
         alt: images[0].alt
     });
-
+    
     // Reset the main image when the images prop changes
     useEffect(() => {
         // This ensures the state is synchronized with the new props

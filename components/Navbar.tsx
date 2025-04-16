@@ -7,13 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
 import { CgDarkMode, CgMenuRight } from "react-icons/cg";
-import {
-    Drawer,
-    DrawerContent,
-    DrawerDescription,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer";
 import { VisuallyHidden } from "radix-ui";
 import { ThemeToggleProps } from '@/types/interfaces';
 import { useTheme } from "next-themes";
@@ -21,8 +15,6 @@ import { useTheme } from "next-themes";
 const Navbar = () => {
     // State to track the active theme - initialize with system as default
     const { theme, setTheme } = useTheme();
-
-
     // State to track whether the page has been scrolled
     const [scrolled, setScrolled] = useState(false);
     // Get current pathname
@@ -113,7 +105,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
     // Function to determine which class to apply
     const getLinkClassName = (path: string) => {
         return pathname === path ? 'nav-selected-btn' : 'nav-hover-btn';
-    };
+    }
 
     // Effect to close dropdown when clicking outside
     useEffect(() => {
@@ -144,7 +136,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                     </div>
                 </div>
             </nav>
-        );
+        )
     }
 
     return (
@@ -288,7 +280,7 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
             <DrawerContent className='font-bold !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
                 <VisuallyHidden.Root>
                     <DrawerTitle>Mobile Navigation Menu</DrawerTitle>
-                    <DrawerDescription></DrawerDescription>
+                    <DrawerDescription>Mobile Navigation Menu</DrawerDescription>
                 </VisuallyHidden.Root>
                 <div className='flex flex-col gap-6 mt-16'>
                     <Link href="/" className='w-full text-center' onClick={() => setIsDrawerOpen(false)}>Home</Link>
@@ -336,7 +328,7 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                 </div>
             </DrawerContent>
         </Drawer>
-    );
-};
+    )
+}
 
 export default Navbar

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const Projects = () => {
     return (
         <>
-            <BreadCrumbs title="Projects"/>
+            <BreadCrumbs title="Projects" />
             <ProjectsSection backgroundColor="bg-my-background-200" limitQuery={false} />
         </>
     )

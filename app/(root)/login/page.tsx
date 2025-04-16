@@ -7,20 +7,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useState } from 'react';
 import { logInAdmin, verifySecret, sendEmailOTP } from "@/lib/actions/login.actions";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog";
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { InputOTP, InputOTPGroup, InputOTPSlot, } from "@/components/ui/input-otp";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
@@ -32,7 +20,7 @@ const Login = () => {
     const validateEmail = (email: string) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
-    };
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent the default form submission behavior
@@ -173,7 +161,7 @@ const OTPModal = ({ accountId, email }: { accountId: string, email: string }) =>
                             {isLoading && <AiOutlineLoading3Quarters className="inline-block ml-2 animate-spin" />}
                         </AlertDialogAction>
                         <div className="text-base mt-2 text-center">
-                            Didn&apos;t recive a code?
+                            Didn&apos;t receive a code?
                             <Button
                                 variant="link"
                                 className="pl-1 text-my-primary cursor-pointer"

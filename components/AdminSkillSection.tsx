@@ -1,3 +1,5 @@
+"use client";
+
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useState, useEffect, useCallback } from 'react';
 import { GripVertical } from 'lucide-react';
@@ -11,16 +13,7 @@ import { AdminSkill } from "@/types/interfaces";
 import { toast } from "sonner";
 import usePickImage from "@/hooks/usePickImage";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle
-} from "@/components/ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -215,7 +208,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         // Store the delete function and open dialog
         setDeleteAction(() => executeDeleteSkill);
         setAlertOpen(true);
-    };
+    }
 
     const handleUpdateIcon = async (skillId: string) => {
         const image = await pickImage();

@@ -1,4 +1,4 @@
-import AdminProjectCards from '@/components/AdminProjectCards'
+import AdminProjectCards from '@/components/AdminProjectCards';
 
 const ProjectCards = () => {
     return (
