@@ -150,8 +150,8 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
 export default SkillsSection
 
 const SkillCard = ({ link, image, text }: SkillCardProps) => {
-    // State to store the transform style
-    const [transformStyle, setTransformStyle] = useState("");
+    // State to store the transform variables
+    const [tiltStyle, setTiltStyle] = useState({ x: 0, y: 0 });
     // Ref to the card element
     const itemRef = useRef<HTMLDivElement>(null);
     // Custom hook to check if the browser supports hover
@@ -169,30 +169,33 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
         const tiltX = (relativeY - 0.5) * 5;
         const tiltY = (relativeX - 0.5) * -5;
 
-        const newTransform = `perspective(150px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(0.98, 0.98, 0.98)`;
-
-        setTransformStyle(newTransform);
+        setTiltStyle({ x: tiltX, y: tiltY });
     }
 
     // Removes the transform style when the mouse leaves the card
     const handleMouseLeave = () => {
-        setTransformStyle("");
+        setTiltStyle({ x: 0, y: 0 });
     }
 
-    const cardVisible = useScrollAnimation(itemRef, 20);
+    const cardVisible = useScrollAnimation(itemRef, 100);
 
     return (
         <div
             ref={itemRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            style={{ transform: transformStyle }}
+            style={{
+                '--tilt-x': `${tiltStyle.x}deg`,
+                '--tilt-y': `${tiltStyle.y}deg`,
+            } as React.CSSProperties}
             className={`${cardVisible ? '!animate-flip-in-y' : 'opacity-0'}`}
         >
             <a
                 href={link}
                 target="_blank"
-                className={`${isHoverSupported ? 'border-[rgba(255,255,255,0.2)] hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300' : 'border-my-primary'} group flex flex-col gap-4 items-center justify-center w-[140px] h-[140px] bg-my-secondary-glass rounded-3xl border backdrop-blur-xs cursor-pointer`}
+                className={`${isHoverSupported ? 'border-[rgba(255,255,255,0.2)] hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300' : 'border-my-primary'} 
+                group flex flex-col gap-4 items-center justify-center w-[140px] h-[140px] bg-my-secondary-glass rounded-3xl border backdrop-blur-xs cursor-pointer
+                ${cardVisible && isHoverSupported ? 'tilt-card' : ''}`}
             >
                 <Image
                     src={image}
