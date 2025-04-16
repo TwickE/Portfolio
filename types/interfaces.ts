@@ -231,3 +231,10 @@ export interface StorageItemProps {
     storageId?: string;
     storageLink?: string;
 }
+
+export interface ChartDataItem {
+    collection?: string;
+    storage?: string;
+    number: number;
+    fill: string;
+}

@@ -124,7 +124,7 @@ export const getDashboardStats = async (): Promise<AdminHomeData | undefined> =>
             storageCVFileId: appwriteConfig.storageCVFileId,
             storageCVLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/storage/bucket-67f6407e0031d1a4186b"
         }
-        console.log("Dashboard statistics:", result);
+        
         // Return formatted data
         return result as AdminHomeData;
     } catch (error) {

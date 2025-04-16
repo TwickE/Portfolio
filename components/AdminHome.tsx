@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getDashboardStats } from "@/lib/actions/dashboard.actions";
-import { AdminHomeData, DatabaseItemProps, StorageItemProps } from "@/types/interfaces";
+import { AdminHomeData, ChartDataItem, DatabaseItemProps, StorageItemProps } from "@/types/interfaces";
 import { format } from "date-fns";
 import { FaDatabase, FaFolder, FaCopy } from "react-icons/fa";
 import {
@@ -15,9 +15,66 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { Label, Pie, PieChart } from "recharts"
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart";
+
+const collectionsChartConfig = {
+    documents: {
+        label: "Documents",
+    },
+    mainSkills: {
+        label: "Main Skills",
+        color: "hsl(var(--chart-1))",
+    },
+    otherSkills: {
+        label: "Other Skills",
+        color: "hsl(var(--chart-2))",
+    },
+    techBadges: {
+        label: "Tech Badges",
+        color: "hsl(var(--chart-3))",
+    },
+    education: {
+        label: "Education",
+        color: "hsl(var(--chart-4))",
+    },
+    work: {
+        label: "Work",
+        color: "hsl(var(--chart-5))",
+    },
+    cv: {
+        label: "CV",
+        color: "hsl(var(--chart-6))",
+    },
+} satisfies ChartConfig
+
+const storageChartConfig = {
+    storage: {
+        label: "Storage",
+    },
+    skills: {
+        label: "Skills",
+        color: "hsl(var(--chart-1))",
+    },
+    techBadges: {
+        label: "Tech Badges",
+        color: "hsl(var(--chart-2))",
+    },
+    cv: {
+        label: "CV",
+        color: "hsl(var(--chart-3))",
+    },
+} satisfies ChartConfig
 
 const AdminHome = () => {
     const [data, setData] = useState<AdminHomeData>();
+    const [collectionsChartData, setCollectionsChartData] = useState<ChartDataItem[]>([]);
+    const [storageChartData, setStorageChartData] = useState<ChartDataItem[]>([]);
 
     useEffect(() => {
         const fetchDashboardStats = async () => {
@@ -25,19 +82,148 @@ const AdminHome = () => {
                 const stats = await getDashboardStats();
                 if (stats) {
                     setData(stats);
+                    // Update the charts data based on the fetched stats
+                    setCollectionsChartData([
+                        { collection: "mainSkills", number: stats.dbTotalMainSkills || 0, fill: "hsl(var(--chart-1))" },
+                        { collection: "otherSkills", number: stats.dbTotalOtherSkills || 0, fill: "hsl(var(--chart-2))" },
+                        { collection: "techBadges", number: stats.dbTotalTechBadges || 0, fill: "hsl(var(--chart-3))" },
+                        { collection: "education", number: stats.dbTotalEducation || 0, fill: "hsl(var(--chart-4))" },
+                        { collection: "work", number: stats.dbTotalWork || 0, fill: "hsl(var(--chart-5))" },
+                        { collection: "cv", number: stats.dbTotalCV || 0, fill: "hsl(var(--chart-6))" }
+                    ]);
+                    setStorageChartData([
+                        { storage: "skills", number: stats.storageTotalSkills || 0, fill: "hsl(var(--chart-1))" },
+                        { storage: "techBadges", number: stats.storageTotalTechBadges || 0, fill: "hsl(var(--chart-2))" },
+                        { storage: "cv", number: stats.storageTotalCV || 0, fill: "hsl(var(--chart-3))" }
+                    ]);
                 }
             } catch (error) {
                 console.error("Error fetching dashboard stats:", error);
             }
-        };
+        }
 
         fetchDashboardStats();
     }, []);
 
+    const totalCollections = useMemo(() => {
+        return collectionsChartData.reduce((acc, curr) => acc + curr.number, 0);
+    }, [collectionsChartData]);
+
+    const totalStorage = useMemo(() => {
+        return storageChartData.reduce((acc, curr) => acc + curr.number, 0);
+    }, [storageChartData]);
+
     return (
         <section className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-full max-xl:grid-cols-1 max-xl:grid-rows-4">
-            <div className="col-span-2 flex flex-col justify-between p-4 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
-                Chart
+            <div className="col-span-2 flex p-4 pb-0 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
+                <div className="flex-1/2 flex flex-col items-center">
+                    <h2 className="w-fit flex gap-1 items-center">
+                        <FaDatabase className="text-my-appwrite" size={24} />
+                        Collections
+                    </h2>
+                    <ChartContainer
+                        config={collectionsChartConfig}
+                        className="mx-auto aspect-square flex-1"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={collectionsChartData}
+                                dataKey="number"
+                                nameKey="collection"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                            return (
+                                                <text
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                >
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {totalCollections.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Documents
+                                                    </tspan>
+                                                </text>
+                                            )
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+                <div className="flex-1/2 flex flex-col items-center">
+                    <h2 className="w-fit flex gap-1 items-center">
+                        <FaFolder className="text-my-appwrite" size={24} />
+                        Storage
+                    </h2>
+                    <ChartContainer
+                        config={storageChartConfig}
+                        className="mx-auto aspect-square flex-1"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={storageChartData}
+                                dataKey="number"
+                                nameKey="storage"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                            return (
+                                                <text
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
+                                                >
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {totalStorage.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Files
+                                                    </tspan>
+                                                </text>
+                                            )
+                                        }
+                                    }}
+                                />
+                            </Pie>
+                        </PieChart>
+                    </ChartContainer>
+                </div>
             </div>
             <div className="col-span-2 flex flex-col gap-2 font-bold group">
                 <div className="flex flex-row gap-2 flex-1/2">
@@ -127,14 +313,14 @@ const AdminHome = () => {
             </div>
             <div className="flex flex-col gap-2 font-bold group">
                 <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                <DatabaseItem
-                    adminLink="/admin/cv-file"
-                    name="CV File"
-                    dbTotal={data?.dbTotalCV}
-                    dbLastUpdated={data?.dbLastUpdatedCV}
-                    collectionId={data?.cvFileCollectionId}
-                    collectionLink={data?.cvFileCollectionLink}
-                />
+                    <DatabaseItem
+                        adminLink="/admin/cv-file"
+                        name="CV File"
+                        dbTotal={data?.dbTotalCV}
+                        dbLastUpdated={data?.dbLastUpdatedCV}
+                        collectionId={data?.cvFileCollectionId}
+                        collectionLink={data?.cvFileCollectionLink}
+                    />
                 </div>
                 <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
                     <StorageItem
