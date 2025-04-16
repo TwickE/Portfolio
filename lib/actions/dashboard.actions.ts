@@ -88,41 +88,41 @@ export const getDashboardStats = async (): Promise<AdminHomeData | undefined> =>
             dbTotalOtherSkills: otherSkills.total,
             dbLastUpdatedOtherSkills: otherSkills.documents[0]?.$updatedAt ? new Date(otherSkills.documents[0].$updatedAt) : new Date(),
             skillsCollectionId: appwriteConfig.skillsCollectionId,
-            skillsCollectionLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67d70a7000092adcf98e",
+            skillsCollectionLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67d70a7000092adcf98e",
             storageTotalSkills: skillsStorage.total,
             storageLastUpdatedSkills: skillsStorage.files[0]?.$updatedAt ? new Date(skillsStorage.files[0].$updatedAt) : new Date(),
             storageSkillIconsId: appwriteConfig.storageSkillIconsId,
-            storageSkillsLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/storage/bucket-67d420a50002fd92b9ff",
+            storageSkillsLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/storage/bucket-67d420a50002fd92b9ff",
         
             dbTotalProjects: projects.total,
             dbLastUpdatedProjects: projects.documents[0]?.$updatedAt ? new Date(projects.documents[0].$updatedAt) : new Date(),
             projectCardsCollectionId: appwriteConfig.projectCardsCollectionId,
-            projectsCollectionLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67e28339000c613a9b11",
+            projectsCollectionLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67e28339000c613a9b11",
         
             dbTotalTechBadges: techBadges.total,
             dbLastUpdatedTechBadges: techBadges.documents[0]?.$updatedAt ? new Date(techBadges.documents[0].$updatedAt) : new Date(),
             techBadgesCollectionId: appwriteConfig.techBadgesCollectionId,
-            techBadgesCollectionLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67dd702b000ee7f96b04",
+            techBadgesCollectionLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67dd702b000ee7f96b04",
             storageTotalTechBadges: techBadgesStorage.total,
             storageLastUpdatedTechBadges: techBadgesStorage.files[0]?.$updatedAt ? new Date(techBadgesStorage.files[0].$updatedAt) : new Date(),
             storageTechBadgesIconsId: appwriteConfig.storageTechBadgesIconsId,
-            storageTechBadgesLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/storage/bucket-67dd7f9d0039afcadec8",
+            storageTechBadgesLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/storage/bucket-67dd7f9d0039afcadec8",
         
             dbTotalEducation: education.total,
             dbLastUpdatedEducation: education.documents[0]?.$updatedAt ? new Date(education.documents[0].$updatedAt) : new Date(),
             dbTotalWork: work.total,
             dbLastUpdatedWork: work.documents[0]?.$updatedAt ? new Date(work.documents[0].$updatedAt) : new Date(),
             resumeCollectionId: appwriteConfig.resumeCollectionId,
-            resumeCollectionLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67ebfd7b0002034c3cca",
+            resumeCollectionLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67ebfd7b0002034c3cca",
         
             dbTotalCV: cv.total,
             dbLastUpdatedCV: cv.documents[0]?.$updatedAt ? new Date(cv.documents[0].$updatedAt) : new Date(),
             cvFileCollectionId: appwriteConfig.cvFileCollectionId,
-            cvFileCollectionLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67f6412d000a9b3dd543",
+            cvFileCollectionLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/databases/database-67d41bfd00189a22bc22/collection-67f6412d000a9b3dd543",
             storageTotalCV: cvStorage.total, 
             storageLastUpdatedCV: cvStorage.files[0]?.$updatedAt ? new Date(cvStorage.files[0].$updatedAt) : new Date(),
             storageCVFileId: appwriteConfig.storageCVFileId,
-            storageCVLink: "https://cloud.appwrite.io/console/project-67d41af6001a9ceab425/storage/bucket-67f6407e0031d1a4186b"
+            storageCVLink: "https://cloud.appwrite.io/console/project-fra-67d41af6001a9ceab425/storage/bucket-67f6407e0031d1a4186b"
         }
         
         // Return formatted data

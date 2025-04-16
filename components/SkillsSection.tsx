@@ -104,7 +104,7 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
                         }}
                     />
                 )}
-                <div ref={mainSkillsRef} className={`${mainSkillsVisible ? '!animate-fade-in-up' : 'opacity-0'}`}>
+                <div ref={mainSkillsRef} className={`${mainSkillsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
                     <h2 className="section-title">My Main Skills</h2>
                 </div>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
@@ -123,7 +123,7 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
                         ))
                     )}
                 </div>
-                <div ref={otherSkillsRef} className={`${otherSkillsVisible ? '!animate-fade-in-up' : 'opacity-0'}`}>
+                <div ref={otherSkillsRef} className={`${otherSkillsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
                     <h2 className="section-title mt-12">My Other Skills</h2>
                 </div>
                 <div className="flex gap-6 flex-wrap m-auto w-[calc(140px*8+24px*7)] mx-auto mt-8 max-5xl:w-[calc(140px*7+24px*6)] max-4xl:w-[calc(140px*6+20px*5)] max-4xl:gap-5 max-3xl:w-[calc(140px*5+20px*4)] max-2xl:w-[calc(140px*4+40px*3)] max-2xl:gap-10 max-xl:w-[calc(140px*3+40px*2)] max-lg:w-[calc(140px*2+16px)] max-lg:gap-4">
@@ -188,7 +188,7 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
                 '--tilt-x': `${tiltStyle.x}deg`,
                 '--tilt-y': `${tiltStyle.y}deg`,
             } as React.CSSProperties}
-            className={`${cardVisible ? '!animate-flip-in-y' : 'opacity-0'}`}
+            className={`${cardVisible ? 'animate-flip-in-y' : 'opacity-0'}`}
         >
             <a
                 href={link}
