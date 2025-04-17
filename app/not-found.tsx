@@ -4,6 +4,7 @@ import FilledButton from "@/components/FilledButton";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useMemo } from "react";
 
 const FRAME_RATE = 25;
@@ -101,7 +102,14 @@ const NotFound = () => {
                 <Navbar />
                 <section className='h-[calc(100vh-100px)] grid place-items-center'>
                     <div className="flex flex-col items-center font-bold text-center">
-                        <h1 className="text-[10rem] max-lg:text-[8rem] max-sm:text-[6rem]">404</h1>
+                        <div className="relative w-[340px] h-[140px] max-sm:w-[250px] max-sm:h-[100px]">
+                            <Image
+                                src="/404.gif"
+                                alt="404 Not Found"
+                                fill
+                                className="object-contain object-center"
+                            />
+                        </div>
                         <h2 className="text-3xl mt-4 mb-8 max-lg:text-2xl max-sm:text-xl">It seems that you are lost<br></br>This page doesn&apos;t exist</h2>
                         <Link href="/">
                             <FilledButton
