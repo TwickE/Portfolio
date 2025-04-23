@@ -393,7 +393,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
 
     return (
         <div ref={cardRef} className={cardVisible ? cardAnimation : 'opacity-0'}>
-            <div  className='relative flex flex-col items-center bg-my-accent w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5'>
+            <div  className='relative flex flex-col items-center bg-my-accent h-full w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5'>
                 {original &&
                     <TooltipProvider>
                         <Tooltip>
