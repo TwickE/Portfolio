@@ -107,6 +107,7 @@ const NotFound = () => {
                                 src="/404.gif"
                                 alt="404 Not Found"
                                 fill
+                                unoptimized
                                 className="object-contain object-center"
                             />
                         </div>
