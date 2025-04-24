@@ -20,17 +20,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getTechBadgesOrderedByName } from "@/lib/actions/techBadges.actions";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useQueries } from "@tanstack/react-query";
+import ErrorCard from "@/components/ErrorCard";
 
 const NUMBER_OF_SKELETON_PROJECTS = 4;
 const NUMBER_OF_SKELETON_TECH_BADGES = 5;
 
 const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: string, limitQuery: boolean }) => {
-    // State to store if the project cards are loading
-    const [isLoading, setIsLoading] = useState(true);
-    // State to store the project cards
-    const [projectCards, setProjectCards] = useState<ProjectCardType[]>([]);
-    // State to store the tech badges
-    const [techBadges, setTechBadges] = useState<Record<string, TechBadgeType>>({});
     // State to store the filtered projects
     const [filteredProjects, setFilteredProjects] = useState<ProjectCardType[]>([]);
     // State to store the number of results
@@ -40,68 +36,58 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
     const [linkFilters, setLinkFilters] = useState<string[]>([]);
     const [techBadgeFilters, setTechBadgeFilters] = useState<string[]>([]);
 
-    // Fetches the project cards when the component mounts
-    useEffect(() => {
-        const fetchProjectCards = async () => {
-            setIsLoading(true);
-            try {
-                // Fetch both techBadgesData and projectsData in parallel
-                const [techBadgesData, projectsData] = await Promise.all([
-                    getTechBadgesOrderedByName(),
-                    getProjectCards({
-                        all: !limitQuery,
-                        sortingOrder: sortingOrderFilter,
-                    })
-                ]);
-
-                if (techBadgesData) {
-                    // Set the tech badges state
-                    setTechBadges(
-                        techBadgesData.reduce((acc, techBadge) => {
-                            acc[techBadge.$id] = techBadge;
-                            return acc;
-                        }, {} as Record<string, TechBadgeType>)
-                    );
-                }
-
-                if (projectsData) {
-                    // Process the data to parse stringified fields
-                    const processedData = projectsData.map(card => {
-                        // Create a new object to avoid mutating the original
-                        return {
-                            ...card,
-                            // Parse the images JSON string to an array of image objects
-                            images: typeof card.images === 'string'
-                                ? JSON.parse(card.images)
-                                : card.images,
-                            // Parse the links JSON string to an array of link objects
-                            links: typeof card.links === 'string'
-                                ? JSON.parse(card.links)
-                                : card.links,
-                        };
-                    });
-
-                    setProjectCards(processedData);
-
-                    // Initialize filtered projects with all projects
-                    setFilteredProjects(processedData);
-                    setNumberOfResults(processedData.length);
-                }
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            } finally {
-                setIsLoading(false);
+    // Fetch tech badges and project cards
+    const [
+        {
+            data: techBadgesData,
+            isLoading: isLoadingTechBadges,
+            isError: isTechBadgesError,
+        },
+        {
+            data: projectCardsData,
+            isLoading: isLoadingProjects,
+            isError: isProjectsError,
+        }
+    ] = useQueries({
+        queries: [
+            {
+                queryKey: ['techBadges'],
+                queryFn: getTechBadgesOrderedByName,
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                // Transform data into the desired Record format
+                select: (data) => (data as TechBadgeType[] | undefined)?.reduce((acc, techBadge) => {
+                    acc[techBadge.$id] = techBadge;
+                    return acc;
+                }, {} as Record<string, TechBadgeType>) ?? {}, // Provide default empty object
+            },
+            {
+                // Include limitQuery and sortingOrderFilter in the queryKey
+                queryKey: ['projectCards', limitQuery, sortingOrderFilter],
+                queryFn: () => getProjectCards({
+                    all: !limitQuery,
+                    sortingOrder: sortingOrderFilter,
+                }),
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                // Process the data to parse stringified fields
+                select: (data) => (data as ProjectCardType[] | undefined)?.map(card => ({
+                    ...card,
+                    images: typeof card.images === 'string' ? JSON.parse(card.images) : card.images,
+                    links: typeof card.links === 'string' ? JSON.parse(card.links) : card.links,
+                })) ?? [], // Provide default empty array
             }
-        };
-        fetchProjectCards();
-    }, [limitQuery, sortingOrderFilter]);
+        ]
+    });
 
     // Apply filters whenever filter values change or project cards change
     useEffect(() => {
-        if (projectCards.length === 0) return;
+        if (!projectCardsData || projectCardsData.length === 0) {
+            setFilteredProjects([]);
+            setNumberOfResults(0);
+            return;
+        }
 
         // Create a copy of the project cards to filter
-        let filtered = [...projectCards];
+        let filtered = [...projectCardsData];
 
         // Apply link filters
         if (linkFilters.length > 0) {
@@ -124,7 +110,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         // Update the filtered projects state
         setFilteredProjects(filtered);
         setNumberOfResults(filtered.length);
-    }, [projectCards, linkFilters, techBadgeFilters]);
+    }, [projectCardsData, linkFilters, techBadgeFilters]);
 
     // Function to handle sorting order change
     const handleSortingOrderChange = (value: string) => {
@@ -184,7 +170,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                 </div>
                 {!limitQuery && (
                     <div className="w-full flex items-center justify-between gap-4 max-lg:flex-col">
-                        {isLoading ? (
+                        {isLoadingTechBadges ? (
                             <div className="flex items-center gap-1 text-base">
                                 <p>Number of results:</p>
                                 <Skeleton className="h-5 w-6 rounded-sm" />
@@ -253,7 +239,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                                         </div>
                                         <div className="space-y-3">
                                             <h4 className="font-medium leading-none">Technologies</h4>
-                                            {isLoading ? (
+                                            {isLoadingTechBadges ? (
                                                 <div className="space-y-2">
                                                     {Array(NUMBER_OF_SKELETON_TECH_BADGES).fill(0).map((_, index) => (
                                                         <div key={index} className="flex items-center space-x-2">
@@ -262,9 +248,11 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                                                         </div>
                                                     ))}
                                                 </div>
-                                            ) : (
+                                            ) : isTechBadgesError ? (
+                                                <p className="text-sm text-red-500">Error loading Tech Badges</p>
+                                            ) : techBadgesData && (
                                                 <div className="space-y-2 max-h-50 overflow-auto">
-                                                    {Object.values(techBadges).map((techBadge) => (
+                                                    {Object.values(techBadgesData).map((techBadge) => (
                                                         <div key={techBadge.$id} className="flex items-center space-x-2">
                                                             <Checkbox
                                                                 id={techBadge.$id}
@@ -305,44 +293,44 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                     </div>
                 )}
                 <div className={`${!limitQuery ? 'mt-2' : ''} w-full flex justify-between flex-wrap gap-5`}>
-                    {isLoading ? (
+                    {isLoadingProjects ? ( // Checks if the projects are still loading and shows skeletons
                         Array(NUMBER_OF_SKELETON_PROJECTS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="p-10 rounded-3xl w-[650px] h-[750px] max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5" />
                         ))
-                    ) : (
-                        filteredProjects.length > 0 ? (
-                            filteredProjects.map((card, index) => (
-                                <ProjectCard
-                                    key={index}
-                                    title={card.title}
-                                    startDate={card.startDate}
-                                    endDate={card.endDate}
-                                    description={card.description}
-                                    links={card.links}
-                                    techBadges={card.techBadges}
-                                    images={card.images}
-                                    original={card.original}
-                                    onImageClick={openImageViewer}
-                                    index={index}
-                                />
-                            ))
-                        ) : (
-                            <div className="bg-my-accent mx-auto my-20 p-8 rounded-2xl border border-my-secondary flex flex-col items-center max-w-md">
-                                <FaExclamationTriangle size={40} className="text-my-primary mb-4" />
-                                <h3 className="text-2xl font-bold mb-2">No projects found</h3>
-                                <p className="text-center text-base mb-6">
-                                    No projects match your current filter selections.
-                                    Try adjusting your filters to see more results.
-                                </p>
-                                <Button
-                                    variant="primary"
-                                    onClick={clearAllFilters}
-                                    className="px-6"
-                                >
-                                    Clear All Filters
-                                </Button>
-                            </div>
-                        )
+                    ) : isProjectsError ? ( // Show error card if there was an error fetching projects
+                        <div className="w-full"><ErrorCard name="Projects" /></div>
+                    ) : filteredProjects.length > 0 ? ( // Show projects if loading is done, no error, and projects exist
+                        filteredProjects.map((card, index) => (
+                            <ProjectCard
+                                key={index}
+                                title={card.title}
+                                startDate={card.startDate}
+                                endDate={card.endDate}
+                                description={card.description}
+                                links={card.links}
+                                techBadges={card.techBadges}
+                                images={card.images}
+                                original={card.original}
+                                onImageClick={openImageViewer}
+                                index={index}
+                            />
+                        ))
+                    ) : ( // Only show "No projects found" if loading is done, no error, and filteredProjects is empty
+                        <div className="bg-my-accent mx-auto my-20 p-8 rounded-2xl border border-my-secondary flex flex-col items-center max-w-md">
+                            <FaExclamationTriangle size={40} className="text-my-primary mb-4" />
+                            <h3 className="text-2xl font-bold mb-2">No projects found</h3>
+                            <p className="text-center text-base mb-6">
+                                No projects match your current filter selections.
+                                Try adjusting your filters to see more results.
+                            </p>
+                            <Button
+                                variant="primary"
+                                onClick={clearAllFilters}
+                                className="px-6"
+                            >
+                                Clear All Filters
+                            </Button>
+                        </div>
                     )}
                 </div>
                 {limitQuery && (
@@ -393,7 +381,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
 
     return (
         <div ref={cardRef} className={cardVisible ? cardAnimation : 'opacity-0'}>
-            <div  className='relative flex flex-col items-center bg-my-accent h-full w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5'>
+            <div className='relative flex flex-col items-center bg-my-accent h-full w-[650px] p-10 border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300 rounded-3xl max-5xl:w-[560px] max-5xl:p-7 max-4xl:w-[470px] max-4xl:p-5 max-3xl:w-full max-3xl:p-10 max-xl:p-5'>
                 {original &&
                     <TooltipProvider>
                         <Tooltip>

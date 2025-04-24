@@ -1,12 +1,14 @@
 "use client";
 
-import { AdminSkill, SkillCardProps } from "@/types/interfaces";
+import { SkillCardProps } from "@/types/interfaces";
 import Image from "next/image";
 import useHoverSupport from "@/hooks/useHoverSupport";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { getSkills } from "@/lib/actions/skills.actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import useScrollAnimation from "@/hooks/useScrollAnimation";
+import { useQueries } from "@tanstack/react-query";
+import ErrorCard from "@/components/ErrorCard";
 
 const NUMBER_OF_SKELETONS = 24;
 
@@ -19,14 +21,33 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
     // Custom hook to check if the browser supports hover
     const isHoverSupported = useHoverSupport();
-    // State to store if the main skills are loading
-    const [isLoadingMainSkills, setIsLoadingMainSkills] = useState(true);
-    // State to store the main skills
-    const [mainSkills, setMainSkills] = useState<AdminSkill[]>([]);
-    // State to store if the main skills are loading
-    const [isLoadingOtherSkills, setIsLoadingOtherSkills] = useState(true);
-    // State to store the main skills
-    const [otherSkills, setOtherSkills] = useState<AdminSkill[]>([]);
+
+    // Fetches main and other skills
+    const [
+        {
+            data: mainSkillsData,
+            isLoading: isLoadingMainSkills,
+            isError: isMainSkillsError,
+        },
+        {
+            data: otherSkillsData,
+            isLoading: isLoadingOtherSkills,
+            isError: isOtherSkillsError,
+        }
+    ] = useQueries({
+        queries: [
+            {
+                queryKey: ['mainSkills'],
+                queryFn: () => getSkills({ isMainSkill: true }),
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+            },
+            {
+                queryKey: ['otherSkills'],
+                queryFn: () => getSkills({ isMainSkill: false }),
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+            }
+        ]
+    });
 
     // Handle mouse movement within the section
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -50,36 +71,6 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
         setIsMouseInSection(false);
     }
 
-    // Fetches the main skills when the component mounts
-    useEffect(() => {
-        const fetchSkills = async () => {
-            setIsLoadingMainSkills(true);
-            setIsLoadingOtherSkills(true);
-            try {
-                // Fetch both types of skills in parallel
-                const [mainSkillsData, otherSkillsData] = await Promise.all([
-                    getSkills({ isMainSkill: true }),
-                    getSkills({ isMainSkill: false })
-                ]);
-
-                // Update state with the results
-                if (mainSkillsData) {
-                    setMainSkills(mainSkillsData);
-                }
-
-                if (otherSkillsData) {
-                    setOtherSkills(otherSkillsData);
-                }
-            } catch (error) {
-                console.error("Failed to fetch skills:", error);
-            } finally {
-                setIsLoadingMainSkills(false);
-                setIsLoadingOtherSkills(false);
-            }
-        };
-        fetchSkills();
-    }, []);
-
     const mainSkillsRef = useRef(null);
     const mainSkillsVisible = useScrollAnimation(mainSkillsRef, 20);
     const otherSkillsRef = useRef(null);
@@ -94,8 +85,7 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
                 onMouseLeave={handleMouseLeave}
                 className="relative flex flex-col items-center responsive-container"
             >
-                {/* Glowing orb that follows the mouse */}
-                {isMouseInSection && isHoverSupported && (
+                {isMouseInSection && isHoverSupported && ( // Glowing orb that follows the mouse
                     <span
                         className="absolute pointer-events-none w-[200px] h-[200px] rounded-full bg-my-primary blur-3xl transition-opacity duration-300"
                         style={{
@@ -112,8 +102,10 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-[140px] h-[140px] rounded-3xl" />
                         ))
-                    ) : (
-                        mainSkills.map((skill) => (
+                    ) : isMainSkillsError ? (
+                        <ErrorCard name="Main Skills" />
+                    ) : mainSkillsData && (
+                        mainSkillsData.map((skill) => (
                             <SkillCard
                                 key={skill.$id}
                                 link={skill.link}
@@ -131,8 +123,10 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-[140px] h-[140px] rounded-3xl" />
                         ))
-                    ) : (
-                        otherSkills.map((skill) => (
+                    ) : isOtherSkillsError ? (
+                        <ErrorCard name="Main Skills" />
+                    ) : otherSkillsData && (
+                        otherSkillsData.map((skill) => (
                             <SkillCard
                                 key={skill.$id}
                                 link={skill.link}

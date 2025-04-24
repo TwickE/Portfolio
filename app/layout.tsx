@@ -3,6 +3,7 @@ import "./globals.css";
 import { Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import QueryProvider from "@/context/QueryProvider";
 
 const sora = Sora({
     subsets: ['latin'],
@@ -29,8 +30,10 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    {children}
-                    <Toaster richColors />
+                    <QueryProvider>
+                        {children}
+                        <Toaster richColors />
+                    </QueryProvider>
                 </ThemeProvider>
             </body>
         </html>

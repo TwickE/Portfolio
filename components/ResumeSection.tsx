@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
@@ -11,50 +11,44 @@ import { FiDownload } from "react-icons/fi";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 import useScrollAnimation from '@/hooks/useScrollAnimation';
+import { useQueries } from '@tanstack/react-query';
+import ErrorCard from '@/components/ErrorCard';
 
 const NUMBER_OF_SKELETONS = 5;
 
 const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
-    // State to store if the education items are loading
-    const [isLoading, setIsLoading] = useState(true);
-    // State to store the education items
-    const [educationItems, setEducationItems] = useState<ResumeItemProps[]>([]);
-    // State to store the work items
-    const [workItems, setWorkItems] = useState<ResumeItemProps[]>([]);
+
+    // Fetches education and work items
+    const [
+        {
+            data: educationItems,
+            isLoading: isLoadingEducation,
+            isError: isEducationError,
+        },
+        {
+            data: workItems,
+            isLoading: isLoadingWork,
+            isError: isWorkError,
+        }
+    ] = useQueries({
+        queries: [
+            {
+                queryKey: ['educationItems'],
+                queryFn: () => getResume({ type: "school" }),
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+            },
+            {
+                queryKey: ['workItems'],
+                queryFn: () => getResume({ type: "work" }),
+                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+            }
+        ]
+    });
 
     const firstBarContainer = useRef<HTMLDivElement>(null);
     const firstBar = useRef<HTMLSpanElement>(null);
     const secondBarContainer = useRef<HTMLDivElement>(null);
     const secondBar = useRef<HTMLSpanElement>(null);
-
-    // Fetches the resume data when the component mounts
-    useEffect(() => {
-        const fetchResume = async () => {
-            setIsLoading(true);
-            try {
-                // Fetch both types of data in parallel
-                const [educationData, workData] = await Promise.all([
-                    getResume({ type: "school" }),
-                    getResume({ type: "work" })
-                ]);
-
-                // Update state with the results
-                if (educationData) {
-                    setEducationItems(educationData);
-                }
-
-                if (workData) {
-                    setWorkItems(workData);
-                }
-            } catch (error) {
-                console.error("Failed to fetch resume data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchResume();
-    }, []);
-
 
     const calculateBarHeights = () => {
         if (firstBarContainer.current && firstBar.current) {
@@ -115,10 +109,10 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
 
     // Calculates the bar heights after data is loaded and DOM is updated
     useEffect(() => {
-        if (!isLoading) {
+        if (!isLoadingEducation && !isLoadingWork) {
             calculateBarHeights();
         }
-    }, [isLoading, educationItems, workItems]);
+    }, [isLoadingEducation, isLoadingWork, educationItems, workItems]);
 
     const fetchCVFile = useCallback(async () => {
         try {
@@ -148,7 +142,7 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
                     <div ref={educationRef} className={`${educationVisible ? 'animate-fade-in-left' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8`}>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Education</h3>
                         <div ref={firstBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
-                            {isLoading ? (
+                            {isLoadingEducation ? (
                                 Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                                     <div key={index} className="flex gap-5">
                                         <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full" />
@@ -159,7 +153,9 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
                                         </div>
                                     </div>
                                 ))
-                            ) : (
+                            ) : isEducationError ? (
+                                <ErrorCard name="Education items" />
+                            ) : educationItems && (
                                 <>
                                     <span ref={firstBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
                                     {educationItems.map((item) => (
@@ -178,7 +174,7 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
                     <div ref={workRef} className={`${workVisible ? 'animate-fade-in-right' : 'opacity-0'} flex flex-1/2 flex-col items-center justify-center gap-10 max-2xl:gap-8 max-2xl:mt-12`}>
                         <h3 className='text-3xl font-bold mx-auto max-2xl:mr-auto max-2xl:ml-0'>Work Experience</h3>
                         <div ref={secondBarContainer} className='w-full flex flex-col gap-10 pl-13 relative max-2xl:pl-6'>
-                            {isLoading ? (
+                            {isLoadingWork ? (
                                 Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                                     <div key={index} className="flex gap-5">
                                         <Skeleton className="w-15 min-w-15 h-15 min-h-15 rounded-full" />
@@ -189,7 +185,9 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
                                         </div>
                                     </div>
                                 ))
-                            ) : (
+                            ) : isWorkError ? (
+                                <ErrorCard name="Work items" />
+                            ) : workItems && (
                                 <>
                                     <span ref={secondBar} className='absolute w-0.5 bg-gray-400 left-[5px] top-[30px]' />
                                     {workItems.map((item) => (
