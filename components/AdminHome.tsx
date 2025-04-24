@@ -3,15 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { getDashboardStats } from "@/lib/actions/dashboard.actions";
-import { AdminHomeData, ChartDataItem, DatabaseItemProps, StorageItemProps } from "@/types/interfaces";
+import { DatabaseItemProps, StorageItemProps } from "@/types/interfaces";
 import { format } from "date-fns";
 import { FaDatabase, FaFolder, FaCopy } from "react-icons/fa";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { Label, Pie, PieChart } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, } from "@/components/ui/chart";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import ErrorCard from "@/components/ErrorCard";
 
 const collectionsChartConfig = {
     documents: { label: "Documents", },
@@ -31,256 +34,295 @@ const storageChartConfig = {
 } satisfies ChartConfig;
 
 const AdminHome = () => {
-    const [data, setData] = useState<AdminHomeData>();
-    const [collectionsChartData, setCollectionsChartData] = useState<ChartDataItem[]>([]);
-    const [storageChartData, setStorageChartData] = useState<ChartDataItem[]>([]);
+    // Fetches the dashboard stats
+    const {
+        data,
+        isLoading: isLoadingDashboardStats,
+        isError: isErrorDashboardStats
+    } = useQuery({
+        queryKey: ['dashboardStats'],
+        queryFn: () => getDashboardStats(),
+        gcTime: 1000 * 60 * 60 * 12 // 12 hours
+    });
 
-    useEffect(() => {
-        const fetchDashboardStats = async () => {
-            try {
-                const stats = await getDashboardStats();
-                if (stats) {
-                    setData(stats);
-                    // Update the charts data based on the fetched stats
-                    setCollectionsChartData([
-                        { collection: "mainSkills", number: stats.dbTotalMainSkills || 0, fill: "hsl(var(--chart-1))" },
-                        { collection: "otherSkills", number: stats.dbTotalOtherSkills || 0, fill: "hsl(var(--chart-2))" },
-                        { collection: "techBadges", number: stats.dbTotalTechBadges || 0, fill: "hsl(var(--chart-3))" },
-                        { collection: "education", number: stats.dbTotalEducation || 0, fill: "hsl(var(--chart-4))" },
-                        { collection: "work", number: stats.dbTotalWork || 0, fill: "hsl(var(--chart-5))" },
-                        { collection: "cv", number: stats.dbTotalCV || 0, fill: "hsl(var(--chart-6))" }
-                    ]);
-                    setStorageChartData([
-                        { storage: "skills", number: stats.storageTotalSkills || 0, fill: "hsl(var(--chart-1))" },
-                        { storage: "techBadges", number: stats.storageTotalTechBadges || 0, fill: "hsl(var(--chart-2))" },
-                        { storage: "cv", number: stats.storageTotalCV || 0, fill: "hsl(var(--chart-3))" }
-                    ]);
-                }
-            } catch (error) {
-                console.error("Error fetching dashboard stats:", error);
-            }
-        }
+    // Derive the collections chart data using useMemo
+    const collectionsChartData = useMemo(() => {
+        if (!data) return []; // Return empty array if data is not yet available
+        return [
+            { collection: "mainSkills", number: data.dbTotalMainSkills || 0, fill: "hsl(var(--chart-1))" },
+            { collection: "otherSkills", number: data.dbTotalOtherSkills || 0, fill: "hsl(var(--chart-2))" },
+            { collection: "techBadges", number: data.dbTotalTechBadges || 0, fill: "hsl(var(--chart-3))" },
+            { collection: "education", number: data.dbTotalEducation || 0, fill: "hsl(var(--chart-4))" },
+            { collection: "work", number: data.dbTotalWork || 0, fill: "hsl(var(--chart-5))" },
+            { collection: "cv", number: data.dbTotalCV || 0, fill: "hsl(var(--chart-6))" }
+        ];
+    }, [data]); // Recalculate only when data changes
 
-        fetchDashboardStats();
-    }, []);
+    // Derive the storage chart data using useMemo
+    const storageChartData = useMemo(() => {
+        if (!data) return []; // Return empty array if data is not yet available
+        return [
+            { storage: "skills", number: data.storageTotalSkills || 0, fill: "hsl(var(--chart-1))" },
+            { storage: "techBadges", number: data.storageTotalTechBadges || 0, fill: "hsl(var(--chart-2))" },
+            { storage: "cv", number: data.storageTotalCV || 0, fill: "hsl(var(--chart-3))" }
+        ];
+    }, [data]); // Recalculate only when data changes
 
     const totalCollections = useMemo(() => {
+        // Check if data is loading before reducing
+        if (isLoadingDashboardStats || !data) return 0;
         return collectionsChartData.reduce((acc, curr) => acc + curr.number, 0);
-    }, [collectionsChartData]);
+    }, [collectionsChartData, isLoadingDashboardStats, data]);
 
     const totalStorage = useMemo(() => {
+        // Check if data is loading before reducing
+        if (isLoadingDashboardStats || !data) return 0;
         return storageChartData.reduce((acc, curr) => acc + curr.number, 0);
-    }, [storageChartData]);
+    }, [storageChartData, isLoadingDashboardStats, data]);
 
-    return (
-        <section className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-full max-xl:grid-cols-1 max-xl:grid-rows-4">
-            <div className="col-span-2 flex p-4 pb-0 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
-                <div className="flex-1/2 flex flex-col items-center">
-                    <h2 className="w-fit flex gap-1 items-center">
-                        <FaDatabase className="text-my-appwrite" size={24} />
-                        Collections
-                    </h2>
-                    <ChartContainer config={collectionsChartConfig} className="mx-auto aspect-square flex-1">
-                        <PieChart>
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                            <Pie
-                                data={collectionsChartData}
-                                dataKey="number"
-                                nameKey="collection"
-                                innerRadius={60}
-                                strokeWidth={5}
-                            >
-                                <Label
-                                    content={({ viewBox }) => {
-                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                            return (
-                                                <text
-                                                    x={viewBox.cx}
-                                                    y={viewBox.cy}
-                                                    textAnchor="middle"
-                                                    dominantBaseline="middle"
-                                                >
-                                                    <tspan
+    if (isLoadingDashboardStats) {
+        return (
+            <section className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-full max-xl:grid-cols-1 max-xl:grid-rows-auto">
+                <Skeleton className="col-span-2 row-span-1 max-xl:col-span-1" />
+                <div className="col-span-2 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
+                    <div className="flex flex-row gap-2 flex-1">
+                        <Skeleton className="flex-1 h-full" />
+                        <Skeleton className="flex-1 h-full" />
+                    </div>
+                    <Skeleton className="flex-1 h-full" />
+                </div>
+                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
+                    <Skeleton className="flex-1 h-full" />
+                    <Skeleton className="flex-1 h-full" />
+                </div>
+                <Skeleton className="col-span-1 row-span-1 max-xl:col-span-1" />
+                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
+                    <Skeleton className="flex-1 h-full" />
+                    <Skeleton className="flex-1 h-full" />
+                </div>
+                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
+                    <Skeleton className="flex-1 h-full" />
+                    <Skeleton className="flex-1 h-full" />
+                </div>
+            </section>
+        )
+    } else if (isErrorDashboardStats) {
+        return (
+            <div className="h-full grid place-items-center">
+                <ErrorCard name="Dashboard Stats" />
+            </div>
+        )
+    } else if (data) {
+        return (
+            <section className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-full max-xl:grid-cols-1 max-xl:grid-rows-4">
+                <div className="col-span-2 flex p-4 pb-0 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
+                    <div className="flex-1/2 flex flex-col items-center">
+                        <h2 className="w-fit flex gap-1 items-center">
+                            <FaDatabase className="text-my-appwrite" size={24} />
+                            Collections
+                        </h2>
+                        <ChartContainer config={collectionsChartConfig} className="mx-auto aspect-square flex-1">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={collectionsChartData}
+                                    dataKey="number"
+                                    nameKey="collection"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
                                                         x={viewBox.cx}
                                                         y={viewBox.cy}
-                                                        className="fill-foreground text-3xl font-bold"
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
                                                     >
-                                                        {totalCollections.toLocaleString()}
-                                                    </tspan>
-                                                    <tspan
-                                                        x={viewBox.cx}
-                                                        y={(viewBox.cy || 0) + 24}
-                                                        className="fill-muted-foreground"
-                                                    >
-                                                        Documents
-                                                    </tspan>
-                                                </text>
-                                            )
-                                        }
-                                    }}
-                                />
-                            </Pie>
-                        </PieChart>
-                    </ChartContainer>
-                </div>
-                <div className="flex-1/2 flex flex-col items-center">
-                    <h2 className="w-fit flex gap-1 items-center">
-                        <FaFolder className="text-my-appwrite" size={24} />
-                        Storage
-                    </h2>
-                    <ChartContainer config={storageChartConfig} className="mx-auto aspect-square flex-1">
-                        <PieChart>
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                            <Pie
-                                data={storageChartData}
-                                dataKey="number"
-                                nameKey="storage"
-                                innerRadius={60}
-                                strokeWidth={5}
-                            >
-                                <Label
-                                    content={({ viewBox }) => {
-                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                            return (
-                                                <text
-                                                    x={viewBox.cx}
-                                                    y={viewBox.cy}
-                                                    textAnchor="middle"
-                                                    dominantBaseline="middle"
-                                                >
-                                                    <tspan
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={viewBox.cy}
+                                                            className="fill-foreground text-3xl font-bold"
+                                                        >
+                                                            {totalCollections.toLocaleString()}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Documents
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
+                    </div>
+                    <div className="flex-1/2 flex flex-col items-center">
+                        <h2 className="w-fit flex gap-1 items-center">
+                            <FaFolder className="text-my-appwrite" size={24} />
+                            Storage
+                        </h2>
+                        <ChartContainer config={storageChartConfig} className="mx-auto aspect-square flex-1">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={storageChartData}
+                                    dataKey="number"
+                                    nameKey="storage"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
                                                         x={viewBox.cx}
                                                         y={viewBox.cy}
-                                                        className="fill-foreground text-3xl font-bold"
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
                                                     >
-                                                        {totalStorage.toLocaleString()}
-                                                    </tspan>
-                                                    <tspan
-                                                        x={viewBox.cx}
-                                                        y={(viewBox.cy || 0) + 24}
-                                                        className="fill-muted-foreground"
-                                                    >
-                                                        Files
-                                                    </tspan>
-                                                </text>
-                                            )
-                                        }
-                                    }}
-                                />
-                            </Pie>
-                        </PieChart>
-                    </ChartContainer>
-                </div>
-            </div>
-            <div className="col-span-2 flex flex-col gap-2 font-bold group">
-                <div className="flex flex-row gap-2 flex-1/2">
-                    <div className="relative flex flex-col justify-between p-4 flex-1/2 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                        <DatabaseItem
-                            adminLink="/admin/main-skills"
-                            name="Main Skills"
-                            dbTotal={data?.dbTotalMainSkills}
-                            dbLastUpdated={data?.dbLastUpdatedMainSkills}
-                            collectionId={data?.skillsCollectionId}
-                            collectionLink={data?.skillsCollectionLink}
-                        />
-                    </div>
-                    <div className="relative flex flex-col justify-between p-4 flex-1/2 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                        <DatabaseItem
-                            adminLink="/admin/other-skills"
-                            name="Other Skills"
-                            dbTotal={data?.dbTotalOtherSkills}
-                            dbLastUpdated={data?.dbLastUpdatedOtherSkills}
-                            collectionId={data?.skillsCollectionId}
-                            collectionLink={data?.skillsCollectionLink}
-                        />
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={viewBox.cy}
+                                                            className="fill-foreground text-3xl font-bold"
+                                                        >
+                                                            {totalStorage.toLocaleString()}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Files
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
                     </div>
                 </div>
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <StorageItem
-                        name="Skills Storage"
-                        storageTotal={data?.storageTotalSkills}
-                        storageLastUpdated={data?.storageLastUpdatedSkills}
-                        storageId={data?.storageSkillIconsId}
-                        storageLink={data?.storageSkillsLink}
-                    />
+                <div className="col-span-2 flex flex-col gap-2 font-bold group">
+                    <div className="flex flex-row gap-2 flex-1/2">
+                        <div className="relative flex flex-col justify-between p-4 flex-1/2 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                            <DatabaseItem
+                                adminLink="/admin/main-skills"
+                                name="Main Skills"
+                                dbTotal={data?.dbTotalMainSkills}
+                                dbLastUpdated={data?.dbLastUpdatedMainSkills}
+                                collectionId={data?.skillsCollectionId}
+                                collectionLink={data?.skillsCollectionLink}
+                            />
+                        </div>
+                        <div className="relative flex flex-col justify-between p-4 flex-1/2 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                            <DatabaseItem
+                                adminLink="/admin/other-skills"
+                                name="Other Skills"
+                                dbTotal={data?.dbTotalOtherSkills}
+                                dbLastUpdated={data?.dbLastUpdatedOtherSkills}
+                                collectionId={data?.skillsCollectionId}
+                                collectionLink={data?.skillsCollectionLink}
+                            />
+                        </div>
+                    </div>
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <StorageItem
+                            name="Skills Storage"
+                            storageTotal={data?.storageTotalSkills}
+                            storageLastUpdated={data?.storageLastUpdatedSkills}
+                            storageId={data?.storageSkillIconsId}
+                            storageLink={data?.storageSkillsLink}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="flex flex-col gap-2 font-bold group">
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                <div className="flex flex-col gap-2 font-bold group">
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <DatabaseItem
+                            adminLink="/admin/tech-badges"
+                            name="Tech Badges"
+                            dbTotal={data?.dbTotalTechBadges}
+                            dbLastUpdated={data?.dbLastUpdatedTechBadges}
+                            collectionId={data?.techBadgesCollectionId}
+                            collectionLink={data?.techBadgesCollectionLink}
+                        />
+                    </div>
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <StorageItem
+                            name="Tech Badges Storage"
+                            storageTotal={data?.storageTotalTechBadges}
+                            storageLastUpdated={data?.storageLastUpdatedTechBadges}
+                            storageId={data?.storageTechBadgesIconsId}
+                            storageLink={data?.storageTechBadgesLink}
+                        />
+                    </div>
+                </div>
+                <div className="relative flex flex-col justify-between p-4 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
                     <DatabaseItem
-                        adminLink="/admin/tech-badges"
-                        name="Tech Badges"
-                        dbTotal={data?.dbTotalTechBadges}
-                        dbLastUpdated={data?.dbLastUpdatedTechBadges}
-                        collectionId={data?.techBadgesCollectionId}
-                        collectionLink={data?.techBadgesCollectionLink}
+                        adminLink="/admin/projects"
+                        name="Projects"
+                        dbTotal={data?.dbTotalProjects}
+                        dbLastUpdated={data?.dbLastUpdatedProjects}
+                        collectionId={data?.projectCardsCollectionId}
+                        collectionLink={data?.projectsCollectionLink}
                     />
                 </div>
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <StorageItem
-                        name="Tech Badges Storage"
-                        storageTotal={data?.storageTotalTechBadges}
-                        storageLastUpdated={data?.storageLastUpdatedTechBadges}
-                        storageId={data?.storageTechBadgesIconsId}
-                        storageLink={data?.storageTechBadgesLink}
-                    />
+                <div className="flex flex-col gap-2 font-bold group">
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <DatabaseItem
+                            adminLink="/admin/education"
+                            name="Education"
+                            dbTotal={data?.dbTotalEducation}
+                            dbLastUpdated={data?.dbLastUpdatedEducation}
+                            collectionId={data?.resumeCollectionId}
+                            collectionLink={data?.resumeCollectionLink}
+                        />
+                    </div>
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <DatabaseItem
+                            adminLink="/admin/work-experience"
+                            name="Work Experience"
+                            dbTotal={data?.dbTotalWork}
+                            dbLastUpdated={data?.dbLastUpdatedWork}
+                            collectionId={data?.resumeCollectionId}
+                            collectionLink={data?.resumeCollectionLink}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="relative flex flex-col justify-between p-4 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
-                <DatabaseItem
-                    adminLink="/admin/projects"
-                    name="Projects"
-                    dbTotal={data?.dbTotalProjects}
-                    dbLastUpdated={data?.dbLastUpdatedProjects}
-                    collectionId={data?.projectCardsCollectionId}
-                    collectionLink={data?.projectsCollectionLink}
-                />
-            </div>
-            <div className="flex flex-col gap-2 font-bold group">
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <DatabaseItem
-                        adminLink="/admin/education"
-                        name="Education"
-                        dbTotal={data?.dbTotalEducation}
-                        dbLastUpdated={data?.dbLastUpdatedEducation}
-                        collectionId={data?.resumeCollectionId}
-                        collectionLink={data?.resumeCollectionLink}
-                    />
+                <div className="flex flex-col gap-2 font-bold group">
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <DatabaseItem
+                            adminLink="/admin/cv-file"
+                            name="CV File"
+                            dbTotal={data?.dbTotalCV}
+                            dbLastUpdated={data?.dbLastUpdatedCV}
+                            collectionId={data?.cvFileCollectionId}
+                            collectionLink={data?.cvFileCollectionLink}
+                        />
+                    </div>
+                    <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
+                        <StorageItem
+                            name="CV File Storage"
+                            storageTotal={data?.storageTotalCV}
+                            storageLastUpdated={data?.storageLastUpdatedCV}
+                            storageId={data?.storageCVFileId}
+                            storageLink={data?.storageCVLink}
+                        />
+                    </div>
                 </div>
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <DatabaseItem
-                        adminLink="/admin/work-experience"
-                        name="Work Experience"
-                        dbTotal={data?.dbTotalWork}
-                        dbLastUpdated={data?.dbLastUpdatedWork}
-                        collectionId={data?.resumeCollectionId}
-                        collectionLink={data?.resumeCollectionLink}
-                    />
-                </div>
-            </div>
-            <div className="flex flex-col gap-2 font-bold group">
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <DatabaseItem
-                        adminLink="/admin/cv-file"
-                        name="CV File"
-                        dbTotal={data?.dbTotalCV}
-                        dbLastUpdated={data?.dbLastUpdatedCV}
-                        collectionId={data?.cvFileCollectionId}
-                        collectionLink={data?.cvFileCollectionLink}
-                    />
-                </div>
-                <div className="relative flex flex-col justify-between flex-1/2 w-full p-4 bg-my-accent rounded-sm border border-my-secondary group-hover:border-my-primary group-hover:shadow-[0_0_10px] group-hover:shadow-my-primary transition-all duration-300">
-                    <StorageItem
-                        name="CV File Storage"
-                        storageTotal={data?.storageTotalCV}
-                        storageLastUpdated={data?.storageLastUpdatedCV}
-                        storageId={data?.storageCVFileId}
-                        storageLink={data?.storageCVLink}
-                    />
-                </div>
-            </div>
-        </section>
-    )
+            </section>
+        )
+    }
 }
 
 export default AdminHome

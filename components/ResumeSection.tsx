@@ -23,24 +23,24 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
         {
             data: educationItems,
             isLoading: isLoadingEducation,
-            isError: isEducationError,
+            isError: isEducationError
         },
         {
             data: workItems,
             isLoading: isLoadingWork,
-            isError: isWorkError,
+            isError: isWorkError
         }
     ] = useQueries({
         queries: [
             {
                 queryKey: ['educationItems'],
                 queryFn: () => getResume({ type: "school" }),
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
             },
             {
                 queryKey: ['workItems'],
                 queryFn: () => getResume({ type: "work" }),
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
             }
         ]
     });

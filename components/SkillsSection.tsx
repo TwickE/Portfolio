@@ -27,24 +27,24 @@ const SkillsSection = ({ backgroundColor }: { backgroundColor: string }) => {
         {
             data: mainSkillsData,
             isLoading: isLoadingMainSkills,
-            isError: isMainSkillsError,
+            isError: isMainSkillsError
         },
         {
             data: otherSkillsData,
             isLoading: isLoadingOtherSkills,
-            isError: isOtherSkillsError,
+            isError: isOtherSkillsError
         }
     ] = useQueries({
         queries: [
             {
-                queryKey: ['mainSkills'],
+                queryKey: ['skills', true],
                 queryFn: () => getSkills({ isMainSkill: true }),
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
             },
             {
-                queryKey: ['otherSkills'],
+                queryKey: ['skills', false],
                 queryFn: () => getSkills({ isMainSkill: false }),
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
             }
         ]
     });

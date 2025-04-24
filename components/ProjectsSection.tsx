@@ -41,19 +41,19 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
         {
             data: techBadgesData,
             isLoading: isLoadingTechBadges,
-            isError: isTechBadgesError,
+            isError: isTechBadgesError
         },
         {
             data: projectCardsData,
             isLoading: isLoadingProjects,
-            isError: isProjectsError,
+            isError: isProjectsError
         }
     ] = useQueries({
         queries: [
             {
                 queryKey: ['techBadges'],
                 queryFn: getTechBadgesOrderedByName,
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
                 // Transform data into the desired Record format
                 select: (data) => (data as TechBadgeType[] | undefined)?.reduce((acc, techBadge) => {
                     acc[techBadge.$id] = techBadge;
@@ -67,7 +67,7 @@ const ProjectsSection = ({ backgroundColor, limitQuery }: { backgroundColor: str
                     all: !limitQuery,
                     sortingOrder: sortingOrderFilter,
                 }),
-                gcTime: 1000 * 60 * 60 * 12, // 12 hours
+                gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
                 // Process the data to parse stringified fields
                 select: (data) => (data as ProjectCardType[] | undefined)?.map(card => ({
                     ...card,
