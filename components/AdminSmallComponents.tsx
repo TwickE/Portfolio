@@ -13,6 +13,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { getTechBadgesByName } from "@/lib/actions/techBadges.actions";
 import Image from "next/image";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export const AdminInput = ({ icon, placeholder, inputValue, onChange }: AdminInputProps) => {
     const [value, setValue] = useState(inputValue);
@@ -153,34 +155,36 @@ export const AdminLink = ({ linkType, inputValue, onChange, onRemove }: AdminLin
                     </button>
                 </PopoverTrigger>
                 <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-2 text-base">
-                    <button
-                        className={`${selectedLinkType === "Github" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleLinkTypeChange("Github")}
-                    >
-                        <FaGithub />
-                        Github
-                    </button>
-                    <button
-                        className={`${selectedLinkType === "Website" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleLinkTypeChange("Website")}
-                    >
-                        <FaGlobe />
-                        Website
-                    </button>
-                    <button
-                        className={`${selectedLinkType === "Figma" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleLinkTypeChange("Figma")}
-                    >
-                        <FaFigma />
-                        Figma
-                    </button>
-                    <button
-                        className={`${selectedLinkType === "Game" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleLinkTypeChange("Game")}
-                    >
-                        <FaGamepad />
-                        Game
-                    </button>
+                    <RadioGroup value={selectedLinkType} onValueChange={handleLinkTypeChange}>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Github" id="Github" />
+                            <Label htmlFor="Github" className="flex items-center gap-1">
+                                <FaGithub />
+                                Github
+                            </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Website" id="Website" />
+                            <Label htmlFor="Website" className="flex items-center gap-1">
+                                <FaGlobe />
+                                Website
+                            </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Figma" id="Figma" />
+                            <Label htmlFor="Figma" className="flex items-center gap-1">
+                                <FaFigma />
+                                Figma
+                            </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Game" id="Game" />
+                            <Label htmlFor="Game" className="flex items-center gap-1">
+                                <FaGamepad />
+                                Game
+                            </Label>
+                        </div>
+                    </RadioGroup>
                     <hr />
                     <Button variant="destructive" onClick={handleRemoveLink}>Remove Link</Button>
                 </PopoverContent>
@@ -362,21 +366,23 @@ export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownPr
                         <FaChevronDown color="white" className="!w-2 !h-2" size={8} />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent align="start" className="flex flex-col gap-2 w-auto p-2 text-base">
-                    <button
-                        className={`${selected === "school" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleSelectionChange("school")}
-                    >
-                        <FaGraduationCap />
-                        School
-                    </button>
-                    <button
-                        className={`${selected === "course" ? "bg-my-primary text-white" : "hover:bg-my-secondary/50"} flex items-center gap-2 px-2 py-1 rounded-sm cursor-pointer transition-colors duration-200`}
-                        onClick={() => handleSelectionChange("course")}
-                    >
-                        <PiCertificateFill />
-                        Course
-                    </button>
+                <PopoverContent align="end" className="flex flex-col gap-2 w-auto p-2 text-base">
+                    <RadioGroup value={selected} onValueChange={handleSelectionChange}>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="school" id="school" />
+                            <Label htmlFor="school" className="flex items-center gap-1">
+                                <FaGraduationCap size={16} />
+                                School
+                            </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="course" id="course" />
+                            <Label htmlFor="course" className="flex items-center gap-1">
+                                <PiCertificateFill size={16} />
+                                Course
+                            </Label>
+                        </div>
+                    </RadioGroup>
                 </PopoverContent>
             </Popover>
         ) : (
