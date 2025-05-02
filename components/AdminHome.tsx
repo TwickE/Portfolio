@@ -22,8 +22,9 @@ const collectionsChartConfig = {
     otherSkills: { label: "Other Skills", color: "hsl(var(--chart-2))" },
     techBadges: { label: "Tech Badges", color: "hsl(var(--chart-3))" },
     education: { label: "Education", color: "hsl(var(--chart-4))" },
-    work: { label: "Work", color: "hsl(var(--chart-5))" },
-    cv: { label: "CV", color: "hsl(var(--chart-6))" }
+    work: { label: "Work", color: "hsl(var(--chart-1))" },
+    cv: { label: "CV", color: "hsl(var(--chart-2))" },
+    projects: { label: "Projects", color: "hsl(var(--chart-3))" }
 } satisfies ChartConfig;
 
 const storageChartConfig = {
@@ -53,8 +54,9 @@ const AdminHome = () => {
             { collection: "otherSkills", number: data.dbTotalOtherSkills || 0, fill: "hsl(var(--chart-2))" },
             { collection: "techBadges", number: data.dbTotalTechBadges || 0, fill: "hsl(var(--chart-3))" },
             { collection: "education", number: data.dbTotalEducation || 0, fill: "hsl(var(--chart-4))" },
-            { collection: "work", number: data.dbTotalWork || 0, fill: "hsl(var(--chart-5))" },
-            { collection: "cv", number: data.dbTotalCV || 0, fill: "hsl(var(--chart-6))" }
+            { collection: "work", number: data.dbTotalWork || 0, fill: "hsl(var(--chart-1))" },
+            { collection: "cv", number: data.dbTotalCV || 0, fill: "hsl(var(--chart-2))" },
+            { collection: "projects", number: data.dbTotalProjects || 0, fill: "hsl(var(--chart-3))" }
         ];
     }, [data]); // Recalculate only when data changes
 
@@ -269,7 +271,7 @@ const AdminHome = () => {
                 </div>
                 <div className="relative flex flex-col justify-between p-4 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300">
                     <DatabaseItem
-                        adminLink="/admin/projects"
+                        adminLink="/admin/project-cards"
                         name="Projects"
                         dbTotal={data?.dbTotalProjects}
                         dbLastUpdated={data?.dbLastUpdatedProjects}

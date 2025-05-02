@@ -35,9 +35,6 @@
     --chart-2: 343 98% 65%;
     --chart-3: 343 98% 70%;
     --chart-4: 343 98% 75%;
-    --chart-5: 343 98% 80%;
-    --chart-5: 343 98% 80%;
-    --chart-6: 343 98% 85%;
 
     /* My custom variables */
     --sora: 'Sora', sans-serif;
@@ -123,8 +120,6 @@
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
-    --color-chart-5: var(--chart-5);
-    --color-chart-6: var(--chart-6);
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
