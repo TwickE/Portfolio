@@ -9,9 +9,9 @@ import ProjectsSection from "@/components/ProjectsSection";
 import ResumeSection from "@/components/ResumeSection";
 import Link from "next/link";
 import ContactSection from "@/components/ContactSection";
-import { useCallback } from "react";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function Home() {
     return (
@@ -26,16 +26,23 @@ export default function Home() {
 }
 
 const HeroSection = () => {
-    const fetchCVFile = useCallback(async () => {
-        try {
-            const file = await getCVFile();
+    const fetchCVFileMutation = useMutation({
+        mutationFn: getCVFile,
+        onSuccess: (file) => {
             if (file) {
                 window.open(file.fileURL, '_blank');
+            } else {
+                toast.error("No file returned");
             }
-        } catch {
+        },
+        onError: () => {
             toast.error("Failed to get CV file");
-        }
-    }, []);
+        },
+    });
+
+    const fetchCVFile = () => {
+        fetchCVFileMutation.mutate();
+    };
 
     return (
         <main className="responsive-container min-h-[calc(100vh-196px)] flex my-12 hero-glow1  max-2xl:flex-col max-2xl:items-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 import { ResumeItemProps } from "@/types/interfaces";
 import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
 import { PiCertificateFill } from "react-icons/pi";
@@ -11,7 +11,7 @@ import { FiDownload } from "react-icons/fi";
 import { getCVFile } from "@/lib/actions/cvFile.actions";
 import { toast } from "sonner";
 import useScrollAnimation from '@/hooks/useScrollAnimation';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useMutation } from '@tanstack/react-query';
 import ErrorCard from '@/components/ErrorCard';
 
 const NUMBER_OF_SKELETONS = 5;
@@ -114,16 +114,23 @@ const ResumeSection = ({ backgroundColor }: { backgroundColor: string }) => {
         }
     }, [isLoadingEducation, isLoadingWork, educationItems, workItems]);
 
-    const fetchCVFile = useCallback(async () => {
-        try {
-            const file = await getCVFile();
+    const fetchCVFileMutation = useMutation({
+        mutationFn: getCVFile,
+        onSuccess: (file) => {
             if (file) {
                 window.open(file.fileURL, '_blank');
+            } else {
+                toast.error("No file returned");
             }
-        } catch {
+        },
+        onError: () => {
             toast.error("Failed to get CV file");
-        }
-    }, []);
+        },
+    });
+
+    const fetchCVFile = () => {
+        fetchCVFileMutation.mutate();
+    };
 
     const titleRef = useRef(null);
     const titleVisible = useScrollAnimation(titleRef, 20);
