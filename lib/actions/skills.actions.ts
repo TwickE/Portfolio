@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { AdminSkill, DeleteSkillProps } from "@/types/interfaces";
+import { AdminSkill, DeleteProps } from "@/types/interfaces";
 import { constructFileUrl, handleError } from "@/lib/utils";
 
 export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Promise<AdminSkill[] | undefined> => {
@@ -74,14 +74,14 @@ export const updateSkill = async ({ $id, name, link, order, iconFile, bucketFile
     }
 }
 
-export const deleteSkill = async ({ skillId, fileId }: DeleteSkillProps) => {
+export const deleteSkill = async ({ id, fileId }: DeleteProps) => {
     try {
         const { databases, storage } = await createAdminClient();
 
         const deletedSkill = await databases.deleteDocument(
             appwriteConfig.databaseId,
             appwriteConfig.skillsCollectionId,
-            skillId
+            id
         );
 
         if (deletedSkill) {

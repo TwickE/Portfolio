@@ -33,7 +33,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
     // React Query Client
     const queryClient = useQueryClient();
 
-    // Fetch Skills Query
+    // Fetch Skills from the backend
     const {
         data: skillsData,
         isLoading,
@@ -53,7 +53,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         if (skillsData) setLocalData(skillsData);
     }, [skillsData]);
 
-    // Refresh function to update the local data with the latest skills data
     const handleRefresh = async () => {
         if (skillsData && localData !== skillsData) {
             setLocalData(skillsData);
@@ -80,7 +79,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         }, {} as Record<string, AdminSkill>));
     }
 
-    // Function to handle updating the icon of a skill
     const handleUpdateIcon = async (skillId: string) => {
         const image = await pickImage();
 
@@ -97,7 +95,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         }));
     }
 
-    // Function to handle input changes for skill name and link
     const handleSkillInputChange = (skillId: string, field: 'name' | 'link', value: string) => {
         const skill = localData[skillId];
         if (!skill) return;
@@ -112,7 +109,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         }));
     }
 
-    // Function to check if any required fields are empty
     const checkEmptyFields = (skillId: string) => {
         const skill = localData[skillId];
         if (!skill) return false;
@@ -166,7 +162,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         },
     });
 
-    // Function to handle updating and or adding skills
     const handleUpdateSkills = async () => {
         // First validate all skills
         for (const skill of Object.values(localData)) {
@@ -180,8 +175,8 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
 
     // Mutation to delete a skill
     const deleteMutation = useMutation({
-        mutationFn: async ({ skillId, fileId }: { skillId: string; fileId: string }) => {
-            return await deleteSkill({ skillId, fileId });
+        mutationFn: async ({ id, fileId }: { id: string; fileId: string }) => {
+            return await deleteSkill({ id, fileId });
         },
         onSuccess: () => {
             toast.success("Skill deleted successfully");
@@ -193,7 +188,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         },
     });
 
-    // Function to handle deleting a skill
     const handleDeleteSkill = (skillId: string, bucketFileId: string, newSkill: boolean) => {
         const executeDeleteSkill = async () => {
             // Always remove from local state immediately
@@ -206,7 +200,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
             // Only call the backend if it's not a new (unsaved) skill
             if (!newSkill) {
                 await deleteMutation.mutateAsync({
-                    skillId,
+                    id: skillId,
                     fileId: bucketFileId
                 });
             }
@@ -220,7 +214,6 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
         setAlertOpen(true);
     };
 
-    // Function to handle adding a new skill
     const handleAddNewSkill = () => {
         const tempId = `temp-${Date.now()}`; // Generate a temporary ID for the new skill
 

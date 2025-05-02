@@ -41,8 +41,8 @@ export interface AdminSkill {
     newSkill: boolean;
 }
 
-export interface DeleteSkillProps {
-    skillId: string;
+export interface DeleteProps {
+    id: string;
     fileId: string;
 }
 

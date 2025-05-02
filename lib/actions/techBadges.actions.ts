@@ -3,7 +3,7 @@
 import { createAdminClient, createPublicClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
-import { TechBadgeType } from "@/types/interfaces";
+import { DeleteProps, TechBadgeType } from "@/types/interfaces";
 import { constructFileUrl, handleError } from "@/lib/utils";
 
 export const getTechBadges = async () => {
@@ -145,20 +145,20 @@ export const addTechBadge = async ({ name, iconFile }: TechBadgeType) => {
     }
 }
 
-export const deleteTechBadge = async ({ $id, bucketFileId }: TechBadgeType) => {
+export const deleteTechBadge = async ({ id, fileId }: DeleteProps) => {
     try {
         const { databases, storage } = await createAdminClient();
 
         const deletedTechBadge = await databases.deleteDocument(
             appwriteConfig.databaseId,
             appwriteConfig.techBadgesCollectionId,
-            $id
+            id
         );
 
         if (deletedTechBadge) {
             await storage.deleteFile(
                 appwriteConfig.storageTechBadgesIconsId,
-                bucketFileId
+                fileId
             )
         }
     } catch (error) {

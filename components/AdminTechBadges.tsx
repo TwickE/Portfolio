@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { getTechBadges, updateTechBadge, addTechBadge, deleteTechBadge } from "@/lib/actions/techBadges.actions";
 import { TechBadgeType } from "@/types/interfaces";
 import Image from "next/image";
@@ -13,68 +13,57 @@ import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import ErrorCard from '@/components/ErrorCard';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const NUMBER_OF_SKELETONS = 6;
 
 const AdminTechBadges = () => {
     // State to store the tech badges and track their changes
-    const [techBadgesData, setTechBadgesData] = useState<Record<string, TechBadgeType>>({});
-    // State to track the saving status of each tech badge
-    const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
+    const [localData, setLocalData] = useState<Record<string, TechBadgeType>>({});
     // State to track the if the alert dialog is open
     const [alertOpen, setAlertOpen] = useState(false);
-    // State to track if the data is being fetched
-    const [isFetchingData, setIsFetchingData] = useState(false);
     // State to store the delete action
     const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
-
     // Custom hook to pick an image from the user's device
     const pickImage = usePickImage();
+    // React Query Client
+    const queryClient = useQueryClient();
 
-    // Gets the tech badges from the database
-    const fetchTechBadges = useCallback(async () => {
-        setIsFetchingData(true);
-        try {
-            const techBadges = await getTechBadges();
+    // Fetch tech badges from the backend
+    const {
+        data: techBadgesData,
+        isLoading,
+        isError
+    } = useQuery({
+        queryKey: ['techBadges'],
+        queryFn: getTechBadges,
+        // Transform data into the desired Record format
+        select: (data) => (data as TechBadgeType[] | undefined)?.reduce((acc, techBadge) => {
+            acc[techBadge.$id] = techBadge;
+            return acc;
+        }, {} as Record<string, TechBadgeType>) ?? {}, // Provide default empty object
+        gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
+    });
 
-            if (techBadges) {
-                setTechBadgesData(
-                    techBadges.reduce((acc, techBadge) => {
-                        acc[techBadge.$id] = techBadge;
-                        return acc;
-                    }, {} as Record<string, TechBadgeType>)
-                );
-                setIsSaving(
-                    techBadges.reduce((acc, techBadge) => {
-                        acc[techBadge.$id] = false;
-                        return acc;
-                    }, {} as Record<string, boolean>)
-                );
-            }
-        } catch (error) {
-            console.error("Failed to fetch tech badges:", error);
-            toast.error("Failed to load tech badges");
-        } finally {
-            setIsFetchingData(false);
-        }
-    }, []);
-
-    // Fetches the tech badges when the component mounts
+    // Effect to set the local data when techBadgesData changes
     useEffect(() => {
-        fetchTechBadges();
-    }, [fetchTechBadges]);
+        if (techBadgesData) setLocalData(techBadgesData);
+    }, [techBadgesData]);
 
     const handleRefresh = () => {
-        fetchTechBadges();
+        if (techBadgesData && localData !== techBadgesData) {
+            setLocalData(techBadgesData);
+        }
     }
 
     const handleTechBadgeInputChange = (techBadgeId: string, value: string) => {
-        const techBadge = techBadgesData[techBadgeId];
+        const techBadge = localData[techBadgeId];
         if (!techBadge) return;
 
         // Track the change
-        setTechBadgesData(prev => ({
+        setLocalData(prev => ({
             ...prev,
             [techBadgeId]: {
                 ...prev[techBadgeId] || techBadge,
@@ -83,8 +72,24 @@ const AdminTechBadges = () => {
         }));
     }
 
+    const handleUpdateIcon = async (techBadgeId: string) => {
+        const image = await pickImage();
+
+        if (!image) return;
+
+        // Update the preview icon of the skill
+        setLocalData(prev => ({
+            ...prev,
+            [techBadgeId]: {
+                ...prev[techBadgeId],
+                iconFile: image.file,
+                icon: image.fileURL
+            }
+        }));
+    }
+
     const checkEmptyFields = (techBadgeId: string) => {
-        const techBadge = techBadgesData[techBadgeId];
+        const techBadge = localData[techBadgeId];
         if (!techBadge) return false;
 
         if (!techBadge.name.trim()) {
@@ -100,93 +105,88 @@ const AdminTechBadges = () => {
         return false; // If all required fields are filled, return false (no empty fields)
     }
 
+    // Mutation to update and or add skills
+    const {
+        mutateAsync: updateMutation,
+        isPending,
+        variables
+    } = useMutation({
+        mutationFn: async (techBadgeId: string) => {
+            const techBadge = localData[techBadgeId];
+
+            // Validate file size
+            if (techBadge.iconFile && techBadge.iconFile.size > MAX_FILE_SIZE) {
+                throw new Error(`Image file too large for ${techBadge.name}`);
+            }
+
+            const response = techBadge.newTechBadge
+                ? await addTechBadge(techBadge)
+                : await updateTechBadge(techBadge);
+
+            if (!response) {
+                throw new Error(`Failed to ${techBadge.newTechBadge ? "add" : "update"} tech badge`);
+            }
+
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['techBadges'] });
+            toast.success("Tech Badge updated successfully");
+        },
+        onError: (err: unknown) => {
+            console.error("Mutation failed:", err);
+            toast.error((err as Error).message || "Failed to update Tech Badge");
+        },
+    });
+
     const handleUpdateTechBadge = async (techBadgeId: string) => {
-        console.log("Updating tech badge", techBadgeId);
-        setIsSaving(prev => ({
-            ...prev,
-            [techBadgeId]: true
-        }));
-
-        const techBadge = techBadgesData[techBadgeId];
-
-        if (checkEmptyFields(techBadge.$id)) {
-            setIsSaving(prev => ({
-                ...prev,
-                [techBadgeId]: false
-            }));
+        // First validate the fields
+        if (checkEmptyFields(techBadgeId)) {
             return;
         }
 
-        try {
-            // Check if the icon file is provided and within the size limit
-            if (techBadge.iconFile) {
-                if (techBadge.iconFile?.size > MAX_FILE_SIZE) {
-                    toast.error("Image size should not exceed 50MB");
-                    setIsSaving(prev => ({
-                        ...prev,
-                        [techBadgeId]: false
-                    }));
-                    return;
-                }
-            }
+        await updateMutation(techBadgeId);
+    };
 
-            if (techBadge.newTechBadge) {
-                const response = await addTechBadge({
-                    $id: techBadge.$id,
-                    name: techBadge.name,
-                    icon: techBadge.icon,
-                    iconFile: techBadge.iconFile,
-                    newTechBadge: techBadge.newTechBadge,
-                    bucketFileId: techBadge.bucketFileId
+    // Mutation to delete a tech badge
+    const deleteMutation = useMutation({
+        mutationFn: async ({ id, fileId }: { id: string; fileId: string }) => {
+            return await deleteTechBadge({ id, fileId });
+        },
+        onSuccess: () => {
+            toast.success("Tech Badge deleted successfully");
+            queryClient.invalidateQueries({ queryKey: ['techBadges'] });
+        },
+        onError: (error) => {
+            console.error("Delete error:", error);
+            toast.error("Failed to delete tech badge");
+        },
+    });
+
+    const handleDeleteTechBadge = (techBadgeId: string, bucketFileId: string, newTechBadge: boolean) => {
+        const executeDeleteTechBadge = async () => {
+            // Always remove from local state immediately
+            setLocalData(prev => {
+                const newState = { ...prev };
+                delete newState[techBadgeId];
+                return newState;
+            });
+
+            // Only call the backend if it's not a new (unsaved) skill
+            if (!newTechBadge) {
+                await deleteMutation.mutateAsync({
+                    id: techBadgeId,
+                    fileId: bucketFileId
                 });
-
-                if (!response) {
-                    toast.error(`Failed to add tech badge: ${techBadge.name}`);
-                    return; // This now exits the entire function
-                }
-            } else {
-                const response = await updateTechBadge({
-                    $id: techBadge.$id,
-                    name: techBadge.name,
-                    icon: techBadge.icon,
-                    iconFile: techBadge.iconFile,
-                    bucketFileId: techBadge.bucketFileId,
-                    newTechBadge: techBadge.newTechBadge
-                });
-
-                if (!response) {
-                    toast.error(`Failed to update tech badge: ${techBadge.name}`);
-                    return; // This now exits the entire function
-                }
             }
-        } catch {
-            toast.error(`Error updating tech badge: ${techBadge.name}`);
-            return; // This now exits the entire function
-        } finally {
-            setIsSaving(prev => ({
-                ...prev,
-                [techBadgeId]: false
-            }));
-        }
-        fetchTechBadges(); // Refetch the tech badges to update the UI
-        toast.success("Tech Badge updated successfully");
-    }
 
-    const handleUpdateIcon = async (techBadgeId: string) => {
-        const image = await pickImage();
+            // Reset and close the dialog
+            setDeleteAction(null);
+            setAlertOpen(false);
+        };
 
-        if (!image) return;
-
-        // Update the preview icon of the skill
-        setTechBadgesData(prev => ({
-            ...prev,
-            [techBadgeId]: {
-                ...prev[techBadgeId],
-                iconFile: image.file,
-                icon: image.fileURL
-            }
-        }));
-    }
+        setDeleteAction(() => executeDeleteTechBadge);
+        setAlertOpen(true);
+    };
 
     const handleAddNewTechBadge = () => {
         const tempId = `temp-${Date.now()}`; // Generate a temporary ID for the new tech badge
@@ -199,51 +199,10 @@ const AdminTechBadges = () => {
             newTechBadge: true
         }
 
-        setTechBadgesData(prev => ({
+        setLocalData(prev => ({
             [newTechBadge.$id]: newTechBadge,
             ...prev
         })); // Add the new tech badge to the state
-    }
-
-    const handleDeleteTechBadge = (techBadgeId: string, bucketFileId: string, newTechBadge: boolean) => {
-        // Create the delete function with the current skill data captured in closure
-        const executeDeleteTechBadge = async () => {
-            try {
-                // Remove the skill from local state
-                setTechBadgesData(prev => {
-                    const newState = { ...prev };
-                    delete newState[techBadgeId];
-                    return newState;
-                });
-
-                const techBadge = techBadgesData[techBadgeId];
-
-                // Only call the API if it's not a new skill
-                if (!newTechBadge) {
-                    await deleteTechBadge({
-                        $id: techBadgeId,
-                        bucketFileId,
-                        newTechBadge: techBadge.newTechBadge,
-                        icon: techBadge.icon,
-                        iconFile: techBadge.iconFile,
-                        name: techBadge.name
-                    });
-                }
-
-                toast.success("Tech Badge deleted successfully");
-            } catch (error) {
-                console.error("Delete error:", error);
-                toast.error("Failed to delete Tech Badge");
-            } finally {
-                // Reset and close dialog
-                setDeleteAction(null);
-                setAlertOpen(false);
-            }
-        };
-
-        // Store the delete function and open dialog
-        setDeleteAction(() => executeDeleteTechBadge);
-        setAlertOpen(true);
     }
 
     return (
@@ -263,12 +222,16 @@ const AdminTechBadges = () => {
                     </div>
                 </div>
                 <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
-                    {isFetchingData ? (
+                    {isLoading ? (
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
                         ))
+                    ) : isError ? (
+                        <div className='h-full grid place-items-center'>
+                            <ErrorCard name="Tech Badges" />
+                        </div>
                     ) : (
-                        Object.values(techBadgesData).map((techBadge, index) => (
+                        Object.values(localData).map((techBadge, index) => (
                             <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
                                 <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                     <Image
@@ -293,9 +256,9 @@ const AdminTechBadges = () => {
                                     <Button
                                         variant="save"
                                         onClick={() => handleUpdateTechBadge(techBadge.$id)}
-                                        disabled={isSaving[techBadge.$id]}
+                                        disabled={isPending && variables === techBadge.$id}
                                     >
-                                        {isSaving[techBadge.$id] ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
+                                        {isPending && variables === techBadge.$id ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
                                         Save
                                     </Button>
                                     <Button
