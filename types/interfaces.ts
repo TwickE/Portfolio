@@ -157,7 +157,7 @@ export interface ResumeItemProps {
 
 export interface AdminDropDownProps {
     selectedValue: string;
-    type: 'education' | 'work';
+    type: 'school' | 'work';
     onChange?: (value: string) => void;
 }
 

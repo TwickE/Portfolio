@@ -343,7 +343,7 @@ export const AdminDropDown = ({ selectedValue, type, onChange }: AdminDropDownPr
     }, [selectedValue, selected]);
 
     return (
-        type === "education" ? (
+        type === "school" ? (
             <Popover>
                 <PopoverTrigger asChild>
                     <Button className="cursor-pointer text-white flex items-center gap-2 min-w-32" variant="primary">

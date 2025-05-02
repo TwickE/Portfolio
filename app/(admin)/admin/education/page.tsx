@@ -2,7 +2,7 @@ import AdminResume from "@/components/AdminResume";
 
 const page = () => {
     return (
-        <AdminResume type="education" />
+        <AdminResume type="school" />
     )
 }
 
