@@ -13,14 +13,34 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     // Define path groups to determine which MenubarTrigger should be active
     const homePath = ['/admin'];
     const skillPaths = ['/admin/main-skills', '/admin/other-skills'];
-    const projectPaths = ['/admin/project-cards', '/admin/tech-badges'];
+    const projectPaths = ['/admin/tech-badges', '/admin/project-cards'];
     const resumePaths = ['/admin/education', '/admin/work-experience'];
     const cvFilePath = ['/admin/cv-file'];
 
     // Helper function to determine if a MenubarTrigger should be active
     const isActive = (paths: string[]) => {
-        return paths.includes(pathname) ? "active-menu-trigger" : "";
-    };
+        // Handle the exact '/admin' case specifically for the homePath group
+        if (paths === homePath && pathname === '/admin') {
+            return "active-menu-trigger";
+        }
+
+        // For other paths
+        for (const path of paths) {
+            // Skip checking the '/admin' path itself within other groups if the pathname is longer
+            if (path === '/admin' && pathname !== '/admin') {
+                continue;
+            }
+
+            // Exact match for static routes
+            if (pathname === path) {
+                return "active-menu-trigger";
+            }
+            // Prefix match for dynamic routes
+            if (path !== '/' && pathname.startsWith(path + '/')) {
+                 return "active-menu-trigger";
+            }
+        }
+    }
 
     return (
         <>

@@ -1,14 +1,12 @@
 "use client";
 
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useState, useEffect } from 'react';
-import { GripVertical } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { FaTrash, FaPlus, FaSave, FaPen, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaTrash, FaSave, FaArrowUp, FaArrowDown, FaChevronRight } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { deleteProjectCard, getProjectCards, getProjectCardById } from "@/lib/actions/projects.actions";
-import { ProjectCardType } from "@/types/interfaces";
+import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,8 +19,22 @@ import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, Adm
 import TechBadge from '@/components/TechBadge';
 
 const AdminProjectCard = () => {
+    // Define a default empty state matching ProjectCardType
+    const defaultProjectCard: ProjectCardType = {
+        $id: '',
+        order: 0,
+        title: '',
+        description: '',
+        startDate: new Date(),
+        endDate: new Date(),
+        original: false,
+        images: [],
+        links: [],
+        techBadges: [],
+        new: false,
+    };
     // State to store the project cards and track their changes
-    const [localData, setLocalData] = useState<ProjectCardType>();
+    const [localData, setLocalData] = useState<ProjectCardType>(defaultProjectCard);
     // State to track the if the alert dialog is open
     const [alertOpen, setAlertOpen] = useState(false);
     // State to store the delete action
@@ -39,12 +51,17 @@ const AdminProjectCard = () => {
         isError
     } = useQuery({
         queryKey: ['projectCard', id],
-        queryFn: () => getProjectCardById(id as string),
+        queryFn: async () => {
+            const data = await getProjectCardById(id as string);
+            if (!data) {
+                throw new Error("Project not found");
+            }
+
+            return data;
+        },
         gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
         // Process the data to parse stringified fields and convert to the correct type
         select: (data) => {
-            if (!data) return {};
-
             const projectCard = data as ProjectCardType;
 
             // Process the single project card
@@ -70,11 +87,181 @@ const AdminProjectCard = () => {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleChangeInput = (field: string, value: any) => {
+        setLocalData(prev => {
+            return {
+                ...prev,
+                [field]: value
+            };
+        });
+    }
+
+    const handleChangeAdminLink = (linkIndex: number, url: string, linkType: string) => {
+        // Create a copy of the links array (ensuring it exists)
+        const updatedLinks = [...(localData.links || [])];
+
+        // Ensure the array has enough elements
+        while (updatedLinks.length <= linkIndex) {
+            updatedLinks.push({ text: "Website", url: "" });
+        }
+
+        // Update the specific link at the given index
+        updatedLinks[linkIndex] = {
+            ...updatedLinks[linkIndex],
+            text: linkType,
+            url: url
+        };
+
+        // Update the project card with the new links array
+        setLocalData(prev => ({
+            ...prev,
+            links: updatedLinks
+        }));
+    }
+
+    const handleRemoveAdminLink = (linkIndex: number) => {
+        if (!localData.links || localData.links.length <= linkIndex) return;
+
+        // Create a copy of the links array
+        const updatedLinks = [...localData.links];
+
+        // Remove the link at the specified index
+        updatedLinks.splice(linkIndex, 1);
+
+        // Update the project card with the new links array
+        setLocalData(prev => ({
+            ...prev,
+            links: updatedLinks
+        }));
+    }
+
+    const handleAddTechBadge = (techBadge: TechBadgeType) => {
+        // Check if tech badge already exists
+        if (localData.techBadges.some(tb => tb.$id === techBadge.$id)) {
+            toast.error("Tech badge already added");
+            return;
+        }
+
+        // Create a copy of the techBadges array
+        const updatedTechBadges = [...localData.techBadges, techBadge];
+
+        // Update the projectCard with the new techBadges array
+        setLocalData(prev => ({
+            ...prev,
+            techBadges: updatedTechBadges
+        }));
+    }
+
+    const handleDeleteTechBadge = (techBadgeId: string) => {
+        if (!localData.techBadges) return;
+
+        // Find the tech badge to be deleted
+        const techBadgeIndex = localData.techBadges.findIndex(tb => tb.$id === techBadgeId);
+
+        // If tech badge not found, return
+        if (techBadgeIndex === -1) {
+            toast.error(`Tech badge with ID ${techBadgeId} not found`);
+            return;
+        }
+
+        // Create a copy of the tech badges array
+        const updatedTechBadges = [...localData.techBadges];
+
+        // Remove the tech badge at the found index
+        updatedTechBadges.splice(techBadgeIndex, 1);
+
+        // Update the project card with the new tech badges array
+        setLocalData(prev => ({
+            ...prev,
+            techBadges: updatedTechBadges
+        }));
+
+        toast.success("Tech badge removed");
+    }
+
+    const handleChangeImageField = (imageIndex: number, field: string, value: string) => {
+        if (!localData.images) return;
+
+        // Create a copy of the images array
+        const updatedImages = [...localData.images];
+
+        // Ensure the array has enough elements
+        if (imageIndex >= updatedImages.length) {
+            console.error(`Image index ${imageIndex} is out of bounds`);
+            return;
+        }
+
+        // Update the specific field of the image at the given index
+        updatedImages[imageIndex] = {
+            ...updatedImages[imageIndex],
+            [field]: value
+        };
+
+        // Update the project card with the new images array
+        setLocalData(prev => ({
+            ...prev,
+            images: updatedImages
+        }));
+    }
+
+    const handleDeleteImage = (imageIndex: number) => {
+        if (!localData.images || localData.images.length <= imageIndex) return;
+
+        // Create a copy of the images array
+        const updatedImages = [...localData.images];
+
+        // Remove the image at the specified index
+        updatedImages.splice(imageIndex, 1);
+
+        // Update the project card with the new images array
+        setLocalData(prev => ({
+            ...prev,
+            images: updatedImages
+        }));
+
+        toast.success("Image removed");
+    }
+
+    // Add a new image to the top or bottom of the images array
+    const handleAddImage = (top: boolean) => {
+        // Create a copy of the images array (ensuring it exists)
+        const updatedImages = [...(localData.images || [])];
+
+        if (top) {
+            // Add a new empty image at the beginning of the array
+            updatedImages.unshift({
+                src: '',
+                alt: ''
+            });
+        } else {
+            // Add a new empty image at the end of the array
+            updatedImages.push({
+                src: '',
+                alt: ''
+            });
+        }
+
+        // Update the project card with the new images array
+        setLocalData(prev => ({
+            ...prev,
+            images: updatedImages
+        }));
+    }
+
     return (
         <>
             <section className="flex flex-col gap-4 h-full">
                 <div className="flex items-center justify-between max-xl:flex-wrap max-xl:gap-2 max-md:justify-center">
-                    <h2 className="text-2xl w-fit">Project Cards</h2>
+                    <div className="flex items-center gap-2">
+                        <Link href="/admin/project-cards"><h2 className="text-2xl breadcrumbs-hover-link">Project Cards</h2></Link>
+                        <FaChevronRight size={16} />
+                        {isLoading ? (
+                            <Skeleton className="w-20 h-7 rounded-md" />
+                        ) : localData && (
+                            <h2 className="text-2xl">{localData.title}</h2>
+                        )}
+                    </div>
                     <div className="flex items-center gap-4 max-md:flex-wrap max-md:justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
@@ -102,65 +289,65 @@ const AdminProjectCard = () => {
                     <div className='h-full grid place-items-center'>
                         <ErrorCard name="Project Card" />
                     </div>
-                ) : (
+                ) : localData && (
                     <div className="h-full overflow-y-auto">
                         <div className="flex flex-col gap-4 w-full">
                             <div className='flex gap-4 flex-wrap max-md:justify-center'>
                                 <AdminInput
                                     icon="text"
                                     placeholder="Title"
-                                    inputValue={localData?.title || ""}
-                                    onChange={() => console.log("Title changed")} /* (value) => handleChangeInput(localData.$id, 'title', value) */
+                                    inputValue={localData.title}
+                                    onChange={(value) => handleChangeInput('title', value)}
                                 />
                                 <AdminDatePicker
                                     placeholder="Starting Date"
-                                    inputValue={localData?.startDate || new Date()}
-                                    onChange={() => console.log("AdminLink changed")} /* (value) => handleChangeInput(localData.$id, 'startDate', value) */
+                                    inputValue={localData.startDate}
+                                    onChange={(value) => handleChangeInput('startDate', value)}
                                 />
                                 <AdminDatePicker
                                     placeholder="Ending Date"
-                                    inputValue={localData?.endDate || new Date()}
-                                    onChange={() => console.log("AdminLink changed")} /* (value) => handleChangeInput(projectCard.$id, 'endDate', value) */
+                                    inputValue={localData.endDate}
+                                    onChange={(value) => handleChangeInput('endDate', value)}
                                 />
                                 <AdminCheckBox
-                                    checked={localData?.original || false}
-                                    onChange={() => console.log("AdminLink changed")} /* (checked) => handleChangeAdminCheckBox(projectCard.$id, checked) */
+                                    checked={localData.original}
+                                    onChange={(value) => handleChangeInput('original', value)}
                                     id={localData?.$id}
                                 />
                             </div>
                             <AdminTextArea
                                 icon="text"
                                 placeholder="Description"
-                                inputValue={localData?.description || ""}
-                                onChange={() => console.log("Description changed")} /* (value) => handleChangeInput(localData.$id, 'description', value) */
+                                inputValue={localData.description}
+                                onChange={(value) => handleChangeInput('description', value)}
                             />
                             <div className='flex gap-4 max-2xl:flex-wrap'>
                                 <AdminLink
-                                    linkType={localData?.links?.[0]?.text || "NoLink"}
-                                    inputValue={localData?.links?.[0]?.url || ""}
-                                    onChange={() => console.log("AdminLink changed")} /* (url, linkType) => handleChangeAdminLink(localData[Object.keys(localData)[0]]?.$id, 0, url, linkType) */
-                                    onRemove={() => console.log("AdminLink removed")} /* () => handleRemoveAdminLink(localData[Object.keys(localData)[0]]?.$id, 0) */
+                                    linkType={localData.links?.[0]?.text || "NoLink"}
+                                    inputValue={localData.links?.[0]?.url || ""}
+                                    onChange={(url, linkType) => handleChangeAdminLink(0, url, linkType)}
+                                    onRemove={() => handleRemoveAdminLink(0)}
                                 />
                                 <AdminLink
-                                    linkType={localData?.links?.[1]?.text || "NoLink"}
-                                    inputValue={localData?.links?.[1]?.url || ""}
-                                    onChange={() => console.log("AdminLink changed")} /* (url, linkType) => handleChangeAdminLink(localData.$id, 1, url, linkType) */
-                                    onRemove={() => console.log("AdminLink removed")} /* () => handleRemoveAdminLink(projectCard.$id, 1) */
+                                    linkType={localData.links?.[1]?.text || "NoLink"}
+                                    inputValue={localData.links?.[1]?.url || ""}
+                                    onChange={(url, linkType) => handleChangeAdminLink(1, url, linkType)}
+                                    onRemove={() => handleRemoveAdminLink(1)}
                                 />
                                 <AdminLink
-                                    linkType={localData?.links?.[2]?.text || "NoLink"}
-                                    inputValue={localData?.links?.[2]?.url || ""}
-                                    onChange={() => console.log("AdminLink changed")} /* (url, linkType) => handleChangeAdminLink(projectCard.$id, 2, url, linkType) */
-                                    onRemove={() => console.log("AdminLink removed")} /* () => handleRemoveAdminLink(projectCard.$id, 2) */
+                                    linkType={localData.links?.[2]?.text || "NoLink"}
+                                    inputValue={localData.links?.[2]?.url || ""}
+                                    onChange={(url, linkType) => handleChangeAdminLink(2, url, linkType)}
+                                    onRemove={() => handleRemoveAdminLink(2)}
                                 />
                             </div>
                             <div className='flex flex-col gap-4 w-full bg-my-background-200 border border-border rounded-md p-3'>
                                 <div className='flex justify-between items-center max-[500px]:flex-wrap max-[500px]:justify-center max-[500px]:gap-2'>
                                     <h3>Tech Badges</h3>
-                                    <AdminSearch onTechBadgeSelect={() => console.log("AdminLink changed")} /> {/* (techBadge) => handleAddTechBadge(localData.$id, techBadge) */}
+                                    <AdminSearch onTechBadgeSelect={(techBadge) => handleAddTechBadge(techBadge)} />
                                 </div>
-                                <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto max-md:justify-center'>
-                                    {localData?.techBadges.map(techBadge => (
+                                <div className='flex flex-wrap gap-3 w-full max-md:justify-center'>
+                                    {localData.techBadges.map(techBadge => (
                                         <div
                                             key={techBadge.$id}
                                             className='flex items-center rounded-s-[19px] rounded-e-md bg-destructive hover:bg-destructive/90'
@@ -171,7 +358,7 @@ const AdminProjectCard = () => {
                                             />
                                             <button
                                                 className='cursor-pointer rounded-e-md w-full h-full px-3'
-                                                onClick={() => console.log("AdminLink changed")} /* () => handleDeleteTechBadge(projectCard.$id, techBadge.$id) */
+                                                onClick={() => handleDeleteTechBadge(techBadge.$id)}
                                             >
                                                 <FaTrash size={16} className='text-white' />
                                             </button>
@@ -180,28 +367,28 @@ const AdminProjectCard = () => {
                                 </div>
                             </div>
                             <div className='flex flex-col gap-4 w-full bg-my-background-200 border border-border rounded-md p-3'>
-                                <div className='flex justify-between items-center'>
+                                <div className='flex justify-between items-center max-lg:flex-wrap max-lg:gap-2 max-md:justify-center'>
                                     <h3>Images</h3>
-                                    <div className='flex gap-4'>
+                                    <div className='flex gap-4 flex-wrap max-md:justify-center'>
                                         <Button
                                             variant="primary"
-                                            onClick={() => console.log("AdminLink changed")} /* () => handleAddImage(projectCard.$id, true) */
+                                            onClick={() => handleAddImage(true)}
                                         >
                                             <FaArrowUp />
                                             Add Image Top
                                         </Button>
                                         <Button
                                             variant="primary"
-                                            onClick={() => console.log("AdminLink changed")} /* () => handleAddImage(projectCard.$id, false) */
+                                            onClick={() => handleAddImage(false)}
                                         >
                                             <FaArrowDown />
                                             Add Image Bottom
                                         </Button>
                                     </div>
                                 </div>
-                                <div className='flex flex-wrap gap-3 w-full max-h-60 overflow-y-auto'>
-                                    {localData?.images.map((image, index) => (
-                                        <div key={index} className="p-3 w-full flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                                <div className='flex flex-wrap gap-3 w-full'>
+                                    {localData.images.map((image, index) => (
+                                        <div key={index} className="p-3 w-full flex items-center gap-4 rounded-md mb-2 bg-my-accent max-3xl:flex-wrap max-md:justify-center">
                                             <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                                 <SafeImage
                                                     src={image.src}
@@ -212,18 +399,18 @@ const AdminProjectCard = () => {
                                                 icon="link"
                                                 placeholder="Image URL"
                                                 inputValue={image.src}
-                                                onChange={() => console.log("AdminLink changed")} /* (value) => handleChangeImageField(projectCard.$id, index, 'src', value) */
+                                                onChange={(value) => handleChangeImageField(index, 'src', value)}
                                             />
                                             <AdminInput
                                                 icon="text"
                                                 placeholder="Image alt text"
                                                 inputValue={image.alt}
-                                                onChange={() => console.log("AdminLink changed")} /* (value) => handleChangeImageField(projectCard.$id, index, 'alt', value) */
+                                                onChange={(value) => handleChangeImageField(index, 'alt', value)}
                                             />
                                             <Button
                                                 variant="destructive"
-                                                className="ml-auto max-4xl:mx-auto"
-                                                onClick={() => console.log("AdminLink changed")} /* () => handleDeleteImage(projectCard.$id, index) */
+                                                className="ml-auto max-3xl:ml-0"
+                                                onClick={() => handleDeleteImage(index)}
                                             >
                                                 <FaTrash />
                                                 Delete
