@@ -1,17 +1,15 @@
 "use client";
 
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { GripVertical } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { FaTrash, FaPlus, FaSave, FaArrowUp, FaArrowDown, FaPen } from "react-icons/fa";
+import { FaTrash, FaPlus, FaSave, FaPen } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
-import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
-import { addProjectCard, deleteProjectCard, getProjectCards, updateProjectCard } from "@/lib/actions/projects.actions";
-import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
+import { deleteProjectCard, getProjectCards, updateProjectCardsOrder } from "@/lib/actions/projects.actions";
+import { ProjectCardType } from "@/types/interfaces";
 import { toast } from "sonner";
-import TechBadge from "@/components/TechBadge";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -92,14 +90,10 @@ const AdminProjectCards = () => {
         isPending
     } = useMutation({
         mutationFn: async (projectCards: ProjectCardType[]) => {
-            for (const projectCard of projectCards) {
-                const response = projectCard.new
-                    ? await addProjectCard(projectCard)
-                    : await updateProjectCard(projectCard);
+            const response = await updateProjectCardsOrder(projectCards);
 
-                if (!response) {
-                    throw new Error(`Failed to ${projectCard.new ? "add" : "update"} project cards`);
-                }
+            if (!response) {
+                throw new Error("Failed to update project cards order");
             }
         },
         onSuccess: async () => {
@@ -155,6 +149,7 @@ const AdminProjectCards = () => {
     };
 
     const handleAddNewProjectCard = () => { // DO THIS NEXT: GO TO A NEW PAGE TO EDIT THE PROJECT CARD
+        console.log("clicked");
         /* const tempId = `temp-${Date.now()}`; // Generate a temporary ID for the new skill
         const currentDate = new Date();
 
@@ -227,6 +222,7 @@ const AdminProjectCards = () => {
                                                                 src={projectCard.images[0].src || "/noImage.webp"}
                                                                 width={60}
                                                                 height={60}
+                                                                //fill Modificar isto para tirar o warning de width e height
                                                                 alt={projectCard.images[0].alt || "Image 1"}
                                                                 className="object-contain object-center max-w-[60px] max-h-[60px]"
                                                             />

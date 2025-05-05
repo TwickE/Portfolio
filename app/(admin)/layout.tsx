@@ -26,7 +26,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <>
             <AdminNavbar />
             <div className='flex flex-col mt-4 responsive-container'>
-                <Menubar className="w-fit">
+                <Menubar className="w-fit max-md:mx-auto">
                     <MenubarMenu>
                         <Link href="/admin" className="h-full cursor-pointer">
                             <MenubarTrigger className={`cursor-pointer h-full ${isActive(homePath)}`}><FaHome /></MenubarTrigger>

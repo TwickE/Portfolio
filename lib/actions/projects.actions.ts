@@ -47,6 +47,24 @@ export const getProjectCards = async ({ all, sortingOrder }: { all: boolean, sor
     }
 }
 
+export const getProjectCardById = async (projectId: string) => {
+    try {
+        const { databases } = await createPublicClient();
+
+        const result = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.projectCardsCollectionId,
+            projectId
+        );
+
+        // Transform the data to match the ProjectCardType interface
+        return result as unknown as ProjectCardType;
+    } catch (error) {
+        handleError(error, "Failed to get Project Card");
+        return undefined;
+    }
+}
+
 export const updateProjectCard = async ({
     $id,
     title,
@@ -93,6 +111,30 @@ export const updateProjectCard = async ({
         return true;
     } catch (error) {
         console.log("Failed to update project card", error);
+        return false;
+    }
+}
+
+export const updateProjectCardsOrder = async (projectCards: ProjectCardType[]) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        // Create an array of update promises
+        const updatePromises = projectCards.map(card => {
+            return databases.updateDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.projectCardsCollectionId,
+                card.$id,
+                { order: card.order }
+            );
+        });
+
+        // Execute all updates in parallel
+        await Promise.all(updatePromises);
+
+        return true;
+    } catch (error) {
+        console.log("Failed to update project card order", error);
         return false;
     }
 }

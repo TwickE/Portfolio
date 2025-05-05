@@ -1,8 +1,8 @@
-import AdminProjectCards from '@/components/AdminProjectCards';
+import AdminProjectList from '@/components/AdminProjectList';
 
 const ProjectCards = () => {
     return (
-        <AdminProjectCards />
+        <AdminProjectList />
     )
 }
 

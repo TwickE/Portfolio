@@ -1,10 +1,8 @@
-
+import AdminProjectCard from "@/components/AdminProjectCard"
 
 const ProjectCard = () => {
     return (
-        <section>
-            <h2>ProjectCard Page</h2>
-        </section>
+        <AdminProjectCard />
     )
 }
 

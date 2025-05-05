@@ -63,13 +63,13 @@ export const AdminTextArea = ({ placeholder, inputValue, onChange }: AdminInputP
     }, [inputValue]);
 
     return (
-        <div className="flex items-center gap-2 ps-[10px] row-span-3 bg-my-primary rounded-sm">
+        <div className="flex items-center gap-2 ps-[10px] w-full h-22 bg-my-primary rounded-sm">
             <FaFont color="white" size={16} />
             <textarea
                 value={value}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className="resize-none bg-secondary h-full w-56 ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+                className="resize-none bg-secondary h-full w-full ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
             />
         </div>
     );
@@ -142,7 +142,7 @@ export const AdminLink = ({ linkType, inputValue, onChange, onRemove }: AdminLin
     };
 
     return (
-        <div className="flex items-center rounded-sm">
+        <div className="flex items-center rounded-sm w-full">
             <Popover>
                 <PopoverTrigger asChild>
                     <button className="cursor-pointer flex items-center gap-[6px] ps-[10px] pe-2 h-[36px] bg-my-primary rounded-s-sm">
@@ -194,7 +194,7 @@ export const AdminLink = ({ linkType, inputValue, onChange, onRemove }: AdminLin
                 value={value}
                 onChange={handleChange}
                 placeholder={`Enter the URL for ${selectedLinkType}`}
-                className="bg-secondary h-full w-[208px] ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+                className="bg-secondary h-full w-full ps-2 text-base border border-my-primary rounded-br-[5px] rounded-tr-[5px] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
             />
         </div>
     )
