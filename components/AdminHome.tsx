@@ -84,28 +84,18 @@ const AdminHome = () => {
 
     if (isLoadingDashboardStats) {
         return (
-            <section className="grid grid-cols-4 grid-rows-2 gap-4 h-full w-full max-xl:grid-cols-1 max-xl:grid-rows-auto">
-                <Skeleton className="col-span-2 row-span-1 max-xl:col-span-1" />
-                <div className="col-span-2 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
-                    <div className="flex flex-row gap-2 flex-1">
-                        <Skeleton className="flex-1 h-full" />
-                        <Skeleton className="flex-1 h-full" />
-                    </div>
-                    <Skeleton className="flex-1 h-full" />
-                </div>
-                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
-                    <Skeleton className="flex-1 h-full" />
-                    <Skeleton className="flex-1 h-full" />
-                </div>
-                <Skeleton className="col-span-1 row-span-1 max-xl:col-span-1" />
-                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
-                    <Skeleton className="flex-1 h-full" />
-                    <Skeleton className="flex-1 h-full" />
-                </div>
-                <div className="col-span-1 row-span-1 flex flex-col gap-2 max-xl:col-span-1">
-                    <Skeleton className="flex-1 h-full" />
-                    <Skeleton className="flex-1 h-full" />
-                </div>
+            <section className="grid grid-cols-4 grid-rows-4 gap-2 h-full w-full overflow-y-auto max-4xl:grid-cols-2 max-4xl:grid-rows-6 max-xl:grid-cols-1 max:xl:grid-rows-15">
+                    <Skeleton className="col-span-2 row-span-2 max-xl:col-span-1 max-xl:row-span-5" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-2 row-span-1 max-4xl:col-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-2 max-4xl:row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
             </section>
         )
     } else if (isErrorDashboardStats) {
@@ -116,205 +106,203 @@ const AdminHome = () => {
         )
     } else if (data) {
         return (
-            <>
-                <section className="grid grid-cols-4 grid-rows-4 gap-2 h-full w-full overflow-y-auto max-4xl:grid-cols-2 max-4xl:grid-rows-6 max-xl:grid-cols-1 max:xl:grid-rows-15">
-                    <div className="col-span-2 row-span-2 pb-0 admin-home-card max-xl:flex-col max-xl:col-span-1 max-xl:row-span-5">
-                        <div className="flex-1/2 flex flex-col items-center">
-                            <h2 className="w-fit flex gap-1 items-center">
-                                <FaDatabase className="text-my-appwrite" size={24} />
-                                Collections
-                            </h2>
-                            <ChartContainer config={collectionsChartConfig} className="mx-auto aspect-square w-full max-w-57 max-xl:max-w-68">
-                                <PieChart>
-                                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                    <Pie
-                                        data={collectionsChartData}
-                                        dataKey="number"
-                                        nameKey="collection"
-                                        innerRadius={60}
-                                        strokeWidth={5}
-                                    >
-                                        <Label
-                                            content={({ viewBox }) => {
-                                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                                    return (
-                                                        <text
+            <section className="grid grid-cols-4 grid-rows-4 gap-2 h-full w-full overflow-y-auto max-4xl:grid-cols-2 max-4xl:grid-rows-6 max-xl:grid-cols-1 max:xl:grid-rows-15">
+                <div className="col-span-2 row-span-2 pb-0 admin-home-card max-xl:flex-col max-xl:col-span-1 max-xl:row-span-5">
+                    <div className="flex-1/2 flex flex-col items-center">
+                        <h2 className="w-fit flex gap-1 items-center">
+                            <FaDatabase className="text-my-appwrite" size={24} />
+                            Collections
+                        </h2>
+                        <ChartContainer config={collectionsChartConfig} className="mx-auto aspect-square w-full max-w-57 max-xl:max-w-68">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={collectionsChartData}
+                                    dataKey="number"
+                                    nameKey="collection"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
+                                                    >
+                                                        <tspan
                                                             x={viewBox.cx}
                                                             y={viewBox.cy}
-                                                            textAnchor="middle"
-                                                            dominantBaseline="middle"
+                                                            className="fill-foreground text-3xl font-bold"
                                                         >
-                                                            <tspan
-                                                                x={viewBox.cx}
-                                                                y={viewBox.cy}
-                                                                className="fill-foreground text-3xl font-bold"
-                                                            >
-                                                                {totalCollections.toLocaleString()}
-                                                            </tspan>
-                                                            <tspan
-                                                                x={viewBox.cx}
-                                                                y={(viewBox.cy || 0) + 24}
-                                                                className="fill-muted-foreground"
-                                                            >
-                                                                Documents
-                                                            </tspan>
-                                                        </text>
-                                                    )
-                                                }
-                                            }}
-                                        />
-                                    </Pie>
-                                </PieChart>
-                            </ChartContainer>
-                        </div>
-                        <div className="flex-1/2 flex flex-col items-center">
-                            <h2 className="w-fit flex gap-1 items-center">
-                                <FaFolder className="text-my-appwrite" size={24} />
-                                Storage
-                            </h2>
-                            <ChartContainer config={storageChartConfig} className="mx-auto aspect-square w-full max-w-57 max-xl:max-w-68">
-                                <PieChart>
-                                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                    <Pie
-                                        data={storageChartData}
-                                        dataKey="number"
-                                        nameKey="storage"
-                                        innerRadius={60}
-                                        strokeWidth={5}
-                                    >
-                                        <Label
-                                            content={({ viewBox }) => {
-                                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                                    return (
-                                                        <text
+                                                            {totalCollections.toLocaleString()}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Documents
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
+                    </div>
+                    <div className="flex-1/2 flex flex-col items-center">
+                        <h2 className="w-fit flex gap-1 items-center">
+                            <FaFolder className="text-my-appwrite" size={24} />
+                            Storage
+                        </h2>
+                        <ChartContainer config={storageChartConfig} className="mx-auto aspect-square w-full max-w-57 max-xl:max-w-68">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={storageChartData}
+                                    dataKey="number"
+                                    nameKey="storage"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
+                                                    >
+                                                        <tspan
                                                             x={viewBox.cx}
                                                             y={viewBox.cy}
-                                                            textAnchor="middle"
-                                                            dominantBaseline="middle"
+                                                            className="fill-foreground text-3xl font-bold"
                                                         >
-                                                            <tspan
-                                                                x={viewBox.cx}
-                                                                y={viewBox.cy}
-                                                                className="fill-foreground text-3xl font-bold"
-                                                            >
-                                                                {totalStorage.toLocaleString()}
-                                                            </tspan>
-                                                            <tspan
-                                                                x={viewBox.cx}
-                                                                y={(viewBox.cy || 0) + 24}
-                                                                className="fill-muted-foreground"
-                                                            >
-                                                                Files
-                                                            </tspan>
-                                                        </text>
-                                                    )
-                                                }
-                                            }}
-                                        />
-                                    </Pie>
-                                </PieChart>
-                            </ChartContainer>
-                        </div>
+                                                            {totalStorage.toLocaleString()}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 24}
+                                                            className="fill-muted-foreground"
+                                                        >
+                                                            Files
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
                     </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/main-skills"
-                            name="Main Skills"
-                            dbTotal={data?.dbTotalMainSkills}
-                            dbLastUpdated={data?.dbLastUpdatedMainSkills}
-                            collectionId={data?.skillsCollectionId}
-                            collectionLink={data?.skillsCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/other-skills"
-                            name="Other Skills"
-                            dbTotal={data?.dbTotalOtherSkills}
-                            dbLastUpdated={data?.dbLastUpdatedOtherSkills}
-                            collectionId={data?.skillsCollectionId}
-                            collectionLink={data?.skillsCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-2 row-span-1 flex-col justify-between admin-home-card max-4xl:col-span-1">
-                        <StorageItem
-                            name="Skills Storage"
-                            storageTotal={data?.storageTotalSkills}
-                            storageLastUpdated={data?.storageLastUpdatedSkills}
-                            storageId={data?.storageSkillIconsId}
-                            storageLink={data?.storageSkillsLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/tech-badges"
-                            name="Tech Badges"
-                            dbTotal={data?.dbTotalTechBadges}
-                            dbLastUpdated={data?.dbLastUpdatedTechBadges}
-                            collectionId={data?.techBadgesCollectionId}
-                            collectionLink={data?.techBadgesCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-2 flex-col justify-between admin-home-card max-4xl:row-span-1">
-                        <DatabaseItem
-                            adminLink="/admin/project-cards"
-                            name="Projects"
-                            dbTotal={data?.dbTotalProjects}
-                            dbLastUpdated={data?.dbLastUpdatedProjects}
-                            collectionId={data?.projectCardsCollectionId}
-                            collectionLink={data?.projectsCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/education"
-                            name="Education"
-                            dbTotal={data?.dbTotalEducation}
-                            dbLastUpdated={data?.dbLastUpdatedEducation}
-                            collectionId={data?.resumeCollectionId}
-                            collectionLink={data?.resumeCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/cv-file"
-                            name="CV File"
-                            dbTotal={data?.dbTotalCV}
-                            dbLastUpdated={data?.dbLastUpdatedCV}
-                            collectionId={data?.cvFileCollectionId}
-                            collectionLink={data?.cvFileCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <StorageItem
-                            name="Tech Badges Storage"
-                            storageTotal={data?.storageTotalTechBadges}
-                            storageLastUpdated={data?.storageLastUpdatedTechBadges}
-                            storageId={data?.storageTechBadgesIconsId}
-                            storageLink={data?.storageTechBadgesLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <DatabaseItem
-                            adminLink="/admin/work-experience"
-                            name="Work Experience"
-                            dbTotal={data?.dbTotalWork}
-                            dbLastUpdated={data?.dbLastUpdatedWork}
-                            collectionId={data?.resumeCollectionId}
-                            collectionLink={data?.resumeCollectionLink}
-                        />
-                    </div>
-                    <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
-                        <StorageItem
-                            name="CV File Storage"
-                            storageTotal={data?.storageTotalCV}
-                            storageLastUpdated={data?.storageLastUpdatedCV}
-                            storageId={data?.storageCVFileId}
-                            storageLink={data?.storageCVLink}
-                        />
-                    </div>
-                </section>
-            </>
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/main-skills"
+                        name="Main Skills"
+                        dbTotal={data?.dbTotalMainSkills}
+                        dbLastUpdated={data?.dbLastUpdatedMainSkills}
+                        collectionId={data?.skillsCollectionId}
+                        collectionLink={data?.skillsCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/other-skills"
+                        name="Other Skills"
+                        dbTotal={data?.dbTotalOtherSkills}
+                        dbLastUpdated={data?.dbLastUpdatedOtherSkills}
+                        collectionId={data?.skillsCollectionId}
+                        collectionLink={data?.skillsCollectionLink}
+                    />
+                </div>
+                <div className="col-span-2 row-span-1 flex-col justify-between admin-home-card max-4xl:col-span-1">
+                    <StorageItem
+                        name="Skills Storage"
+                        storageTotal={data?.storageTotalSkills}
+                        storageLastUpdated={data?.storageLastUpdatedSkills}
+                        storageId={data?.storageSkillIconsId}
+                        storageLink={data?.storageSkillsLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/tech-badges"
+                        name="Tech Badges"
+                        dbTotal={data?.dbTotalTechBadges}
+                        dbLastUpdated={data?.dbLastUpdatedTechBadges}
+                        collectionId={data?.techBadgesCollectionId}
+                        collectionLink={data?.techBadgesCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-2 flex-col justify-between admin-home-card max-4xl:row-span-1">
+                    <DatabaseItem
+                        adminLink="/admin/project-cards"
+                        name="Projects"
+                        dbTotal={data?.dbTotalProjects}
+                        dbLastUpdated={data?.dbLastUpdatedProjects}
+                        collectionId={data?.projectCardsCollectionId}
+                        collectionLink={data?.projectsCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/education"
+                        name="Education"
+                        dbTotal={data?.dbTotalEducation}
+                        dbLastUpdated={data?.dbLastUpdatedEducation}
+                        collectionId={data?.resumeCollectionId}
+                        collectionLink={data?.resumeCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/cv-file"
+                        name="CV File"
+                        dbTotal={data?.dbTotalCV}
+                        dbLastUpdated={data?.dbLastUpdatedCV}
+                        collectionId={data?.cvFileCollectionId}
+                        collectionLink={data?.cvFileCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <StorageItem
+                        name="Tech Badges Storage"
+                        storageTotal={data?.storageTotalTechBadges}
+                        storageLastUpdated={data?.storageLastUpdatedTechBadges}
+                        storageId={data?.storageTechBadgesIconsId}
+                        storageLink={data?.storageTechBadgesLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <DatabaseItem
+                        adminLink="/admin/work-experience"
+                        name="Work Experience"
+                        dbTotal={data?.dbTotalWork}
+                        dbLastUpdated={data?.dbLastUpdatedWork}
+                        collectionId={data?.resumeCollectionId}
+                        collectionLink={data?.resumeCollectionLink}
+                    />
+                </div>
+                <div className="col-span-1 row-span-1 flex-col justify-between admin-home-card">
+                    <StorageItem
+                        name="CV File Storage"
+                        storageTotal={data?.storageTotalCV}
+                        storageLastUpdated={data?.storageLastUpdatedCV}
+                        storageId={data?.storageCVFileId}
+                        storageLink={data?.storageCVLink}
+                    />
+                </div>
+            </section>
         )
     }
 }
