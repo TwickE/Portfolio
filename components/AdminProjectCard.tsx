@@ -406,9 +406,9 @@ const AdminProjectCard = () => {
     return (
         <>
             <section className="flex flex-col gap-4 h-full">
-                <div className="flex items-center justify-between max-xl:flex-wrap max-xl:gap-2 max-md:justify-center">
+                <div className="flex items-center justify-between mb-4 max-xl:flex-col max-xl:gap-2">
                     <h2 className="text-2xl">Project Card</h2>
-                    <div className="flex items-center gap-4 max-md:flex-wrap max-md:justify-center">
+                    <div className="flex items-center gap-4 flex-wrap justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
                             Refresh
@@ -437,7 +437,7 @@ const AdminProjectCard = () => {
                 ) : localData && (
                     <div className="h-full overflow-y-auto">
                         <div className="flex flex-col gap-4 w-full">
-                            <div className='flex gap-4 flex-wrap max-md:justify-center'>
+                            <div className='flex gap-4 flex-wrap max-xl:flex-col items-center'>
                                 <AdminInput
                                     icon="text"
                                     placeholder="Title"
@@ -491,7 +491,7 @@ const AdminProjectCard = () => {
                                     <h3>Tech Badges</h3>
                                     <AdminSearch onTechBadgeSelect={(techBadge) => handleAddTechBadge(techBadge)} />
                                 </div>
-                                <div className='flex flex-wrap gap-3 w-full max-md:justify-center'>
+                                <div className='flex flex-wrap gap-3 w-full max-xl:justify-center'>
                                     {localData.techBadges.map(techBadge => (
                                         <div
                                             key={techBadge.$id}
@@ -512,9 +512,9 @@ const AdminProjectCard = () => {
                                 </div>
                             </div>
                             <div className='flex flex-col gap-4 w-full bg-my-background-200 border border-border rounded-md p-3'>
-                                <div className='flex justify-between items-center max-lg:flex-wrap max-lg:gap-2 max-md:justify-center'>
+                                <div className='flex justify-between items-center max-lg:flex-wrap max-xl:gap-2 max-xl:flex-col'>
                                     <h3>Images</h3>
-                                    <div className='flex gap-4 flex-wrap max-md:justify-center'>
+                                    <div className='flex gap-4 flex-wrap max-xl:justify-center'>
                                         <Button
                                             variant="primary"
                                             onClick={() => handleAddImage(true)}
@@ -533,7 +533,7 @@ const AdminProjectCard = () => {
                                 </div>
                                 <div className='flex flex-wrap gap-3 w-full'>
                                     {localData.images.map((image, index) => (
-                                        <div key={index} className="p-3 w-full flex items-center gap-4 rounded-md mb-2 bg-my-accent max-3xl:flex-wrap max-md:justify-center">
+                                        <div key={index} className="p-3 w-full flex items-center gap-4 rounded-md mb-2 bg-my-accent max-3xl:flex-wrap max-xl:justify-center">
                                             <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                                 <SafeImage
                                                     src={image.src}

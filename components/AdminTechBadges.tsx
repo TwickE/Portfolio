@@ -207,10 +207,10 @@ const AdminTechBadges = () => {
 
     return (
         <>
-            <section className="h-full">
-                <div className="flex items-start justify-between mb-4">
+            <section className="flex flex-col gap-4 h-full">
+                <div className="flex items-center justify-between max-xl:flex-col max-xl:gap-2">
                     <h2 className="text-2xl w-fit">Tech Badges</h2>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-wrap justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
                             Refresh
@@ -221,7 +221,7 @@ const AdminTechBadges = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                <div className="h-full overflow-y-auto">
                     {isLoading ? (
                         Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
@@ -232,7 +232,7 @@ const AdminTechBadges = () => {
                         </div>
                     ) : (
                         Object.values(localData).map((techBadge, index) => (
-                            <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent">
+                            <div key={index} className="p-3 flex items-center gap-4 flex-wrap rounded-md mb-2 bg-my-accent max-xl:flex-col">
                                 <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                     <Image
                                         src={techBadge.icon || "/noImage.webp"}
@@ -252,7 +252,7 @@ const AdminTechBadges = () => {
                                     inputValue={techBadge.name}
                                     onChange={(value) => handleTechBadgeInputChange(techBadge.$id, value)}
                                 />
-                                <div className="flex items-center gap-4 ml-auto">
+                                <div className="flex items-center max-xl:flex-wrap justify-center gap-4 ml-auto max-3xl:ml-0">
                                     <Button
                                         variant="save"
                                         onClick={() => handleUpdateTechBadge(techBadge.$id)}

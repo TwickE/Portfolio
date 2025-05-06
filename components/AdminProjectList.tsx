@@ -157,10 +157,10 @@ const AdminProjectCards = () => {
 
     return (
         <>
-            <section className="h-full">
-                <div className="flex items-center justify-between mb-4">
+            <section className="flex flex-col gap-4 h-full">
+                <div className="flex items-center justify-between max-xl:flex-col max-xl:gap-2">
                     <h2 className="text-2xl w-fit">Project Cards</h2>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-wrap justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
                             Refresh
@@ -176,7 +176,7 @@ const AdminProjectCards = () => {
                     </div>
                 </div>
                 {isLoading ? (
-                    <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                    <div className="h-full overflow-y-auto">
                         {Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-full h-25 rounded-md mb-2" />
                         ))}
@@ -189,16 +189,16 @@ const AdminProjectCards = () => {
                     <DragDropContext onDragEnd={handleDragProjectCard}>
                         <Droppable droppableId="list">
                             {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-full overflow-y-auto">
                                     {Object.values(localData).map((projectCard, index) => (
                                         <Draggable key={projectCard.$id} draggableId={projectCard.$id} index={index}>
                                             {(provided, snapshot) => (
-                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
-                                                    <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
-                                                        <GripVertical color='white' size={20} />
+                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent max-xl:flex-col ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
+                                                    <span {...provided.dragHandleProps} className="flex items-center gap-1 bg-my-secondary py-0.5 px-2 rounded-sm">
+                                                        <GripVertical color='white' size={24} />
+                                                        <p className="text-black dark:text-white">{projectCard.order}</p>
                                                     </span>
-                                                    <div className="flex items-center gap-4 flex-wrap w-full">
-                                                        <p>{projectCard.order}</p>
+                                                    <div className="flex items-center gap-4 flex-wrap w-full max-xl:flex-col max-xl:justify-center">
                                                         <div className="grid place-content-center rounded-xl bg-[url(/lightTransparentPattern.svg)] dark:bg-[url(/darkTransparentPattern.svg)] w-[76px] h-[76px]">
                                                             <Image
                                                                 src={projectCard.images[0].src || "/noImage.webp"}
@@ -210,7 +210,7 @@ const AdminProjectCards = () => {
                                                             />
                                                         </div>
                                                         <h3>{projectCard.title}</h3>
-                                                        <div className='flex items-center gap-4 ml-auto max-4xl:mx-auto'>
+                                                        <div className='flex items-center flex-wrap justify-center gap-4 ml-auto max-xl:ml-0'>
                                                             <Link href={`/admin/project-cards/${projectCard.$id}`}>
                                                                 <Button
                                                                     variant="primary"

@@ -232,10 +232,10 @@ const AdminResume = ({ type }: { type: "school" | "work" }) => {
 
     return (
         <>
-            <section className="h-full">
-                <div className="flex items-center justify-between mb-4">
+            <section className="flex flex-col gap-4 h-full">
+                <div className="flex items-center justify-between max-xl:flex-col max-xl:gap-2">
                     <h2 className="text-2xl w-fit">{type === 'school' ? 'Education' : 'Work Experience'}</h2>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 flex-wrap justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
                             Refresh
@@ -251,7 +251,7 @@ const AdminResume = ({ type }: { type: "school" | "work" }) => {
                     </div>
                 </div>
                 {isLoading ? (
-                    <div className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                    <div className="h-full overflow-y-auto">
                         {Array(NUMBER_OF_SKELETONS).fill(0).map((_, index) => (
                             <Skeleton key={index} className="w-full h-15 rounded-md mb-2" />
                         ))}
@@ -264,16 +264,16 @@ const AdminResume = ({ type }: { type: "school" | "work" }) => {
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="list">
                             {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-[calc(100%-36px-16px)] overflow-y-auto">
+                                <div ref={provided.innerRef} {...provided.droppableProps} className="h-full overflow-y-auto">
                                     {Object.values(localData).map((resumeItem, index) => (
                                         <Draggable key={resumeItem.$id} draggableId={resumeItem.$id} index={index}>
                                             {(provided, snapshot) => (
-                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
-                                                    <span {...provided.dragHandleProps} className="h-6 bg-my-secondary py-0.5 rounded-sm">
-                                                        <GripVertical color='white' size={20} />
-                                                    </span>
-                                                    <div className="flex items-center gap-4 flex-wrap w-full">
+                                                <div ref={provided.innerRef} {...provided.draggableProps} className={`p-3 flex items-center gap-4 rounded-md mb-2 bg-my-accent max-xl:flex-col ${snapshot.isDragging ? "ring-2 ring-my-primary" : ""}`}>
+                                                    <span {...provided.dragHandleProps} className="flex items-center gap-1 bg-my-secondary py-0.5 px-2 rounded-sm">
+                                                        <GripVertical color='white' size={24} />
                                                         <p className="text-black dark:text-white">{resumeItem.order}</p>
+                                                    </span>
+                                                    <div className="flex items-center gap-4 flex-wrap w-full max-xl:flex-col max-xl:justify-center">
                                                         <AdminDropDown
                                                             selectedValue={resumeItem.icon || "school"}
                                                             type={type}
@@ -299,7 +299,7 @@ const AdminResume = ({ type }: { type: "school" | "work" }) => {
                                                         />
                                                         <Button
                                                             variant="destructive"
-                                                            className="ml-auto max-4xl:mx-auto"
+                                                            className="ml-auto max-5xl:ml-0"
                                                             onClick={() => handleDeleteResumeItem(resumeItem.$id, resumeItem.new)}
                                                         >
                                                             <FaTrash />
