@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             }
             // Prefix match for dynamic routes
             if (path !== '/' && pathname.startsWith(path + '/')) {
-                 return "active-menu-trigger";
+                return "active-menu-trigger";
             }
         }
     }
@@ -68,6 +68,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         <MenubarContent>
                             <MenubarItem>
                                 <Link href="/admin/project-cards" className="w-full cursor-pointer">Project Cards</Link>
+                            </MenubarItem>
+                            <MenubarItem>
+                                <Link href="/admin/project-cards/new" className="w-full cursor-pointer">New Project Card</Link>
                             </MenubarItem>
                             <MenubarItem>
                                 <Link href="/admin/tech-badges" className="w-full cursor-pointer">Tech Badges</Link>

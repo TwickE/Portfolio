@@ -65,47 +65,28 @@ export const getProjectCardById = async (projectId: string) => {
     }
 }
 
-export const updateProjectCard = async ({
-    $id,
-    title,
-    startDate,
-    endDate,
-    description,
-    links,
-    techBadges,
-    images,
-    order,
-    original }: ProjectCardType) => {
+export const updateProjectCard = async (projectCard: ProjectCardType) => {
     try {
         const { databases } = await createAdminClient();
 
-        // Build the update object with only provided fields
-        const updateData: Partial<ProjectCardDatabase> = {};
+        console.log(projectCard);
 
-        if (title !== undefined) updateData.title = title;
-        if (startDate !== undefined) updateData.startDate = startDate;
-        if (endDate !== undefined) updateData.endDate = endDate;
-        if (description !== undefined) updateData.description = description;
-        if (links !== undefined) updateData.links = JSON.stringify(links);
-        if (techBadges !== undefined) {
-            // Extract just the $id values from techBadges for proper Appwrite document references
-            const techBadgeIds = techBadges.map(badge => badge.$id);
-            updateData.techBadges = techBadgeIds;
-        }
-        if (images !== undefined) updateData.images = JSON.stringify(images);
-        if (order !== undefined) updateData.order = order;
-        if (original !== undefined) updateData.original = original;
-
-        // If no fields to update, return early
-        if (Object.keys(updateData).length === 0) {
-            throw new Error("No new data provided for update");
+        const updatedData = {
+            title: projectCard.title,
+            startDate: projectCard.startDate,
+            endDate: projectCard.endDate,
+            description: projectCard.description,
+            links: JSON.stringify(projectCard.links),
+            techBadges: projectCard.techBadges.map(badge => badge.$id),
+            images: JSON.stringify(projectCard.images),
+            original: projectCard.original
         }
 
         await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.projectCardsCollectionId,
-            $id,
-            updateData
+            projectCard.$id,
+            updatedData
         );
 
         return true;

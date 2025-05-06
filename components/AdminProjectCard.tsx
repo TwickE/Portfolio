@@ -3,18 +3,17 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { FaTrash, FaSave, FaArrowUp, FaArrowDown, FaChevronRight } from "react-icons/fa";
+import { FaTrash, FaSave, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
-import { deleteProjectCard, getProjectCards, getProjectCardById } from "@/lib/actions/projects.actions";
+import { addProjectCard, deleteProjectCard, getProjectCardById, updateProjectCard } from "@/lib/actions/projects.actions";
 import { ProjectCardType, TechBadgeType } from "@/types/interfaces";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ErrorCard from '@/components/ErrorCard';
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AdminCheckBox, AdminDatePicker, AdminInput, AdminLink, AdminSearch, AdminTextArea } from "@/components/AdminSmallComponents";
 import TechBadge from '@/components/TechBadge';
 
@@ -22,16 +21,16 @@ const AdminProjectCard = () => {
     // Define a default empty state matching ProjectCardType
     const defaultProjectCard: ProjectCardType = {
         $id: '',
-        order: 0,
+        order: 1,
         title: '',
         description: '',
         startDate: new Date(),
         endDate: new Date(),
         original: false,
-        images: [],
+        images: [{ src: '', alt: '' }],
         links: [],
         techBadges: [],
-        new: false,
+        new: true,
     };
     // State to store the project cards and track their changes
     const [localData, setLocalData] = useState<ProjectCardType>(defaultProjectCard);
@@ -44,6 +43,8 @@ const AdminProjectCard = () => {
     // Project Card ID from the URL params
     const { id } = useParams();
 
+    const router = useRouter();
+
     // Fetch projects from the backend
     const {
         data: projectCardData,
@@ -52,6 +53,9 @@ const AdminProjectCard = () => {
     } = useQuery({
         queryKey: ['projectCard', id],
         queryFn: async () => {
+            if (id === 'new') {
+                return defaultProjectCard;
+            }
             const data = await getProjectCardById(id as string);
             if (!data) {
                 throw new Error("Project not found");
@@ -60,6 +64,7 @@ const AdminProjectCard = () => {
             return data;
         },
         gcTime: 1000 * 60 * 60 * 12, // Cache for 12 hours
+        refetchOnWindowFocus: false,
         // Process the data to parse stringified fields and convert to the correct type
         select: (data) => {
             const projectCard = data as ProjectCardType;
@@ -71,7 +76,6 @@ const AdminProjectCard = () => {
                 links: typeof projectCard.links === 'string' ? JSON.parse(projectCard.links) : projectCard.links,
             };
 
-            console.log("Processed Data:", processedData);
             return processedData;
         }
     });
@@ -249,19 +253,161 @@ const AdminProjectCard = () => {
         }));
     }
 
+    const validateFields = () => {
+        if (!localData) return true;
+        if (!localData.title) {
+            toast.error("Please provide a title");
+            return true;
+        }
+        if (!localData.description) {
+            toast.error("Please provide a description");
+            return true;
+        }
+        if (!localData.startDate) {
+            toast.error("Please provide a starting date");
+            return true;
+        }
+        if (!localData.endDate) {
+            toast.error("Please provide an ending date");
+            return true;
+        }
+        if (localData.links.length === 0) {
+            toast.error("Please provide at least one link");
+            return true;
+        }
+        if (localData.links.some(link => !link.url)) {
+            toast.error("Please provide a URL for all links");
+            return true;
+        }
+        if (localData.links.some(link => !isValidURL(link.url))) {
+            toast.error("Please provide valid URLs for all links");
+            return true;
+        }
+        if (localData.links.some(link => link.text === "NoLink")) {
+            toast.error("Please provide a link type for all links");
+            return true;
+        }
+        if (localData.images.length === 0) {
+            toast.error("Please provide at least one image");
+            return true;
+        }
+        if (localData.images.some(image => !image.alt)) {
+            toast.error("Please provide alt text for all images");
+            return true;
+        }
+        if (localData.images.some(image => !image.src)) {
+            toast.error("Please provide a URL for all images");
+            return true;
+        }
+        if (localData.images.some(image => !isValidURL(image.src))) {
+            toast.error("Please provide a valid URL for all images");
+            return true;
+        }
+
+        return false;
+    }
+
+    // Mutation to update the the project card
+    const {
+        mutateAsync: updateMutation,
+        isPending: updateIsPending
+    } = useMutation({
+        mutationFn: async (projectCard: ProjectCardType) => {
+            if (validateFields()) return;
+            const response = await updateProjectCard(projectCard);
+
+            if (!response) {
+                throw new Error("Failed to update project card");
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['projectCard', id] });
+            toast.success("Project Card updated successfully");
+        },
+        onError: (err: unknown) => {
+            console.error("Mutation failed:", err);
+            toast.error((err as Error).message || "Failed to update project cards");
+        },
+    });
+
+    // Mutation to add a project card
+    const {
+        mutateAsync: addMutation,
+        isPending: addIsPending
+    } = useMutation({
+        mutationFn: async (projectCard: ProjectCardType) => {
+            if (validateFields()) return;
+            const response = await addProjectCard(projectCard);
+
+            if (!response) {
+                throw new Error("Failed to add project card");
+            }
+        },
+        onSuccess: async () => {
+            if (localData.new) {
+                router.push("/admin/project-cards");
+            }
+            await queryClient.invalidateQueries({ queryKey: ['projectCard', id] });
+            toast.success("Project Card added successfully");
+        },
+        onError: (err: unknown) => {
+            console.error("Mutation failed:", err);
+            toast.error((err as Error).message || "Failed to add project cards");
+        },
+    });
+
+    const handleUpdateProjectCard = async () => {
+        // First validate the fields
+        if (validateFields()) {
+            return;
+        }
+        if (localData.new) {
+            await addMutation(localData);
+        } else {
+            await updateMutation(localData);
+        }
+
+    }
+
+    // Mutation to delete a skill
+    const deleteMutation = useMutation({
+        mutationFn: async (projectId: string) => {
+            if (localData.new) {
+                return setLocalData(defaultProjectCard);
+            }
+            return await deleteProjectCard(projectId);
+        },
+        onSuccess: () => {
+            toast.success("Project deleted successfully");
+            queryClient.invalidateQueries({ queryKey: ['projectCard', id] });
+            if (!localData.new) {
+                router.push("/admin/project-cards");
+            }
+        },
+        onError: (error) => {
+            console.error("Delete error:", error);
+            toast.error("Failed to delete project card");
+        },
+    });
+
+    const handleDeleteProjectCard = () => {
+        const executeDeleteSkill = async () => {
+            await deleteMutation.mutateAsync(id as string);
+
+            // Reset and close the dialog
+            setDeleteAction(null);
+            setAlertOpen(false);
+        };
+
+        setDeleteAction(() => executeDeleteSkill);
+        setAlertOpen(true);
+    }
+
     return (
         <>
             <section className="flex flex-col gap-4 h-full">
                 <div className="flex items-center justify-between max-xl:flex-wrap max-xl:gap-2 max-md:justify-center">
-                    <div className="flex items-center gap-2">
-                        <Link href="/admin/project-cards"><h2 className="text-2xl breadcrumbs-hover-link">Project Cards</h2></Link>
-                        <FaChevronRight size={16} />
-                        {isLoading ? (
-                            <Skeleton className="w-20 h-7 rounded-md" />
-                        ) : localData && (
-                            <h2 className="text-2xl">{localData.title}</h2>
-                        )}
-                    </div>
+                    <h2 className="text-2xl">Project Card</h2>
                     <div className="flex items-center gap-4 max-md:flex-wrap max-md:justify-center">
                         <Button onClick={handleRefresh}>
                             <FaRotate />
@@ -269,14 +415,13 @@ const AdminProjectCard = () => {
                         </Button>
                         <Button
                             variant="destructive"
-                        /* onClick={() => handleDeleteProjectCard(projectCard.$id, projectCard.new)} */
+                            onClick={() => handleDeleteProjectCard()}
                         >
                             <FaTrash />
                             Delete
                         </Button>
-                        <Button variant="save" /* onClick={handleUpdateProjectCardsOrder} */ /* disabled={isPending} */>
-                            {/* {isPending ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />} */}
-                            <FaSave />
+                        <Button variant="save" onClick={handleUpdateProjectCard} disabled={updateIsPending || addIsPending}>
+                            {updateIsPending || addIsPending ? <AiOutlineLoading3Quarters className="animate-spin" /> : <FaSave />}
                             Save
                         </Button>
                     </div>
