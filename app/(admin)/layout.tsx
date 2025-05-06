@@ -55,10 +55,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(skillPaths)}`}>Skills</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/main-skills" className="w-full cursor-pointer">Main Skills</Link>
                             </MenubarItem>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/other-skills" className="w-full cursor-pointer">Other Skills</Link>
                             </MenubarItem>
                         </MenubarContent>
@@ -66,13 +66,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(projectPaths)}`}>Projects</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/project-cards" className="w-full cursor-pointer">Project Cards</Link>
                             </MenubarItem>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/project-cards/new" className="w-full cursor-pointer">New Project Card</Link>
                             </MenubarItem>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/tech-badges" className="w-full cursor-pointer">Tech Badges</Link>
                             </MenubarItem>
                         </MenubarContent>
@@ -80,10 +80,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     <MenubarMenu>
                         <MenubarTrigger className={`cursor-pointer ${isActive(resumePaths)}`}>Resume</MenubarTrigger>
                         <MenubarContent>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/education" className="w-full cursor-pointer">Education</Link>
                             </MenubarItem>
-                            <MenubarItem>
+                            <MenubarItem asChild>
                                 <Link href="/admin/work-experience" className="w-full cursor-pointer">Work Experience</Link>
                             </MenubarItem>
                         </MenubarContent>
@@ -94,7 +94,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         </Link>
                     </MenubarMenu>
                 </Menubar>
-                <div className="w-full h-[calc(100dvh-32px-36px-16px-72px-16px)] bg-my-background-200 border border-border rounded-md mt-2 p-6">
+                <div className={
+                    `${isActive(homePath) ?
+                        'max-4xl:h-fit'
+                        : ''
+                    } h-[calc(100dvh-32px-36px-16px-72px-16px)] w-full bg-my-background-200 border border-border rounded-md mt-2 p-6`
+                }>
                     {children}
                 </div>
             </div>

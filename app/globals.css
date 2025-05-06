@@ -368,6 +368,10 @@
     .tilt-card {
         transform: perspective(150px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
     }
+
+    .admin-home-card {
+        @apply relative flex p-4 font-bold bg-my-accent rounded-sm border border-my-secondary hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
