@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FaCloudUploadAlt, FaTrash, FaPlus, FaSave } from "react-icons/fa";
 import { FaRotate } from "react-icons/fa6";
 import { AdminInput } from "@/components/AdminSmallComponents";
-import { getSkills, updateSkill, deleteSkill, addSkill } from "@/lib/actions/skills.actions";
+import { getSkills, updateSkills, deleteSkill, addSkill } from "@/lib/actions/skills.actions";
 import { AdminSkill } from "@/types/interfaces";
 import { toast } from "sonner";
 import usePickImage from "@/hooks/usePickImage";
@@ -143,13 +143,22 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     throw new Error(`Image file too large for ${skill.name}`);
                 }
 
-                const response = skill.newSkill
-                    ? await addSkill(skill)
-                    : await updateSkill(skill);
+                if (skill.newSkill) {
+                    const response = await addSkill(skill);
 
-                if (!response) {
-                    throw new Error(`Failed to ${skill.newSkill ? "add" : "update"} skills`);
+                    if (!response) {
+                        throw new Error(`Failed to add skill ${skill.name}`);
+                    } else {
+                        // Removes the new sill added to the database
+                        skills = skills.filter(s => s.$id !== skill.$id);
+                    }
                 }
+            }
+
+            const response = await updateSkills(skills);
+
+            if (!response) {
+                throw new Error(`Failed to update skills`);
             }
         },
         onSuccess: async () => {

@@ -28,44 +28,46 @@ export const getSkills = async ({ isMainSkill }: { isMainSkill: boolean }): Prom
     }
 }
 
-export const updateSkill = async ({ $id, name, link, order, iconFile, bucketFileId }: AdminSkill) => {
+export const updateSkills = async (skills: AdminSkill[]) => {
     try {
         const { databases, storage } = await createAdminClient();
 
-        // Build the update object with only provided fields
-        const updateData: Partial<AdminSkill> = {};
+        // Create an array of update promises
+        const updatePromises = skills.map(async (skill) => {
+            const updateData: Partial<AdminSkill> = {
+                name: skill.name,
+                link: skill.link,
+                order: skill.order,
+                mainSkill: skill.mainSkill
+            };
 
-        if (name !== undefined) updateData.name = name;
-        if (link !== undefined) updateData.link = link;
-        if (order !== undefined) updateData.order = order;
+            // Checks if the iconFile is provided and if the skill is not new to delete the old file and upload the new one
+            if (skill.iconFile !== undefined && skill.bucketFileId !== undefined && skill.newSkill !== true) {
+                await storage.deleteFile(
+                    appwriteConfig.storageSkillIconsId,
+                    skill.bucketFileId
+                );
 
-        if (iconFile !== undefined && bucketFileId !== undefined) {
-            await storage.deleteFile(
-                appwriteConfig.storageSkillIconsId,
-                bucketFileId
+                const bucketFile = await storage.createFile(
+                    appwriteConfig.storageSkillIconsId,
+                    ID.unique(),
+                    skill.iconFile
+                );
+
+                updateData.bucketFileId = bucketFile.$id;
+                updateData.icon = constructFileUrl(appwriteConfig.storageSkillIconsId, bucketFile.$id);
+            }
+
+            return databases.updateDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.skillsCollectionId,
+                skill.$id,
+                updateData
             );
+        });
 
-            const bucketFile = await storage.createFile(
-                appwriteConfig.storageSkillIconsId,
-                ID.unique(),
-                iconFile
-            );
-
-            updateData.bucketFileId = bucketFile.$id;
-            updateData.icon = constructFileUrl(appwriteConfig.storageSkillIconsId, bucketFile.$id);
-        }
-
-        // If no fields to update, return early
-        if (Object.keys(updateData).length === 0) {
-            throw new Error("No new data provided for update");
-        }
-
-        await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.skillsCollectionId,
-            $id,
-            updateData
-        );
+        // Execute all updates in parallel
+        await Promise.all(updatePromises);
 
         return true;
     } catch (error) {
