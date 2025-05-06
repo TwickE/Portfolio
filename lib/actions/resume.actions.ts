@@ -43,30 +43,30 @@ export const getResume = async ({ type }: { type: "school" | "work" | "course" }
     }
 }
 
-export const updateResumeItems = async ({ $id, icon, date, text1, text2, order }: Partial<ResumeItemProps>) => {
+export const updateResumeItems = async (resumeItems: ResumeItemProps[]) => {
     try {
         const { databases } = await createAdminClient();
 
-        // Build the update object with only provided fields
-        const updateData: Partial<ResumeItemProps> = {};
+        // Create an array of update promises
+        const updatePromises = resumeItems.map(async (resumeItem) => {
+            const updateData: Partial<ResumeItemProps> = {
+                date: resumeItem.date,
+                text1: resumeItem.text1,
+                text2: resumeItem.text2,
+                icon: resumeItem.icon,
+                order: resumeItem.order
+            };
 
-        if (icon !== undefined) updateData.icon = icon;
-        if (date !== undefined) updateData.date = date;
-        if (text1 !== undefined) updateData.text1 = text1;
-        if (text2 !== undefined) updateData.text2 = text2;
-        if (order !== undefined) updateData.order = order;
+            return databases.updateDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.resumeCollectionId,
+                resumeItem.$id,
+                updateData
+            );
+        });
 
-        // If no fields to update, return early
-        if (Object.keys(updateData).length === 0) {
-            throw new Error("No new data provided for update");
-        }
-
-        await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.resumeCollectionId,
-            $id!,
-            updateData
-        );
+        // Execute all updates in parallel
+        await Promise.all(updatePromises);
 
         return true;
     } catch (error) {

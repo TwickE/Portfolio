@@ -122,13 +122,22 @@ const AdminResume = ({ type }: { type: "school" | "work" }) => {
     } = useMutation({
         mutationFn: async (resumeItems: ResumeItemProps[]) => {
             for (const resumeItem of resumeItems) {
-                const response = resumeItem.new
-                    ? await addResumeItem(resumeItem)
-                    : await updateResumeItems(resumeItem);
+                if (resumeItem.new) {
+                    const response = await addResumeItem(resumeItem);
 
-                if (!response) {
-                    throw new Error(`Failed to ${resumeItem.new ? "add" : "update"} resume item`);
+                    if (!response) {
+                        throw new Error(`Failed to add resume item ${resumeItem.text1}`);
+                    } else {
+                        // Removes the new resume item added to the database
+                        resumeItems = resumeItems.filter(s => s.$id !== resumeItem.$id);
+                    }
                 }
+            }
+
+            const response = await updateResumeItems(resumeItems);
+
+            if (!response) {
+                throw new Error(`Failed to update resume items`);
             }
         },
         onSuccess: async () => {

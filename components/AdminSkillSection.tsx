@@ -149,7 +149,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                     if (!response) {
                         throw new Error(`Failed to add skill ${skill.name}`);
                     } else {
-                        // Removes the new sill added to the database
+                        // Removes the new skill added to the database
                         skills = skills.filter(s => s.$id !== skill.$id);
                     }
                 }
