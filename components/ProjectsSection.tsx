@@ -435,6 +435,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                                 alt={image.alt}
                                 width={104}
                                 height={58.5}
+                                quality={100}
                                 style={{ width: 'auto', height: 'auto' }}
                                 className={`${image.src === mainImageData.src
                                     ? 'border-my-primary shadow-[0_0_10px] shadow-my-primary'
@@ -450,6 +451,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                         alt={mainImageData.alt}
                         width={300}
                         height={80}
+                        quality={100}
                         style={{ width: 'auto', height: 'auto' }}
                         className="object-contain object-center flex-1 max-h-[300px] max-lg:order-1 cursor-pointer"
                         onClick={() => onImageClick(mainImageData.src, mainImageData.alt)}
