@@ -204,9 +204,8 @@ const AdminProjectCards = () => {
                                                                 src={projectCard.images[0].src || "/noImage.webp"}
                                                                 width={60}
                                                                 height={60}
-                                                                //fill Modificar isto para tirar o warning de width e height
                                                                 alt={projectCard.images[0].alt || "Image 1"}
-                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                                                className="object-contain object-center max-w-15 h-15 max-h-15 w-15"
                                                             />
                                                         </div>
                                                         <h3>{projectCard.title}</h3>

@@ -196,7 +196,7 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
                     alt={`${text} Logo`}
                     width={60}
                     height={60}
-                    className={`${isHoverSupported ? 'grayscale-100 group-hover:grayscale-0 transition-all duration-300' : 'grayscale-0'} object-contain object-center max-w-[60px] max-h-[60px]`}
+                    className={`${isHoverSupported ? 'grayscale-100 group-hover:grayscale-0 transition-all duration-300' : 'grayscale-0'} object-contain object-center w-15 max-w-15 h-15 max-h-15`}
                 />
                 <p className={`${isHoverSupported ? 'text-gray-500 group-hover:text-my-primary transition-colors duration-300' : 'text-my-primary'} text-base font-bold`}>{text}</p>
             </a>

@@ -624,7 +624,7 @@ const SafeImage = ({ src, alt }: { src: string, alt: string }) => {
             width={60}
             height={60}
             alt={alt}
-            className="object-contain object-center max-w-[60px] max-h-[60px]"
+            className="object-contain object-center max-w-15 h-15 max-h-15 w-15"
             onError={() => {
                 setError(true);
                 setImgSrc(fallbackSrc);

@@ -85,17 +85,17 @@ const AdminHome = () => {
     if (isLoadingDashboardStats) {
         return (
             <section className="grid grid-cols-4 grid-rows-4 gap-2 h-full w-full overflow-y-auto max-4xl:grid-cols-2 max-4xl:grid-rows-6 max-xl:grid-cols-1 max:xl:grid-rows-15">
-                    <Skeleton className="col-span-2 row-span-2 max-xl:col-span-1 max-xl:row-span-5" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-2 row-span-1 max-4xl:col-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-2 max-4xl:row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
-                    <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-2 row-span-2 max-xl:col-span-1 max-xl:row-span-5" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-2 row-span-1 max-4xl:col-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-2 max-4xl:row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
+                <Skeleton className="col-span-1 row-span-1 max-4xl:h-32" />
             </section>
         )
     } else if (isErrorDashboardStats) {
@@ -374,6 +374,7 @@ const AppwriteButton = ({ link, containerClasses, id }: { link: string, containe
                                         src="/appwrite.svg"
                                         alt="Appwrite Icon"
                                         fill
+                                        sizes="100%"
                                         className="object-contain object-center"
                                     />
                                 </div>

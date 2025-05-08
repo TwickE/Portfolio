@@ -239,7 +239,7 @@ const AdminTechBadges = () => {
                                         width={60}
                                         height={60}
                                         alt="Tech Badge Icon"
-                                        className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                        className="object-contain object-center max-w-15 h-15 max-h-15 w-15"
                                     />
                                 </div>
                                 <Button variant="primary" onClick={() => handleUpdateIcon(techBadge.$id)}>

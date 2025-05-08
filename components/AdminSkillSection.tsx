@@ -305,7 +305,7 @@ const AdminSkillSection = ({ isMainSkill }: { isMainSkill: boolean }) => {
                                                                 width={60}
                                                                 height={60}
                                                                 alt="Skill Icon"
-                                                                className="object-contain object-center max-w-[60px] max-h-[60px]"
+                                                                className="object-contain object-center max-w-15 w-15 max-h-15 h-15"
                                                             />
                                                         </div>
                                                         <Button variant="primary" onClick={() => handleUpdateIcon(skill.$id)}>

@@ -9,7 +9,7 @@ const TechBadge = ({ imgSrc, text }: TechBadgeProps) => {
                 alt={`${text} Logo`}
                 width={20}
                 height={20}
-                className="object-contain object-center max-w-5 max-h-5"
+                className="object-contain object-center w-5 max-w-5 h-5 max-h-5"
             />
             {text}
         </div>
