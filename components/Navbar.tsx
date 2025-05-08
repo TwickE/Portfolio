@@ -6,6 +6,7 @@ import FilledButton from './FilledButton';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
+import { HiMiniXMark } from "react-icons/hi2";
 import { CgDarkMode, CgMenuRight } from "react-icons/cg";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer";
 import { VisuallyHidden } from "radix-ui";
@@ -156,7 +157,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                 {/* Dropdown menu that shows on hover or click */}
                 <ul className={`absolute top-[62px] flex flex-col gap-1 left-0 bg-my-background-100 rounded-md p-1 shadow-[0_0_20px_rgba(40,58,255,0.5)] transition-[transform,opacity,scale] duration-600 origin-top ${isThemeDropdownOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 group-hover:scale-y-100 group-hover:opacity-100'}`}>
                     <li
-                        className={`${activeTheme === 'light' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'light' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-sm cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('light');
                             setIsThemeDropdownOpen(false);
@@ -166,7 +167,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Light</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'dark' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'dark' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-sm cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('dark');
                             setIsThemeDropdownOpen(false);
@@ -176,7 +177,7 @@ const DesktopMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
                         <p>Dark</p>
                     </li>
                     <li
-                        className={`${activeTheme === 'system' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-xs cursor-pointer transition-[background] duration-300`}
+                        className={`${activeTheme === 'system' ? 'bg-my-primary text-white' : 'text-black dark:text-white hover:bg-my-secondary/50'} flex gap-2 py-2 pl-2 pr-12 rounded-sm cursor-pointer transition-[background] duration-300`}
                         onClick={() => {
                             setActiveTheme('system');
                             setIsThemeDropdownOpen(false);
@@ -274,8 +275,12 @@ const MobileMenu = ({ activeTheme, setActiveTheme }: ThemeToggleProps) => {
 
     return (
         <Drawer onOpenChange={(open) => setIsDrawerOpen(open)} open={isDrawerOpen}>
-            <DrawerTrigger className="items-center justify-center">
-                <CgMenuRight size={56} className='hidden max-xl:flex cursor-pointer' />
+            <DrawerTrigger className="items-center justify-center" aria-label='Navigation Menu Button'>
+                {isDrawerOpen ? (
+                    <HiMiniXMark size={56} className='hidden max-xl:flex cursor-pointer' />
+                ) : (
+                    <CgMenuRight size={56} className='hidden max-xl:flex cursor-pointer' />
+                )}
             </DrawerTrigger>
             <DrawerContent className='font-bold !rounded-t-3xl shadow-[inset_0_4px_10px_-1px_rgba(10,18,100,0.5)]'>
                 <VisuallyHidden.Root>

@@ -69,8 +69,6 @@ export const updateProjectCard = async (projectCard: ProjectCardType) => {
     try {
         const { databases } = await createAdminClient();
 
-        console.log(projectCard);
-
         const updatedData = {
             title: projectCard.title,
             startDate: projectCard.startDate,

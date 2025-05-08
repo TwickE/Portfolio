@@ -440,8 +440,7 @@ const ProjectCard = ({ title, startDate, endDate, description, links, techBadges
                                 className={`${image.src === mainImageData.src
                                     ? 'border-my-primary shadow-[0_0_10px] shadow-my-primary'
                                     : 'border-slate-700 dark:border-slate-400'}
-                            object-contain object-center border cursor-pointer`
-                                }
+                                    object-contain object-center border cursor-pointer`}
                                 onClick={() => selectImage(image.src, image.alt)}
                             />
                         ))}
