@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fred's Portfolio Website
+Welcome to my personal portfolio website! This site showcases my projects, skills, and experience as a Developer with a focus on Web Development.
 
-## Getting Started
+## Live Demo
+[View Portfolio](https://portfolio-twickes-projects.vercel.app/)
 
-First, run the development server:
+## Tech Stack
+- HTML
+- Tailwind CSS
+- shadcn/ui
+- TypeScript
+- Recat JS
+- Next.js
+- appwrite
+- TanStack Query
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Home Page Dark Mode
+![Home Page Dark Mode](https://github.com/user-attachments/assets/9c9daa72-ce38-4e91-a001-ddb138dd9d84)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Home Page Light Mode
+![Home Page Light Mode](https://github.com/user-attachments/assets/10297580-71b8-4278-825b-e717882fe9de)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## About Page
+![About Page](https://github.com/user-attachments/assets/e0901939-99aa-4980-8900-517566ab6066)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Projects Page
+![Projects Page](https://github.com/user-attachments/assets/2f675915-adc7-41fb-80f3-22c0bf91d925)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contact Page
+![Contact Page](https://github.com/user-attachments/assets/68d08046-b1c5-4891-b086-0a392a7b2b6d)
