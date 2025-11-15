@@ -51,7 +51,7 @@ const HeroSection = () => {
                 <h1 className="text-5xl font-bold text-gradient mb-2 leading-[1.1] max-5xl:text-[2.7rem] max-4xl:text-4xl max-3xl:text-[2rem] max-2xl:m-auto max-2xl:text-center max-2xl:text-5xl max-xl:text-[2.5rem] max-lg:text-[2rem] max-md:[1.7rem] max-sm:text-xl">A Full Stack Developer + UX Designer</h1>
                 <div className="hero-glow2 hidden max-2xl:block">
                     <Image
-                        src="/profilePlaceHolder.png"
+                        src="/profilePhoto.png"
                         alt="Profile Photo"
                         width={475}
                         height={510}
@@ -94,7 +94,7 @@ const HeroSection = () => {
             </div>
             <div className="animate-fade-in-right flex items-center justify-center w-1/2 hero-glow2 max-2xl:hidden">
                 <Image
-                    src="/profilePlaceHolder.png"
+                    src="/profilePhoto.png"
                     alt="Profile Photo"
                     width={475}
                     height={510}
