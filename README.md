@@ -15,16 +15,49 @@ Welcome to my personal portfolio website! This site showcases my projects, skill
 - TanStack Query
 
 ## Home Page Dark Mode
-![Home Page Dark Mode](https://github.com/user-attachments/assets/9c9daa72-ce38-4e91-a001-ddb138dd9d84)
+<img width="1920" height="1440" alt="portfolio1" src="https://github.com/user-attachments/assets/b58336b9-047c-4cb0-aa68-c523eefaeb71" />
+
 
 ## Home Page Light Mode
-![Home Page Light Mode](https://github.com/user-attachments/assets/10297580-71b8-4278-825b-e717882fe9de)
+<img width="1920" height="1440" alt="portfolio2" src="https://github.com/user-attachments/assets/3e0f860f-a815-4ce1-9375-cdec8bd1f426" />
+
 
 ## About Page
-![About Page](https://github.com/user-attachments/assets/e0901939-99aa-4980-8900-517566ab6066)
+<img width="1920" height="1440" alt="portfolio3" src="https://github.com/user-attachments/assets/ac94828c-bb30-42f6-a89a-76de7ad5c4b5" />
+
 
 ## Projects Page
-![Projects Page](https://github.com/user-attachments/assets/2f675915-adc7-41fb-80f3-22c0bf91d925)
+<img width="1920" height="1440" alt="portfolio4" src="https://github.com/user-attachments/assets/e482aa06-b34b-4695-8dc9-d89365a9dcdb" />
+
 
 ## Contact Page
-![Contact Page](https://github.com/user-attachments/assets/68d08046-b1c5-4891-b086-0a392a7b2b6d)
+<img width="1920" height="1440" alt="portfolio5" src="https://github.com/user-attachments/assets/12163627-f8e3-4ad8-b20f-afa5b76da49c" />
+
+
+## Home Admin Page
+<img width="1920" height="1440" alt="portfolio6" src="https://github.com/user-attachments/assets/58070e9e-0959-44bc-b11b-7d8de0e3fe9c" />
+
+
+## Skills Admin Page
+<img width="1920" height="1440" alt="portfolio7" src="https://github.com/user-attachments/assets/787b21cc-e7ee-4bce-a766-9133cc645468" />
+
+
+## Project Cards Admin Page
+<img width="1920" height="1440" alt="portfolio8" src="https://github.com/user-attachments/assets/d75dabda-7aea-4a2e-9644-b58c1578bfca" />
+
+
+## Project Card Admin Page
+<img width="1920" height="1440" alt="portfolio9" src="https://github.com/user-attachments/assets/54351254-f370-4c50-accb-5ec44d558c3a" />
+
+
+## Tech Badges Admin Page
+<img width="1920" height="1440" alt="portfolio10" src="https://github.com/user-attachments/assets/11404d0f-39ac-4a4a-9706-e7a5bde67f95" />
+
+
+## Resume Admin Page
+<img width="1920" height="1440" alt="portfolio11" src="https://github.com/user-attachments/assets/2172882c-4f5e-430b-9d98-2d937898e7dc" />
+
+
+## CV Admin Page
+<img width="1920" height="1440" alt="portfolio12" src="https://github.com/user-attachments/assets/2aaf20ba-45b2-487e-8449-af2d8d2f8b66" />
+
