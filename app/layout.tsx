@@ -4,6 +4,7 @@ import { Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import QueryProvider from "@/context/QueryProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const sora = Sora({
     subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
                     <QueryProvider>
                         {children}
                         <Toaster richColors />
+                        <Analytics />
                     </QueryProvider>
                 </ThemeProvider>
             </body>
