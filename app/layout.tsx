@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import QueryProvider from "@/context/QueryProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const sora = Sora({
     subsets: ['latin'],
@@ -35,6 +36,7 @@ export default function RootLayout({
                         {children}
                         <Toaster richColors />
                         <Analytics />
+                        <SpeedInsights />
                     </QueryProvider>
                 </ThemeProvider>
             </body>
