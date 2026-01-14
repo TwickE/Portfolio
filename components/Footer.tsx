@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import CurrentYear from '@/components/CurrentYear';
 
 const Footer = () => {
-    const currentYear = new Date().getFullYear();
-
     return (
         <footer className='w-full flex flex-col items-center gap-9 py-12 text-white bg-my-primary dark:bg-my-secondary'>
             <Link href='/'>
@@ -29,7 +28,7 @@ const Footer = () => {
                     alt='Next.js Logo'
                 />
                 <p>Made with Next.js</p>
-                <p>{`© ${currentYear} All rights reserved by Frederico Silva`}</p>
+                <p>© <CurrentYear /> All rights reserved by Frederico Silva</p>
             </div>
         </footer>
     )
