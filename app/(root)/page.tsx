@@ -53,6 +53,7 @@ const HeroSection = () => {
                     <Image
                         src="/profilePhoto.jpg"
                         alt="Profile Photo"
+                        priority
                         width={475}
                         height={510}
                         className="border-2 border-my-secondary bg-my-photo-background rounded-[38px] hover:border-my-primary transition-colors duration-300 max-2xl:my-8 max-lg:w-full max-lg:h-auto max-md:my-4 max-sm:my-2"
@@ -96,6 +97,7 @@ const HeroSection = () => {
                 <Image
                     src="/profilePhoto.jpg"
                     alt="Profile Photo"
+                    priority
                     width={475}
                     height={510}
                     className="border-2 border-my-secondary bg-my-photo-background rounded-[38px] rotate-5 hover:rotate-0 hover:border-my-primary transition-all duration-300 max-4xl:w-[80%] max-4xl:h-auto"

@@ -191,7 +191,7 @@ const SkillCard = ({ link, image, text }: SkillCardProps) => {
       <a
         href={link}
         target="_blank"
-        className={`${isHoverSupported ? 'border-[rgba(255,255,255,0.2)] hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary transition-all duration-300' : 'border-my-primary'} 
+        className={`${isHoverSupported ? 'border-[rgba(255,255,255,0.2)] hover:border-my-primary hover:shadow-[0_0_10px] hover:shadow-my-primary' : 'border-my-primary'} 
                 group flex flex-col gap-4 items-center justify-center w-[140px] h-[140px] bg-my-secondary-glass rounded-3xl border backdrop-blur-xs cursor-pointer
                 ${cardVisible && isHoverSupported ? 'tilt-card' : ''}`}
       >
